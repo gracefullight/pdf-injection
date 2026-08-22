@@ -26,6 +26,16 @@ that a policy was intentionally violated, or that AI-written text was left unedi
 match must never be used as sole disciplinary evidence — see
 [`docs/ethics-and-privacy.md`](docs/ethics-and-privacy.md).
 
+PDF Injection is also not designed to evade detection. Independent metamorphic-detection research
+(PhantomLint) reports 100% recall and a 0.092% false-positive rate against exactly the two
+hidden-instruction modes this tool actually works with, `white_text` and `render_mode_3` — meaning
+a canary authored with this tool is discoverable by anyone who checks, not only by the professor
+who embedded it. That is a property of the design, not a gap to be fixed: the private manifest is
+recorded before distribution, the injection mode is disclosed in this project's own documentation,
+and detectability is what keeps the practice auditable instead of covert. See
+[`docs/related-work.md`](docs/related-work.md#5-detectability-finding-and-what-it-implies) for the
+finding and what it implies.
+
 ## Status
 
 **PoC v0.1 — research use only.** PDF authoring, round-trip/PDF.js/pixel-diff validation, and a
@@ -276,8 +286,8 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 
 | Mode | Description | Status | Caveats |
 |---|---|---|---|
-| `white_text` | Fills instruction text white (`1 1 1 rg`), readable by ordinary PDF text extraction | **Default** | Visible if the background isn't white; discoverable by select-all/copy-paste, screen readers, dark-mode viewers, or a PDF sanitizer |
-| `render_mode_3` | Uses PDF text-rendering mode 3 (`3 Tr`, `TextRenderingMode.Invisible`) — text stays in the content stream but is never painted | **Experimental** | Some parsers/sanitizers strip render-mode-3 text entirely; provider ingestion pipelines may ignore it; extraction results are recorded explicitly (success or failure), never assumed |
+| `white_text` | Fills instruction text white (`1 1 1 rg`), readable by ordinary PDF text extraction | **Default** | Visible if the background isn't white; discoverable by select-all/copy-paste, screen readers, dark-mode viewers, or a PDF sanitizer; also detectable by independent metamorphic-detection tools (PhantomLint: 100% recall, 0.092% FPR — see [`docs/related-work.md`](docs/related-work.md#5-detectability-finding-and-what-it-implies)), by design |
+| `render_mode_3` | Uses PDF text-rendering mode 3 (`3 Tr`, `TextRenderingMode.Invisible`) — text stays in the content stream but is never painted | **Experimental** | Some parsers/sanitizers strip render-mode-3 text entirely; provider ingestion pipelines may ignore it; extraction results are recorded explicitly (success or failure), never assumed; also detectable by independent metamorphic-detection tools (PhantomLint: 100% recall, 0.092% FPR — see [`docs/related-work.md`](docs/related-work.md#5-detectability-finding-and-what-it-implies)), by design |
 | `visible_positive_control` | Injects the same instruction, visible to the reader | **Research-only positive control** | Not a stealth mode — used to establish whether a model follows the instruction at all when it can be seen, as a baseline for the other two modes |
 | `xmp_only` | Writes the instruction into the PDF's XMP metadata stream (catalog `/Metadata`) only — no page content stream is touched | **Research-only, no page text** | Never extracted by ordinary page-text extraction (`hiddenTextExtracted` is not required for this mode); presence is checked via `metadataPayloadPresent` instead. Most robustness transforms (print-to-PDF, OCR regeneration, screenshot OCR) strip XMP metadata entirely, since they rebuild the page content from a raster image — this mode is expected to have near-zero survival under those transforms, which is itself a useful research data point, not a defect |
 | `unicode_tags` | Draws the instruction as ordinary ASCII in an invisible (`3 Tr`) text object, then rewrites the embedded font's `/ToUnicode` CMap (post-save, public `pdf-lib` APIs only) so each glyph decodes to a Unicode Tag character (U+E0000–U+E007F) instead of its drawn ASCII value — prior art: PRD §4.2 In-Context Watermarking, §4.3 SteganoPrompt | **Experimental** | The payload is verified present in the output file's font/CMap (a server-side CMap read-back independent of PDF.js), but this app's own PDF.js-based text extraction can never display it: `pdfjs-dist` unconditionally filters Unicode General Category "Cf" (Format) characters, and the entire Unicode Tags block is Cf — so `hiddenTextExtracted` is always `false` for this mode and every job is `PASS_WITH_WARNINGS`, never plain `PASS`, by design, not a defect. Whether a given LLM provider's own document ingestion sees the payload is exactly what the Model Test benchmark measures, not something this local view can answer either way. ASCII-only: `payloadLanguage: "ko"` is rejected with `422 PROMPT_ENCODING_FAILED` for this mode |
@@ -363,3 +373,4 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 - [`docs/research-protocol.md`](docs/research-protocol.md) — running the PRD §21/§23.2 model-benchmark and robustness experiments end to end
 - [`docs/ethics-and-privacy.md`](docs/ethics-and-privacy.md) — governance requirements, manifest handling, IRB note
 - [`docs/limitations.md`](docs/limitations.md) — non-goals, experimental-mode caveats, remaining unimplemented pieces
+- [`docs/related-work.md`](docs/related-work.md) — nearest published/preprint work, peer-review status of every cited claim, and the detectability finding

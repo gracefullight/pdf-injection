@@ -188,6 +188,9 @@ Before running any step above with anything beyond the `mock` provider and fixtu
 - [`docs/limitations.md`](limitations.md) — capability gates (OCR/canvas availability, mock
   provider semantics, translation-requires-provider) and residual risks (regex ReDoS)
 - [`research/README.md`](../research/README.md) — directory layout and protocol summary
+- [`docs/related-work.md`](related-work.md) — nearest published/preprint work, peer-review status
+  of every cited claim, and a worked example of this exact 6-condition-matrix protocol run against
+  a real provider
 - [`research/experiment-configs/schema.json`](../research/experiment-configs/schema.json) — the
   config file shape consumed by a researcher-run script calling `packages/benchmark`'s
   `runMatrix()`, or used as a reference for building a `POST /model-tests` request body by hand

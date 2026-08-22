@@ -43,6 +43,34 @@ the product follows and the privacy defaults it ships with.
     used anywhere in the product: *Safe*, *Undetectable*, *AI proof*, *Cheating proof*,
     *Guaranteed to work*.
 
+## Detectability is by design
+
+PDF Injection is a transparent, detection-aware watermarking mechanism for attribution — not a
+covert or undetectable one. Independent metamorphic-detection research (PhantomLint) reports 100%
+recall (113/113 positives) and a 0.092% false-positive rate (3/3,257 held-out papers) against
+exactly the two hidden-instruction modes this tool actually works with in practice, `white_text`
+and `render_mode_3` (see [`docs/related-work.md`](related-work.md#5-detectability-finding-and-what-it-implies)
+for the finding, sources, and this project's own supporting measurement). In plain terms: a canary
+authored with this tool is discoverable by anyone who runs a basic extracted-text-vs-rendered-page
+check — a student, an institution's own screening pipeline, or a journal's submission checker —
+not only by the professor who embedded it.
+
+That is intentional, not a residual risk to be minimized:
+
+- **The manifest is recorded before distribution** (governance requirement 8 above), so there is
+  no way to retroactively change what was claimed to have been embedded.
+- **The injection mode is disclosed** in this project's own documentation (this page, and
+  [`README.md`](../README.md#injection-modes)) rather than concealed from whoever is running it.
+- **Detectability is what keeps the practice auditable.** A professor, an institution, or an
+  outside researcher can independently verify what was embedded and cross-check it against the
+  recorded manifest. An undetectable mechanism would remove exactly the independent verifiability
+  this page's governance requirements (especially requirement 9: results must show uncertainty and
+  alternative explanations, never a bare "detected/not detected" claim) depend on.
+
+Nothing in this project should ever be described as safe from detection, undetectable, or
+guaranteed to evade a screening pipeline — see governance requirement 10 above for the exact list
+of phrases this product never uses.
+
 ## Private manifest handling
 
 Every job produces a `<stem>.private-manifest.json` file containing the **plaintext hidden

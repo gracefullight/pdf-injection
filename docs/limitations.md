@@ -65,6 +65,13 @@ for the (tighter) pixel-diff threshold applied to this mode.
 select-all/copy-paste, readable by screen readers, exposed in dark-mode PDF viewers, and
 removable by a PDF sanitizer) — see [`README.md`](../README.md#injection-modes).
 
+**Both `white_text` and `render_mode_3` are reliably detectable, by design.** Independent
+metamorphic-detection research (PhantomLint) reports 100% recall and a 0.092% false-positive rate
+against exactly these two channels — see
+[`docs/related-work.md`](related-work.md#5-detectability-finding-and-what-it-implies). This project
+treats that as expected, disclosed behavior, not a defect to work around: see
+[`docs/ethics-and-privacy.md`](ethics-and-privacy.md#detectability-is-by-design).
+
 ## `unicode_tags` caveats
 
 `unicode_tags` is an **experimental** injection mode that draws the instruction as ordinary ASCII
