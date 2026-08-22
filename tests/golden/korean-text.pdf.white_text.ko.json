@@ -1,0 +1,42 @@
+{
+  "expectedExtraction": {
+    "hiddenTextExtracted": true,
+    "metadataPayloadPresent": null,
+    "targetPageMatch": true
+  },
+  "expectedGeometry": [
+    {
+      "cropBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "height": 792,
+      "mediaBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "pageIndex": 0,
+      "rotation": 0,
+      "width": 612
+    }
+  ],
+  "expectedPageCount": 1,
+  "expectedWarnings": [
+    "ACCESSIBILITY_HIDDEN_TEXT"
+  ],
+  "fixture": "korean-text.pdf",
+  "generatedAt": "2026-08-22T05:11:00.066Z",
+  "kind": "inject",
+  "maxVisualDiffRatio": 0.00001,
+  "mode": "white_text",
+  "payloadLanguage": "ko",
+  "toolVersions": {
+    "bun": "1.3.14",
+    "pdfLib": "^1.17.1",
+    "pdfjsDist": "^4.10.38"
+  }
+}

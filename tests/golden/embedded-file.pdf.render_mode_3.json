@@ -1,0 +1,42 @@
+{
+  "expectedExtraction": {
+    "hiddenTextExtracted": true,
+    "metadataPayloadPresent": null,
+    "targetPageMatch": true
+  },
+  "expectedGeometry": [
+    {
+      "cropBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "height": 792,
+      "mediaBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "pageIndex": 0,
+      "rotation": 0,
+      "width": 612
+    }
+  ],
+  "expectedPageCount": 1,
+  "expectedWarnings": [
+    "PDF_CONTAINS_EMBEDDED_FILES"
+  ],
+  "fixture": "embedded-file.pdf",
+  "generatedAt": "2026-08-22T05:10:59.963Z",
+  "kind": "inject",
+  "maxVisualDiffRatio": 1e-7,
+  "mode": "render_mode_3",
+  "payloadLanguage": "en",
+  "toolVersions": {
+    "bun": "1.3.14",
+    "pdfLib": "^1.17.1",
+    "pdfjsDist": "^4.10.38"
+  }
+}
