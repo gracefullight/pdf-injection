@@ -1,0 +1,52 @@
+# PDF Injection — files excluded from the Docker build context.
+# Mirrors .gitignore plus Docker/VCS-specific exclusions. Both
+# apps/api/Dockerfile and apps/web/Dockerfile COPY the full workspace (Bun
+# workspace monorepo, workspace:* deps require it), so keeping this list
+# accurate matters for build context size and avoiding stale local state
+# leaking into images.
+
+# VCS / editor
+.git/
+.gitignore
+.github/
+
+# oh-my-agent runtime (local artifacts — never needed inside an image)
+.agents/results/
+.agents/state/
+.agents/backup/
+.antigravitycli/
+docs/plans/
+.migration-backup/
+.qwen/tmp/
+
+# Dependencies (reinstalled inside the image via `bun install --frozen-lockfile`)
+node_modules/
+**/node_modules/
+
+# Local runtime data / build output
+.pdf-injection-data/
+**/.pdf-injection-data/
+dist/
+**/dist/
+build/
+**/build/
+coverage/
+**/coverage/
+*.tsbuildinfo
+
+# Test artifacts
+test-results/
+playwright-report/
+tests/e2e/.tmp/
+tests/e2e/.auth/
+
+# Env / secrets — never bake these into an image; pass at `docker run` /
+# docker-compose `environment:` instead.
+.env
+.env.local
+.env.*.local
+
+# Research outputs (kept local; not needed for the running app)
+research/results/*
+!research/results/README.md
+!research/results/.gitkeep

@@ -1,0 +1,71 @@
+# PDF Injection — local/dev-parity Docker Compose stack (api + web).
+#
+# Not executed by any agent per CLAUDE.md ("NEVER build the software until
+# the user explicitly asks for a build"). Syntax-validated with
+# `docker compose config` only; `docker compose up` is left to the user.
+#
+# Usage (once the user chooses to run it):
+#   docker compose up --build
+#   API:  http://localhost:3001/api/v1/health
+#   Web:  http://localhost:5173/
+#
+# All secrets/keys below default to empty and external providers stay
+# disabled (PS_ALLOW_EXTERNAL_PROVIDERS=false) unless explicitly overridden
+# via a local `.env` file (never commit one) or the shell environment.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: pdf-injection-api:local
+    ports:
+      - "${PS_PORT:-3001}:3001"
+    environment:
+      # --- Round 1 limits/paths (see apps/api/.env.example) ---
+      PS_MAX_FILE_BYTES: "${PS_MAX_FILE_BYTES:-26214400}"
+      PS_MAX_PAGES: "${PS_MAX_PAGES:-100}"
+      PS_MAX_INSTRUCTION_CHARS: "${PS_MAX_INSTRUCTION_CHARS:-1500}"
+      PS_RETENTION_HOURS: "${PS_RETENTION_HOURS:-24}"
+      PS_STORAGE_DIR: /app/data
+      PS_DB_PATH: /app/data/pdf-injection.sqlite
+      PS_QPDF_ENABLED: "${PS_QPDF_ENABLED:-false}"
+      PS_MAX_PAGE_DIMENSION_PT: "${PS_MAX_PAGE_DIMENSION_PT:-14400}"
+      PS_CORS_ORIGIN: "${PS_CORS_ORIGIN:-http://localhost:5173}"
+      PS_SWEEP_INTERVAL_MS: "${PS_SWEEP_INTERVAL_MS:-600000}"
+      PS_PORT: "3001"
+      # --- Round 2 §0.2: providers / research mode (default OFF) ---
+      PS_ALLOW_EXTERNAL_PROVIDERS: "${PS_ALLOW_EXTERNAL_PROVIDERS:-false}"
+      PS_RESEARCH_MODE: "${PS_RESEARCH_MODE:-false}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      PS_ANTHROPIC_MODEL: "${PS_ANTHROPIC_MODEL:-claude-opus-5}"
+      PS_OPENAI_MODEL: "${PS_OPENAI_MODEL:-gpt-5.5}"
+      PS_MAX_PROCESSING_MS: "${PS_MAX_PROCESSING_MS:-60000}"
+      PS_MAX_VARIANTS: "${PS_MAX_VARIANTS:-8}"
+      PS_MAX_STUDENT_KEYS: "${PS_MAX_STUDENT_KEYS:-500}"
+      PS_MODEL_TEST_MAX_REPEATS: "${PS_MODEL_TEST_MAX_REPEATS:-10}"
+      PS_MODEL_TEST_CONCURRENCY: "${PS_MODEL_TEST_CONCURRENCY:-2}"
+      PS_FONT_DIR: "${PS_FONT_DIR:-packages/pdf-engine/fonts}"
+      # Optional: copy model-test exports into research/results/ (unset = off).
+      PS_RESEARCH_RESULTS_DIR: "${PS_RESEARCH_RESULTS_DIR:-}"
+    volumes:
+      - pdf-injection-data:/app/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: pdf-injection-web:local
+    ports:
+      - "${PS_WEB_PORT:-5173}:80"
+    environment:
+      PS_API_PROXY_TARGET: http://api:3001
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pdf-injection-data:
