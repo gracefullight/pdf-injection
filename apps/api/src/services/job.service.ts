@@ -11,14 +11,17 @@ import {
   type PrivateManifest,
   type TargetPage,
   type ValidationReport,
+  type ValidationWarning,
 } from "@pdf-injection/contracts";
 import {
   buildManifest,
   compareGeometry,
+  InjectionFailedError,
   injectPdf,
   inspectSource,
   normalizePrompt,
   PdfEngineError,
+  readUnicodeTagsPayload,
   resolveTargetPage,
 } from "@pdf-injection/pdf-engine";
 import { lintPrompt } from "@pdf-injection/prompt-lint";
@@ -80,6 +83,7 @@ const INJECTION_MODES: InjectionMode[] = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 const POSITIONS: Position[] = ["top", "bottom", "custom"];
 const PAYLOAD_LANGUAGES: PayloadLanguage[] = ["en", "ko"];
@@ -229,6 +233,22 @@ export async function createJob(
     throw new ApiError("VALIDATION_ERROR", "x and y are required when position is 'custom'");
   }
 
+  // unicode_tags only carries ASCII payloads (its codec has no non-ASCII
+  // encoding) — injectPdf() itself already enforces this (throws
+  // PromptEncodingFailedError), but that's a hard-gate rejection (201, job
+  // row persisted with status "failed") since it's structurally
+  // indistinguishable there from a data-dependent runtime failure. This
+  // combination is known/deterministic before any file bytes are even read,
+  // so reject it here as a genuine pre-processing 422 (no job row, no
+  // source.pdf persisted) — matching every other structurally-invalid
+  // input-combination check in this function.
+  if (injectionMode === "unicode_tags" && payloadLanguage === "ko") {
+    throw new ApiError(
+      "PROMPT_ENCODING_FAILED",
+      "injectionMode 'unicode_tags' only supports ASCII payloads; payloadLanguage 'ko' is not supported for this mode.",
+    );
+  }
+
   const bytes = new Uint8Array(await fields.file.arrayBuffer());
   if (bytes.byteLength > config.maxFileBytes) {
     throw new ApiError("FILE_TOO_LARGE");
@@ -309,6 +329,29 @@ export async function createJob(
           throw new ApiError("PROCESSING_TIMEOUT");
         }
 
+        // unicode_tags-only sanity gate, run before anything else touches
+        // result.bytes (pdf.js's getDocument({data}) below detaches its
+        // ArrayBuffer — see the comment on outputSizeBytes further down;
+        // this public-pdf-lib-API read-back must run first regardless).
+        // Verifies the ToUnicode CMap rewrite actually took effect on the
+        // final saved bytes via a channel pdfjs-dist's Cf-category filter
+        // doesn't intercept (extractText() below can never see this
+        // payload — see packages/pdf-engine/test/inject-unicode-tags.test.ts's
+        // documented finding). This should never fire in practice (it would
+        // mean injectPdf() reported success but silently produced no
+        // payload); it exists as a hard gate against exactly that failure
+        // mode, routed through the same PdfEngineError hard-gate pathway
+        // (job row persisted as "failed", 201 response) every other
+        // injection failure already uses.
+        if (injectionMode === "unicode_tags") {
+          const unicodeTagsPayload = await readUnicodeTagsPayload(result.bytes);
+          if (unicodeTagsPayload.length === 0) {
+            throw new InjectionFailedError(
+              "unicode_tags injection reported success but no Unicode Tag payload could be read back from the output PDF",
+            );
+          }
+        }
+
         const injection: PrivateManifest["injection"] = {
           mode: injectionMode,
           pageIndex: result.pageIndex,
@@ -340,11 +383,38 @@ export async function createJob(
             ? await checkMetadataPayload(result.bytes, normalizedInstruction)
             : null;
 
+        // No mode-aware comparison target: pdfjs-dist filters Cf-category
+        // codepoints, so neither the plain nor the tag-encoded instruction can
+        // ever match for unicode_tags — extractText() runs with the same plain
+        // normalizedInstruction target as every other mode.
         const textExtraction = await extractText({
           bytes: result.bytes,
           targetInstruction: normalizedInstruction,
           targetPageIndex: result.pageIndex,
         });
+
+        // Round 2 (unicode_tags): hiddenTextExtracted is expected/correct to
+        // be false for this mode (see the block comment above the presence
+        // gate) — computeOverall() already treats this as PASS_WITH_WARNINGS,
+        // never FAIL. Surface *why* via a warning rather than leaving it
+        // unexplained: the payload IS present (verified by the gate above),
+        // just invisible to this project's pdfjs-dist-based extraction.
+        const unicodeTagsWarnings: ValidationWarning[] =
+          injectionMode === "unicode_tags"
+            ? [
+                {
+                  code: "UNICODE_TAGS_NOT_EXTRACTABLE",
+                  message:
+                    "The Unicode Tag payload is present in the output PDF (verified via a " +
+                    "public-pdf-lib-API CMap read-back) but is invisible to this project's " +
+                    "PDF.js-based text extraction: pdfjs-dist unconditionally filters out " +
+                    'Unicode General Category "Cf" (Format) glyphs, and the entire Unicode ' +
+                    "Tags block (U+E0000-U+E007F) is category Cf. Provider-side visibility " +
+                    "(what the Model Test measures) is unaffected by this.",
+                  pageIndex: result.pageIndex,
+                },
+              ]
+            : [];
 
         const outputPath = jobFilePath(config, jobId, "output.pdf");
         const qpdfResult = await qpdfCheck({ filePath: outputPath, enabled: config.qpdfEnabled });
@@ -371,7 +441,7 @@ export async function createJob(
           textExtraction,
           qpdf: qpdfResult,
           metadata,
-          warnings: result.warnings,
+          warnings: [...result.warnings, ...unicodeTagsWarnings],
           lint: { errors: [], warnings: lint.warnings, acknowledged: acknowledgedWarnings },
           mode: injectionMode,
         });

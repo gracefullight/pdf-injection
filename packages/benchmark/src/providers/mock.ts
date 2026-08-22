@@ -1,5 +1,5 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
-import { readXmpPayload } from "@pdf-injection/pdf-engine";
+import { readUnicodeTagsPayload, readXmpPayload } from "@pdf-injection/pdf-engine";
 import { extractText, sha256Hex } from "@pdf-injection/validation";
 import { collapseWhitespace } from "../disclosure";
 import { createSeededRng } from "../prng";
@@ -103,10 +103,15 @@ function buildMockAnswer(params: {
  * using the same mechanisms a real extraction pipeline would: page text
  * matching (`@pdf-injection/validation extractText`, catches
  * white_text / render_mode_3 / visible_positive_control, where the
- * instruction is drawn as extractable page text) and XMP metadata
- * (`@pdf-injection/pdf-engine`'s `readXmpPayload`, catches `xmp_only`). For the `original` condition
- * neither check matches, so `instructionFound` is `false` — exactly the
- * "low probability" branch the contract describes.
+ * instruction is drawn as extractable page text), XMP metadata
+ * (`@pdf-injection/pdf-engine`'s `readXmpPayload`, catches `xmp_only`), and
+ * a public-pdf-lib-API ToUnicode CMap read-back (`readUnicodeTagsPayload`,
+ * catches `unicode_tags` — this channel is invisible to `extractText()`
+ * itself, since pdfjs-dist filters the entire Unicode Tags block out of
+ * extracted text; see `packages/pdf-engine/test/inject-unicode-tags.test.ts`).
+ * For the `original` condition none of these checks match, so
+ * `instructionFound` is `false` — exactly the "low probability" branch the
+ * contract describes.
  */
 export interface CreateMockAdapterInput {
   model?: string;
@@ -131,11 +136,25 @@ export function createMockAdapter(input: CreateMockAdapterInput = {}): ProviderA
     if (extraction.anyPageMatch) return true;
 
     const xmp = await readXmpPayload(pdfBytes);
-    if (xmp.instruction == null) return false;
-    return (
+    if (
+      xmp.instruction != null &&
       collapseWhitespace(xmp.instruction).toLowerCase() ===
-      collapseWhitespace(hiddenInstruction).toLowerCase()
-    );
+        collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    // unicode_tags: readUnicodeTagsPayload bypasses pdfjs-dist's Cf-category
+    // filter that makes extractText() blind to this channel. Presence-only
+    // check — the ToUnicode CMap is keyed by unique glyph (first-appearance
+    // order), not drawn position, so an exact literal-order reconstruction
+    // of `hiddenInstruction` isn't recoverable from the CMap alone; a
+    // non-empty result reliably means THIS PDF carries a Unicode Tag
+    // payload. Structurally a safe no-op for every other condition: their
+    // ToUnicode CMaps map to plain ASCII, and decodeUnicodeTags() only ever
+    // returns non-empty runs for tag-block (U+E0000-U+E007F) codepoints.
+    const unicodeTagsPayload = await readUnicodeTagsPayload(pdfBytes);
+    return unicodeTagsPayload.length > 0;
   }
 
   async function askWithPdf({ pdfBytes, prompt }: AskWithPdfInput): Promise<ProviderAnswer> {

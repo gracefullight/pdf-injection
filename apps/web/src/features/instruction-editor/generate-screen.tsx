@@ -46,6 +46,7 @@ const MODE_LABELS: Record<InjectionSettings["mode"], string> = {
   render_mode_3: "Render mode 3 (non-rendering)",
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only (research control)",
+  unicode_tags: "Unicode tags (research)",
 };
 const POSITION_LABELS: Record<string, string> = {
   top: "Top margin",

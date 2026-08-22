@@ -21,6 +21,7 @@ const INJECTABLE_CONDITIONS: InjectionMode[] = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 
 function isInjectionMode(condition: BenchmarkCondition): condition is InjectionMode {

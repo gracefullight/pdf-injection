@@ -1,7 +1,9 @@
+export * from "./cmap-bfchar";
 export * from "./compare-geometry";
 export * from "./errors";
 export * from "./inject";
 export * from "./inject-render-mode-3";
+export * from "./inject-unicode-tags";
 export * from "./inject-visible-control";
 export * from "./inject-white-text";
 export * from "./inject-xmp-only";
@@ -11,5 +13,7 @@ export * from "./manifest";
 export * from "./normalize-prompt";
 export * from "./page-geometry";
 export * from "./pdf-standard-security";
+export * from "./read-unicode-tags-payload";
 export * from "./resolve-target-page";
 export * from "./text-layout";
+export * from "./unicode-tags";

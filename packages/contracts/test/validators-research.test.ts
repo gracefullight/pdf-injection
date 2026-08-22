@@ -88,6 +88,23 @@ describe("parseStudentIds", () => {
 });
 
 describe("isModelTestRequest", () => {
+  // Note: this asserts BenchmarkConditionSchema accepts "unicode_tags" for the
+  // `conditions` field of POST /api/v1/jobs/:jobId/model-tests. It does NOT
+  // verify that POST /api/v1/jobs accepts `injectionMode: "unicode_tags"` —
+  // that field is gated at runtime by a separate hardcoded array in
+  // apps/api/src/services/job.service.ts, verified in
+  // apps/api/test/unicode-tags.test.ts (task-3). Do not conflate the two.
+  test("accepts conditions including unicode_tags", () => {
+    expect(
+      isModelTestRequest({
+        providers: [{ name: "mock" }],
+        conditions: ["unicode_tags"],
+        repeats: 1,
+        acknowledgeExternalTransfer: false,
+      }),
+    ).toBe(true);
+  });
+
   test("accepts a valid request with explicit conditions", () => {
     expect(
       isModelTestRequest({

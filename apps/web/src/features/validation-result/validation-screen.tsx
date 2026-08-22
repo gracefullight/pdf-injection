@@ -387,6 +387,7 @@ export function ValidationScreen({
               }
               targetPageIndex={targetPageIndex}
               normalizedInstruction={manifestQuery.data?.prompt.normalizedInstruction ?? ""}
+              injectionMode={job.injectionMode}
             />
           </ErrorBoundary>
         </TabsContent>

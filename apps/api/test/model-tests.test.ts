@@ -61,13 +61,13 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
       totalCalls: number;
     };
     expect(created.status).toBe("queued");
-    // 1 provider x 5 conditions (original, white_text, render_mode_3,
-    // visible_positive_control, xmp_only) x 2 repeats.
-    expect(created.totalCalls).toBe(10);
+    // 1 provider x 6 conditions (original, white_text, render_mode_3,
+    // visible_positive_control, xmp_only, unicode_tags) x 2 repeats.
+    expect(created.totalCalls).toBe(12);
 
     const run = await pollUntilDone(app, jobId, created.runId, accessToken);
     expect(run.status).toBe("completed");
-    expect((run.results as unknown[]).length).toBe(10);
+    expect((run.results as unknown[]).length).toBe(12);
     expect((run.aggregates as unknown[]).length).toBeGreaterThan(0);
     const gate = run.smokeTestGate as { threshold: number; passed: boolean };
     expect(gate.threshold).toBe(50);

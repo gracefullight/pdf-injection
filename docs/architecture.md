@@ -12,7 +12,7 @@ flowchart LR
     B -->|Eden Treaty treaty App, X-Job-Token| C[apps/api — Elysia on Bun]
     B -->|typed fetch, research-fetch.ts, X-Job-Token| C
     C --> D["inspectSource() — pdf-engine (incl. riskFlags)"]
-    D --> E["injectPdf() — pdf-engine (4 modes, payloadLanguage)"]
+    D --> E["injectPdf() — pdf-engine (5 modes, payloadLanguage)"]
     E --> F[output.pdf]
     F --> G["Round-trip + PDF.js text validation — validation"]
     F --> H["buildManifest() — pdf-engine"]
@@ -56,8 +56,8 @@ and [`docs/ethics-and-privacy.md`](ethics-and-privacy.md).
 
 | Package / app | Responsibility |
 |---|---|
-| `packages/contracts` | All wire types (`InjectionMode` incl. `xmp_only`, `PayloadLanguage`, `ExpectedSignal`, `JobRecord`, `PrivateManifest`, `ValidationReport`, plus `types-research.ts`'s §1-4 request/response shapes), `ApiErrorCode` + HTTP status/message maps, `LIMITS` defaults, and `computeOverall()` (the single source of truth for the `overall` status formula, incl. the `xmp_only`/`metadataPayloadPresent` case) |
-| `packages/pdf-engine` | `inspectSource()` (magic bytes, size, page count, encryption/signature detection, page geometry snapshot, `riskFlags`), `injectPdf()` (dispatches to white-text / render-mode-3 / visible-control / `xmp_only` injectors, `payloadLanguage="ko"` via `@pdf-lib/fontkit`), `compareGeometry()`, `resolveTargetPage()`, `normalizePrompt()`, `buildManifest()`, `readXmpPayload()`, `koreanFontAvailable()` |
+| `packages/contracts` | All wire types (`InjectionMode` incl. `xmp_only`/`unicode_tags`, `PayloadLanguage`, `ExpectedSignal`, `JobRecord`, `PrivateManifest`, `ValidationReport`, plus `types-research.ts`'s §1-4 request/response shapes), `ApiErrorCode` + HTTP status/message maps, `LIMITS` defaults, and `computeOverall()` (the single source of truth for the `overall` status formula, incl. the `xmp_only`/`metadataPayloadPresent` case and the `unicode_tags`/`render_mode_3`-shared "recorded, never required for FAIL" `hiddenTextExtracted` treatment) |
+| `packages/pdf-engine` | `inspectSource()` (magic bytes, size, page count, encryption/signature detection, page geometry snapshot, `riskFlags`), `injectPdf()` (dispatches to white-text / render-mode-3 / visible-control / `xmp_only` / `unicode_tags` injectors, `payloadLanguage="ko"` via `@pdf-lib/fontkit`), `compareGeometry()`, `resolveTargetPage()`, `normalizePrompt()`, `buildManifest()`, `readXmpPayload()`, `koreanFontAvailable()`, and (for `unicode_tags`) `encodeUnicodeTags()`/`decodeUnicodeTags()`/`stripUnicodeTags()` (the Unicode Tag block codec, `unicode-tags.ts`) plus `readUnicodeTagsPayload()` (`read-unicode-tags-payload.ts` — a public-`pdf-lib`-API CMap read-back that confirms the tag-encoded payload actually landed in the output's `/ToUnicode` CMap, used as `apps/api`'s post-injection correctness gate and by `packages/benchmark`'s mock provider, since `packages/validation`'s `pdfjs-dist`-based `extractText()` structurally cannot see this mode's payload — see [`docs/validation.md`](validation.md#unicode_tags-verification-independent-of-pdfjs)) |
 | `packages/validation` | `sha256Hex()` (via `Bun.CryptoHasher`), `extractText()` (server-side `pdfjs-dist` legacy build, run under Bun), `checkMetadataPayload()` (XMP-stream check for `xmp_only`), `qpdfCheck()` (optional, via `Bun.spawn`), `buildReport()` / `buildSummary()` / `mergeClientValidation()` |
 | `packages/prompt-lint` | `lintPrompt()` — pure, dependency-free, shared by both the API (server-side enforcement) and the web app (live linting in the instruction editor) |
 | `packages/detector` | Deterministic `ExpectedSignal` matchers (`exact_phrase`, `regex`, `methodology_label`, `ordered_terms`, `section_order`, regex matching under a Worker-based timeout) returning match evidence only — no verdict field. Plus Phase 4 `scoring.ts` (per-group weighted scores), `calibration.ts` (false-positive rate vs. baseline texts), `statistics.ts` (Fisher's exact test + Holm-Bonferroni correction), and `smoke-test-gate.ts` (PRD §23.2). Used by `apps/api`'s submissions and robustness services |
@@ -163,7 +163,7 @@ transforms) can legitimately take much longer than one HTTP request should block
    immediately with `{ runId, status: "queued", totalCalls }`.
 2. The background task resolves each requested `BenchmarkCondition`'s PDF via
    `condition-pdfs.ts`'s `getConditionPdf()` — `"original"` is the job's `source.pdf` verbatim;
-   every injected mode (including `xmp_only`) re-runs `injectPdf()` with the job's own stored
+   every injected mode (including `xmp_only`/`unicode_tags`) re-runs `injectPdf()` with the job's own stored
    instruction/settings from `manifest.json` and caches the result at
    `<jobDir>/conditions/<mode>.pdf` so repeated runs against the same job reuse it.
 3. For each `(provider, condition, repeat)` triple, `packages/benchmark`'s `runMatrix()` calls the
@@ -239,7 +239,7 @@ path segment):
     ├── output.pdf         # injected PDF (absent if injection hard-failed)
     ├── manifest.json      # PrivateManifest — contains the plaintext instruction
     ├── report.json        # ValidationReport
-    ├── conditions/        # cached condition PDFs for model-test runs (<mode>.pdf, incl. xmp_only)
+    ├── conditions/        # cached condition PDFs for model-test runs (<mode>.pdf, incl. xmp_only/unicode_tags)
     └── submissions/       # per-submission uploaded/derived text + OCR source files (§3, PDFI_RESEARCH_MODE)
 ```
 

@@ -66,6 +66,9 @@ export function useClientValidation() {
         const pageDiffs: PageDiffResult[] = [];
         const extractedPageTexts: string[] = [];
         const extractionPages: ClientValidationInput["extractedText"]["pages"] = [];
+        // No mode-aware comparison target: pdfjs filters Cf-category codepoints, so neither the
+        // plain nor the tag-encoded instruction can ever match for unicode_tags. Keeping the plain
+        // instruction here matches every other mode and keeps the parser view honest.
 
         for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
           const pageNumber = pageIndex + 1;

@@ -32,6 +32,8 @@ const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   visible_positive_control:
     "Visible control condition: the instruction is shown to readers; research use only, not for distribution.",
   xmp_only: "Research control: payload only in XMP metadata; not a production mode.",
+  unicode_tags:
+    "Zero-width Unicode Tag characters (U+E00xx) carried by an invisible text object; many pipelines strip tag characters — research channel, not a production default.",
 };
 
 export function InjectionSettingsForm({
@@ -66,6 +68,13 @@ export function InjectionSettingsForm({
             <SelectItem value="xmp_only" data-testid="injection-mode-option-xmp-only">
               XMP metadata only (research control)
             </SelectItem>
+            <SelectItem
+              value="unicode_tags"
+              disabled={!koPayloadAvailable}
+              data-testid="injection-mode-option-unicode-tags"
+            >
+              Unicode tags (research) {koPayloadAvailable ? "" : "(unavailable on this server)"}
+            </SelectItem>
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground" data-testid="injection-mode-description">
@@ -75,6 +84,17 @@ export function InjectionSettingsForm({
           <Alert variant="warning" data-testid="injection-mode-xmp-only-caveat">
             <AlertDescription>
               Research control: payload only in XMP metadata; not a production mode.
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.mode === "unicode_tags" && (
+          <Alert variant="warning" data-testid="injection-mode-unicode-tags-caveat">
+            <AlertDescription>
+              Zero-width Unicode Tag characters (U+E00xx) carried by an invisible text object; many
+              pipelines strip tag characters — research channel, not a production default. Survival
+              under real providers is unproven; this mode exists to measure it, not to guarantee it.
+              {!koPayloadAvailable &&
+                " Unicode tags is currently unavailable on this server (same font dependency as Korean payload)."}
             </AlertDescription>
           </Alert>
         )}

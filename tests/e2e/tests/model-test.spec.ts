@@ -17,6 +17,7 @@ const CONDITIONS = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 
 test.beforeAll(async () => {
@@ -57,7 +58,7 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
     "start Ollama to use local models",
   );
 
-  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 5
+  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 6
   // conditions checked (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2.
   await expect(page.getByTestId("model-test-provider-mock")).toBeChecked();
   for (const condition of CONDITIONS) {
@@ -111,7 +112,7 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
   const exportPath = path.join(DOWNLOAD_DIR, exportDownload.suggestedFilename());
   await exportDownload.saveAs(exportPath);
   const exported = JSON.parse(await fs.readFile(exportPath, "utf8"));
-  expect(exported.results.length).toBe(CONDITIONS.length * 2); // 5 conditions x 2 repeats
+  expect(exported.results.length).toBe(CONDITIONS.length * 2); // 6 conditions x 2 repeats
   expect(exported.smokeTestGate).toBeDefined();
 
   await page.locator('[data-testid^="model-test-run-delete-"]').first().click();

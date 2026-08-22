@@ -32,6 +32,7 @@ export const ALL_CONDITIONS: BenchmarkCondition[] = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 
 const PROVIDER_NAMES: ProviderName[] = ["anthropic", "openai", "mock", "ollama"];

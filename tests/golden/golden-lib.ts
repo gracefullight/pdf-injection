@@ -30,6 +30,7 @@ export const MODES: InjectionMode[] = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 
 /**

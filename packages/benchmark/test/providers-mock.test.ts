@@ -35,6 +35,18 @@ async function buildXmpOnlyPdf(): Promise<Uint8Array> {
   return result.bytes;
 }
 
+async function buildUnicodeTagsPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "unicode_tags",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
 describe("createMockAdapter", () => {
   test("isConfigured() is always true", () => {
     expect(createMockAdapter().isConfigured()).toBe(true);
@@ -64,6 +76,22 @@ describe("createMockAdapter", () => {
     const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
     const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B" });
     expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+  });
+
+  test("detects the instruction via the Unicode Tag encode-compare check (unicode_tags) and marks instructionFound", async () => {
+    const pdfBytes = await buildUnicodeTagsPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B2" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+
+    // Safe no-op for other conditions: an untouched (original) PDF must
+    // still report instructionFound: false via this same adapter/context.
+    const originalBytes = await buildSourcePdf();
+    const originalAnswer = await adapter.askWithPdf({
+      pdfBytes: originalBytes,
+      prompt: "prompt B2",
+    });
+    expect((originalAnswer.raw as { instructionFound: boolean }).instructionFound).toBe(false);
   });
 
   test("does not find the instruction in an untouched (original) source PDF", async () => {

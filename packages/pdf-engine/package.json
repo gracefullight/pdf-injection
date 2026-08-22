@@ -10,6 +10,10 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./unicode-tags": {
+      "types": "./src/unicode-tags.ts",
+      "default": "./src/unicode-tags.ts"
     }
   },
   "scripts": {

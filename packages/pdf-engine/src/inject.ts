@@ -14,6 +14,7 @@ import {
   PromptEncodingFailedError,
 } from "./errors";
 import { injectRenderMode3 } from "./inject-render-mode-3";
+import { injectUnicodeTags } from "./inject-unicode-tags";
 import { injectVisibleControl } from "./inject-visible-control";
 import { injectWhiteText } from "./inject-white-text";
 import { injectXmpOnly } from "./inject-xmp-only";
@@ -79,6 +80,17 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
     );
   }
 
+  // unicode_tags: the Unicode Tag block only has a defined mapping for the
+  // ASCII range (0x00-0x7F) — payloadLanguage="ko" is rejected up front,
+  // before any font embedding is attempted (fail fast, no wasted work, no
+  // partial PDF state). Round 2 addendum §7 / plan architecture_decisions #2.
+  if (input.mode === "unicode_tags" && payloadLanguage === "ko") {
+    throw new PromptEncodingFailedError(
+      'unicode_tags does not support payloadLanguage="ko" — the Unicode Tag block ' +
+        "(U+E0000-U+E007F) only has a defined mapping for printable ASCII (0x20-0x7E).",
+    );
+  }
+
   const sourceSha256 = sha256Hex(input.source);
   const promptSha256 = sha256Hex(normalizedInstruction);
 
@@ -106,6 +118,26 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
       instruction: normalizedInstruction,
       promptSha256,
     }));
+  } else if (input.mode === "unicode_tags") {
+    // Draws via embedKoreanFont() (ASCII-complete, never shared with any
+    // visible text) + a post-save, public-pdf-lib-API /ToUnicode CMap
+    // rewrite — the injector performs its OWN internal save/reload cycle
+    // and returns the reloaded, CMap-rewritten PDFDocument instance; swap
+    // the dispatcher's local `doc` to it BEFORE the dispatcher's own final
+    // save/reload/geometry-check step below (which then runs unchanged).
+    const result = await injectUnicodeTags({
+      doc,
+      pageIndex,
+      instruction: normalizedInstruction,
+      position: input.position,
+      x: input.x,
+      y: input.y,
+      fontSize: input.fontSize,
+      maxWidth: input.maxWidth,
+    });
+    doc = result.doc;
+    boundingBox = result.boundingBox;
+    fontSize = result.fontSize;
   } else {
     // Korean (non-ASCII) payload on a drawn-text mode requires the CJK font;
     // ASCII text under payloadLanguage="ko" can still use Helvetica. See

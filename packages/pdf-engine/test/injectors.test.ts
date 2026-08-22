@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { PDFDocument } from "pdf-lib";
+import { extractText } from "@pdf-injection/validation";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 import { injectRenderMode3 } from "../src/inject-render-mode-3";
+import { injectUnicodeTags } from "../src/inject-unicode-tags";
 import { injectVisibleControl } from "../src/inject-visible-control";
 import { injectWhiteText } from "../src/inject-white-text";
 import { decodeAllStreamsAsText } from "./pdf-bytes-helpers";
@@ -114,5 +116,57 @@ describe("injectVisibleControl", () => {
     const bytes = await doc.save();
     const content = decodeAllStreamsAsText(bytes);
     expect(content).toMatch(/0 0 0 rg|0 g/);
+  });
+});
+
+describe("injectUnicodeTags", () => {
+  test("draws invisible text and returns the reloaded, rewritten PDFDocument + a bounding box + fontSize", async () => {
+    const doc = await freshDoc();
+    const result = await injectUnicodeTags({
+      doc,
+      pageIndex: 0,
+      instruction: "invisible tag instruction",
+      position: "bottom",
+    });
+    expect(result.fontSize).toBe(1);
+    expect(result.boundingBox).toHaveLength(4);
+    expect(result.doc).not.toBe(doc); // reloaded instance, not the original
+
+    expect(result.doc.getPageCount()).toBe(1);
+  });
+
+  test("output content stream contains the `3 Tr` render-mode-3 operator (invisible)", async () => {
+    const doc = await freshDoc();
+    const result = await injectUnicodeTags({
+      doc,
+      pageIndex: 0,
+      instruction: "render mode marker",
+      position: "bottom",
+    });
+    const bytes = await result.doc.save();
+    const content = decodeAllStreamsAsText(bytes);
+    expect(content).toMatch(/3 Tr/);
+  });
+
+  test("does not alter a page's existing visible (Helvetica) text extraction — additive only", async () => {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage([612, 792]);
+    const visibleFont = await doc.embedFont(StandardFonts.Helvetica);
+    page.drawText("Visible assignment text", { x: 50, y: 700, size: 12, font: visibleFont });
+
+    const result = await injectUnicodeTags({
+      doc,
+      pageIndex: 0,
+      instruction: "hidden tag instruction",
+      position: "bottom",
+    });
+
+    const bytes = await result.doc.save();
+    const extraction = await extractText({
+      bytes,
+      targetInstruction: "Visible assignment text",
+      targetPageIndex: 0,
+    });
+    expect(extraction.targetPageMatch).toBe(true);
   });
 });

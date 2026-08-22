@@ -138,13 +138,13 @@ for the full pipeline).
 | `file` | File (`application/pdf`) | yes | magic bytes `%PDF-` checked, MIME checked |
 | `instruction` | string | yes | 1..1500 printable ASCII (`\n` and `\t` allowed) when `payloadLanguage="en"`; non-ASCII allowed only with `payloadLanguage="ko"` |
 | `expectedSignals` | string (JSON `ExpectedSignal[]`) | yes | min 1 item |
-| `injectionMode` | `"white_text" \| "render_mode_3" \| "visible_positive_control" \| "xmp_only"` | yes | |
+| `injectionMode` | `"white_text" \| "render_mode_3" \| "visible_positive_control" \| "xmp_only" \| "unicode_tags"` | yes | |
 | `targetPage` | string: `"first"`, `"last"`, or 1-based integer | no | default `"last"`; ignored (no page content is touched) for `xmp_only` |
 | `position` | `"top" \| "bottom" \| "custom"` | no | default `"bottom"`; ignored for `xmp_only` |
 | `x`, `y` | number (pt) | when `position=custom` | ignored for `xmp_only` |
 | `fontSize` | number | no | default `1`; 0.5–12 (visible control ignores and uses 9); ignored for `xmp_only` |
 | `maxWidth` | number | no | default page width − 2×margin; ignored for `xmp_only` |
-| `payloadLanguage` | `"en" \| "ko"` | no | default `"en"`. `"ko"` embeds a Noto Sans KR subset (`@pdf-lib/fontkit`) for the 3 drawn-text modes; non-ASCII with `"en"` → `422 PROMPT_ENCODING_FAILED`; missing font → `422 FONT_UNAVAILABLE` |
+| `payloadLanguage` | `"en" \| "ko"` | no | default `"en"`. `"ko"` embeds a Noto Sans KR subset (`@pdf-lib/fontkit`) for the 3 drawn-text modes; non-ASCII with `"en"` → `422 PROMPT_ENCODING_FAILED`; missing font → `422 FONT_UNAVAILABLE`; `"ko"` is rejected outright for `unicode_tags` → `422 PROMPT_ENCODING_FAILED` (its Unicode Tag codec has no mapping outside printable ASCII) |
 | `acknowledgedWarnings` | string (JSON `string[]`) | no | lint warning ids the professor acknowledged |
 
 - **Response 201** (`CreateJobResponse`):
@@ -287,7 +287,7 @@ Creates a run (`ModelTestRequest`: `providers`, `conditions` — a `BenchmarkCon
 literal `"all"` — `repeats` (≤ `PDFI_MODEL_TEST_MAX_REPEATS`, default 10), `outerPrompt` (optional,
 defaults to the PRD §21.3 prompt), `acknowledgeExternalTransfer`). One condition PDF is generated
 per requested `BenchmarkCondition` (`original`, `white_text`, `render_mode_3`,
-`visible_positive_control`, `xmp_only`) and cached for reuse across repeats/providers.
+`visible_positive_control`, `xmp_only`, `unicode_tags`) and cached for reuse across repeats/providers.
 
 - **Response 202** (`CreateRunResponse`): `{ "runId": "uuid", "status": "queued", "totalCalls": 10 }`
 - **Errors**: 403 (`JOB_FORBIDDEN`/`EXTERNAL_PROVIDERS_DISABLED`), 404 (`JOB_NOT_FOUND`), 422
@@ -523,7 +523,7 @@ Idempotent (a second `DELETE` on an already-deleted job returns `404`).
 ## Data models (`packages/contracts/src/*.ts`)
 
 ```ts
-export type InjectionMode = "white_text" | "render_mode_3" | "visible_positive_control" | "xmp_only";
+export type InjectionMode = "white_text" | "render_mode_3" | "visible_positive_control" | "xmp_only" | "unicode_tags";
 export type PayloadLanguage = "en" | "ko";
 export type TargetPage = number | "first" | "last";        // number is 1-based from the API, 0-based `pageIndex` internally
 export type Position = "top" | "bottom" | "custom";
@@ -643,7 +643,7 @@ export interface ValidationReport {
     };
     qpdf: { status: QpdfStatus; exitCode: number | null; stdout: string; stderr: string; warningCount: number; errorCount: number } | null;
     metadata: { xmpPresent: boolean; payloadFound: boolean; sha256OfPayload: string | null }; // checkMetadataPayload() result; {false,false,null} for non-xmp_only modes
-    warnings: ValidationWarning[];          // e.g. BACKGROUND_NOT_WHITE, ACCESSIBILITY_HIDDEN_TEXT
+    warnings: ValidationWarning[];          // e.g. BACKGROUND_NOT_WHITE, ACCESSIBILITY_HIDDEN_TEXT, UNICODE_TAGS_NOT_EXTRACTABLE (unicode_tags mode only)
   };
   clientValidation: ClientValidationInput | null;
   summary: ValidationSummary;
@@ -665,17 +665,28 @@ FAIL               if !outputLoadPassed || !pageCountPreserved || !pageGeometryP
                    || (mode === xmp_only && metadataPayloadPresent !== true)
                    || (changedPixelRatio !== null && changedPixelRatio > threshold(mode))
 NOT_TESTED         if pdfJsRenderPassed === null (client validation not yet posted)
-PASS_WITH_WARNINGS if any serverValidation.warnings, qpdfStatus === "warning", or (mode === render_mode_3 && !hiddenTextExtracted)
+PASS_WITH_WARNINGS if any serverValidation.warnings, qpdfStatus === "warning", or (mode in {render_mode_3, unicode_tags} && !hiddenTextExtracted)
 PASS               otherwise
 
 threshold(white_text) = 1e-5 (0.001%)
 threshold(render_mode_3) = 1e-7 (0.00001%)
 threshold(visible_positive_control) = Infinity
 threshold(xmp_only) = 1e-7 (0.00001%) — no page content is touched, so any pixel diff at all is unexpected
+threshold(unicode_tags) = 1e-7 (0.00001%) — same zero-ink tier as render_mode_3 (nothing painted)
 
 Note: xmp_only never draws page text, so hiddenTextExtracted is not part of its FAIL condition —
 metadataPayloadPresent (checkMetadataPayload() against the output's XMP stream) is the equivalent
 signal for this mode.
+
+Note: unicode_tags's hiddenTextExtracted is ALWAYS false via this app's own PDF.js-based
+extraction (deterministic — pdfjs-dist filters Unicode General Category "Cf" characters, and the
+whole Unicode Tags block is Cf), treated the same "recorded, never required for FAIL" way as
+render_mode_3's. The payload's actual presence is instead verified server-side via a CMap
+read-back independent of pdfjs (packages/pdf-engine's readUnicodeTagsPayload()) — a genuine
+absence hard-fails the job with INJECTION_FAILED, and a present-but-unextractable payload (the
+normal case) is recorded as a serverValidation.warnings entry, code
+UNICODE_TAGS_NOT_EXTRACTABLE. See
+[`docs/validation.md`](validation.md#unicode_tags-verification-independent-of-pdfjs).
 ```
 
 ## Notes

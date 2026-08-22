@@ -17,6 +17,7 @@ export const ALL_BENCHMARK_CONDITIONS: BenchmarkCondition[] = [
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
 ];
 
 export const MIN_REPEATS = 1;

@@ -74,6 +74,11 @@ the **output** PDF. For each page it records:
 - The character offset where the instruction was found (if any)
 - Whether the **target page** specifically matched, and whether **any** page matched
 
+For `unicode_tags`, this step **always** reports no match (`hiddenTextExtracted: false`,
+`targetPageMatch: false`) — deterministically, not merely uncertainly. See
+[unicode_tags: verification independent of PDF.js](#unicode_tags-verification-independent-of-pdfjs)
+below for why, and for how this mode's payload is actually verified instead.
+
 The web app's Extracted Text tab shows the equivalent client-side result and always displays:
 
 > PDF.js parser view — may differ from actual LLM provider ingestion.
@@ -81,6 +86,33 @@ The web app's Extracted Text tab shows the equivalent client-side result and alw
 OpenAI, Anthropic, and other providers' PDF ingestion pipelines may combine text extraction and
 visual/vision-based page analysis differently depending on product, plan, and API — a local
 parser result never confirms what an actual provider model receives as input.
+
+### `unicode_tags`: verification independent of PDF.js
+
+`pdfjs-dist`'s `getTextContent()` unconditionally filters out every glyph whose `/ToUnicode`
+target is Unicode General Category "Cf" (Format), and the entire Unicode Tags block
+(U+E0000–U+E007F) is category Cf by definition — so step 5 above can **never** surface a
+`unicode_tags` payload, on any input, regardless of which target string is searched for. This is
+a deterministic property of this app's own PDF.js-based extraction, verified by direct repro
+against `tests/fixtures/five-page-text.pdf` (injection succeeds, geometry stays byte-identical,
+the output's `/ToUnicode` CMap carries the tag-encoded payload, yet `extractText()` reports no
+match on the target page for either the encoded or the plain instruction). It is why
+`computeOverall()` treats `unicode_tags`'s `hiddenTextExtracted` exactly like `render_mode_3`'s
+(recorded, never required for `FAIL`) — every `unicode_tags` job is `PASS_WITH_WARNINGS`, never
+plain `PASS`.
+
+Because step 5 structurally cannot confirm this mode, `job.service.ts` instead calls
+`packages/pdf-engine`'s `readUnicodeTagsPayload()` — a public-`pdf-lib`-API CMap read-back run
+directly on the output bytes, independent of `pdfjs-dist` — immediately after injection:
+
+- If the payload is genuinely absent from the output's `/ToUnicode` CMap, job creation hard-fails
+  with `INJECTION_FAILED` (same hard-gate pathway as `GEOMETRY_CHANGED`: a job row with
+  `status: "failed"` is still created and the `POST /jobs` response is still `201`) — a real
+  correctness gate on the injector's own output, not a workaround for PDF.js's limitation.
+- Otherwise (the normal case), a `ValidationWarning` with `code: "UNICODE_TAGS_NOT_EXTRACTABLE"`
+  is added to `ValidationReport.serverValidation.warnings`, explaining that the payload is
+  present in the file but invisible to this project's own PDF.js-based text extraction, and that
+  provider-side visibility — what the Model Test benchmark measures — is unaffected by this.
 
 ### 6. Visual difference (client-side, posted back to the server)
 
@@ -97,6 +129,7 @@ Default thresholds (`packages/contracts/src/overall.ts`, `diffThreshold()`):
 | `render_mode_3` | ≤ 1e-7 (0.00001%) |
 | `visible_positive_control` | no threshold (`Infinity` — the instruction is meant to be visible) |
 | `xmp_only` | ≤ 1e-7 (0.00001%) — no page content is touched, so any visible pixel diff at all is unexpected |
+| `unicode_tags` | ≤ 1e-7 (0.00001%) — same zero-ink tier as `render_mode_3` (invisible mode 3, nothing painted) |
 
 Thresholds are conservative starting points; renderer noise and test-corpus results may warrant
 recalibration, but they are not currently configurable via environment variables.

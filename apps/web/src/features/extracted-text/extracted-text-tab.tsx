@@ -1,4 +1,4 @@
-import type { ClientValidationInput } from "@pdf-injection/contracts";
+import type { ClientValidationInput, InjectionMode } from "@pdf-injection/contracts";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ export interface ExtractedTextTabProps {
   matches: ClientValidationInput["extractedText"]["pages"];
   targetPageIndex: number;
   normalizedInstruction: string;
+  injectionMode: InjectionMode;
 }
 
 function highlight(text: string, needle: string) {
@@ -32,11 +33,13 @@ export function ExtractedTextTab({
   matches,
   targetPageIndex,
   normalizedInstruction,
+  injectionMode,
 }: ExtractedTextTabProps) {
   const [selectedPage, setSelectedPage] = useState(targetPageIndex);
 
   const selectedMatch = matches.find((match) => match.pageIndex === selectedPage);
   const selectedText = pageTexts[selectedPage] ?? "";
+  const isUnicodeTags = injectionMode === "unicode_tags";
 
   return (
     <div className="flex flex-col gap-4" data-testid="extracted-text-tab">
@@ -46,6 +49,16 @@ export function ExtractedTextTab({
           ingestion result.
         </AlertDescription>
       </Alert>
+
+      {isUnicodeTags && (
+        <Alert data-testid="extracted-text-unicode-tags-note">
+          <AlertDescription>
+            Unicode Tag payload: present in the file, not visible to PDF.js text extraction
+            (Cf-category characters are filtered). Whether a provider's extractor sees it is what
+            the Model Test measures.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="flex flex-wrap gap-1">
         {pageTexts.map((_, index) => {

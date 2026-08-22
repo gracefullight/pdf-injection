@@ -75,6 +75,22 @@ describe("computeOverall", () => {
     expect(result).toBe("PASS_WITH_WARNINGS");
   });
 
+  test("PASS_WITH_WARNINGS (not FAIL) when mode is unicode_tags and hiddenTextExtracted is false", () => {
+    const result = computeOverall(
+      baseParts({ metadataPayloadPresent: null, hiddenTextExtracted: false }),
+      "unicode_tags",
+    );
+    expect(result).toBe("PASS_WITH_WARNINGS");
+  });
+
+  test("PASS when mode is unicode_tags and hiddenTextExtracted is true (all else passing)", () => {
+    const result = computeOverall(
+      baseParts({ metadataPayloadPresent: null, hiddenTextExtracted: true }),
+      "unicode_tags",
+    );
+    expect(result).toBe("PASS");
+  });
+
   test("FAIL when changedPixelRatio exceeds mode threshold", () => {
     const result = computeOverall(baseParts({ changedPixelRatio: 1e-4 }), "white_text");
     expect(result).toBe("FAIL");
@@ -95,6 +111,10 @@ describe("computeOverall", () => {
 
   test("xmp_only threshold is 1e-7", () => {
     expect(diffThreshold("xmp_only")).toBe(1e-7);
+  });
+
+  test("unicode_tags threshold is 1e-7", () => {
+    expect(diffThreshold("unicode_tags")).toBe(1e-7);
   });
 
   test("xmp_only PASSes when metadataPayloadPresent is true (hiddenTextExtracted not required)", () => {

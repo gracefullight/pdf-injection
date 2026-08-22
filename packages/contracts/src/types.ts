@@ -5,7 +5,8 @@ export type InjectionMode =
   | "white_text"
   | "render_mode_3"
   | "visible_positive_control"
-  | "xmp_only";
+  | "xmp_only"
+  | "unicode_tags";
 
 /**
  * Payload language for the hidden instruction. `"en"` is printable-ASCII only

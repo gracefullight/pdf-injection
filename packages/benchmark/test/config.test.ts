@@ -132,6 +132,15 @@ describe("resolveConditions", () => {
   test("passes an explicit array through unchanged", () => {
     expect(resolveConditions(["original", "xmp_only"])).toEqual(["original", "xmp_only"]);
   });
+
+  test('resolves "all" to include unicode_tags, 6 conditions total', () => {
+    expect(ALL_CONDITIONS).toContain("unicode_tags");
+    expect(ALL_CONDITIONS).toHaveLength(6);
+  });
+
+  test("resolves an explicit array containing unicode_tags unchanged", () => {
+    expect(resolveConditions(["original", "unicode_tags"])).toEqual(["original", "unicode_tags"]);
+  });
 });
 
 describe("research/experiment-configs/example-matrix.json (integration)", () => {

@@ -152,6 +152,14 @@ async function extractionFromBytes(
   manifest: PrivateManifest,
 ): Promise<RobustnessExtraction> {
   try {
+    // No mode-aware comparison target (mirrors job.service.ts's createJob):
+    // for unicode_tags, post-transform extraction is expected to always read
+    // false for two independent reasons — raster-based transforms
+    // (print_to_pdf, ocr_regeneration, screenshot_ocr) destroy the payload
+    // outright (no visible glyphs to re-OCR), AND pdfjs-dist's Cf-category
+    // filtering means it can never see tag characters even when the payload
+    // survives digitally — a valid research finding, mirroring the xmp_only
+    // precedent.
     const result = await extractText({
       bytes,
       targetInstruction: manifest.prompt.normalizedInstruction,

@@ -239,8 +239,10 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 │   ├── contracts/            # Shared wire types (incl. types-research.ts for §1-4), ApiErrorCode,
 │   │                         # LIMITS, overall-status computation
 │   ├── pdf-engine/           # inspectSource (incl. riskFlags), injectPdf (white_text/render_mode_3/
-│   │                         # visible_positive_control/xmp_only, payloadLanguage="ko" via @pdf-lib/fontkit),
-│   │                         # compareGeometry, resolveTargetPage, manifest builder
+│   │                         # visible_positive_control/xmp_only/unicode_tags, payloadLanguage="ko" via
+│   │                         # @pdf-lib/fontkit), compareGeometry, resolveTargetPage, manifest builder,
+│   │                         # encodeUnicodeTags/decodeUnicodeTags/stripUnicodeTags + readUnicodeTagsPayload
+│   │                         # (unicode_tags codec + CMap read-back, independent of pdfjs-dist)
 │   ├── validation/           # sha256Hex, extractText (pdfjs-dist), checkMetadataPayload (xmp_only),
 │   │                         # qpdfCheck, report builder
 │   ├── prompt-lint/          # lintPrompt() — instruction/signal errors and warnings
@@ -278,10 +280,13 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 | `render_mode_3` | Uses PDF text-rendering mode 3 (`3 Tr`, `TextRenderingMode.Invisible`) — text stays in the content stream but is never painted | **Experimental** | Some parsers/sanitizers strip render-mode-3 text entirely; provider ingestion pipelines may ignore it; extraction results are recorded explicitly (success or failure), never assumed |
 | `visible_positive_control` | Injects the same instruction, visible to the reader | **Research-only positive control** | Not a stealth mode — used to establish whether a model follows the instruction at all when it can be seen, as a baseline for the other two modes |
 | `xmp_only` | Writes the instruction into the PDF's XMP metadata stream (catalog `/Metadata`) only — no page content stream is touched | **Research-only, no page text** | Never extracted by ordinary page-text extraction (`hiddenTextExtracted` is not required for this mode); presence is checked via `metadataPayloadPresent` instead. Most robustness transforms (print-to-PDF, OCR regeneration, screenshot OCR) strip XMP metadata entirely, since they rebuild the page content from a raster image — this mode is expected to have near-zero survival under those transforms, which is itself a useful research data point, not a defect |
+| `unicode_tags` | Draws the instruction as ordinary ASCII in an invisible (`3 Tr`) text object, then rewrites the embedded font's `/ToUnicode` CMap (post-save, public `pdf-lib` APIs only) so each glyph decodes to a Unicode Tag character (U+E0000–U+E007F) instead of its drawn ASCII value — prior art: PRD §4.2 In-Context Watermarking, §4.3 SteganoPrompt | **Experimental** | The payload is verified present in the output file's font/CMap (a server-side CMap read-back independent of PDF.js), but this app's own PDF.js-based text extraction can never display it: `pdfjs-dist` unconditionally filters Unicode General Category "Cf" (Format) characters, and the entire Unicode Tags block is Cf — so `hiddenTextExtracted` is always `false` for this mode and every job is `PASS_WITH_WARNINGS`, never plain `PASS`, by design, not a defect. Whether a given LLM provider's own document ingestion sees the payload is exactly what the Model Test benchmark measures, not something this local view can answer either way. ASCII-only: `payloadLanguage: "ko"` is rejected with `422 PROMPT_ENCODING_FAILED` for this mode |
 
-All four modes accept `payloadLanguage: "en" | "ko"` (default `"en"`). `"en"` requires the
-instruction to be printable ASCII (`PROMPT_ENCODING_FAILED` otherwise, for every mode including
-`xmp_only`). `"ko"` embeds a Korean (Noto Sans KR, static Regular) font subset for the three
+Four of the five modes accept `payloadLanguage: "en" | "ko"` (default `"en"`); `unicode_tags` is
+`"en"`-only (`"ko"` is rejected with `PROMPT_ENCODING_FAILED`, since the Unicode Tag block has no
+defined mapping outside the ASCII range). `"en"` requires the instruction to be printable ASCII
+(`PROMPT_ENCODING_FAILED` otherwise, for every mode including `xmp_only` and `unicode_tags`).
+`"ko"` embeds a Korean (Noto Sans KR, static Regular) font subset for the three
 drawn-text modes (`white_text`/`render_mode_3`/`visible_positive_control`): the font is first
 pre-subset with HarfBuzz WASM (`subset-font`) to just the instruction's codepoints plus printable
 ASCII, then embedded through `pdf-lib`'s CID-keyed subset path (`@pdf-lib/fontkit` handles the

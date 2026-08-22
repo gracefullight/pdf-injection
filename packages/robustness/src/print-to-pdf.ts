@@ -2,8 +2,9 @@
 // image-only PDF with pdf-lib, one page per source page, sized in PDF points
 // identically to the source page (geometry preserved) with the rendered PNG
 // filling the full page. Simulates the "print to PDF" robustness attack: any
-// text-layer payload (white_text, render_mode_3, xmp_only) is gone from the
-// output because there is no text content stream at all, only an image XObject.
+// text-layer payload (white_text, render_mode_3, xmp_only, unicode_tags) is
+// gone from the output because there is no text content stream at all, only
+// an image XObject.
 import { PDFDocument } from "pdf-lib";
 import { renderPagesToPng } from "./render-pages";
 

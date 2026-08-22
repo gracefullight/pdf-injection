@@ -46,6 +46,7 @@ const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
   render_mode_3: "Render mode 3",
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only",
+  unicode_tags: "Unicode tags (research)",
 };
 
 export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTestRunFormProps) {

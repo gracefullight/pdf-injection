@@ -14,7 +14,11 @@ The following are explicitly out of scope, matching the PRD's MVP non-goals:
 - Any definitive "AI cheating" determination
 - General AI-generated-text detection (style/token-distribution based)
 - Token-probability watermarking
-- Font glyph remapping or custom `/ToUnicode` manipulation
+- General-purpose font glyph remapping or arbitrary custom `/ToUnicode` manipulation, beyond the
+  one narrow, documented exception the `unicode_tags` mode makes for its own tag-block codec (see
+  [`unicode_tags` caveats](#unicode_tags-caveats) below) — this tool never remaps glyphs to alter
+  what a sighted reader or a font-rendering pipeline sees, only what a `/ToUnicode` CMap reports
+  for an already-invisible (render-mode-3) text object
 - PDF JavaScript of any kind (a source PDF that already contains JavaScript is flagged via
   `riskFlags`, never executed or added to)
 - Aggressively optimized jailbreak-style prompts
@@ -61,6 +65,51 @@ for the (tighter) pixel-diff threshold applied to this mode.
 select-all/copy-paste, readable by screen readers, exposed in dark-mode PDF viewers, and
 removable by a PDF sanitizer) — see [`README.md`](../README.md#injection-modes).
 
+## `unicode_tags` caveats
+
+`unicode_tags` is an **experimental** injection mode that draws the instruction as ordinary ASCII
+in an invisible (`3 Tr`) text object, then rewrites the embedded font's `/ToUnicode` CMap
+(post-save, public `pdf-lib` APIs only) so each glyph decodes to a Unicode Tag character
+(U+E0000–U+E007F) instead of its drawn ASCII value. It shares `render_mode_3`'s zero-ink geometry
+contract (nothing is painted) but has its own, more specific extraction story:
+
+- **`hiddenTextExtracted` is ALWAYS `false` for this mode via this app's own PDF.js-based
+  validation — not merely uncertain, but deterministic.** `pdfjs-dist`'s `getTextContent()`
+  unconditionally filters out every glyph whose `/ToUnicode` target is Unicode General Category
+  "Cf" (Format), and the entire Unicode Tags block (U+E0000–U+E007F) is category Cf by
+  definition — verified by direct repro against `tests/fixtures/five-page-text.pdf` (injection
+  succeeds, geometry stays identical, the output's `/ToUnicode` CMap carries the tag-encoded
+  payload, yet `extractText()` reports no match on the target page for either the encoded or the
+  plain instruction). This is why `computeOverall()` treats `unicode_tags` exactly like
+  `render_mode_3` (recorded, never required for `FAIL`) rather than like `white_text` — every
+  `unicode_tags` job is `PASS_WITH_WARNINGS`, never plain `PASS`, and that is expected/tracked
+  behavior for this mode, not a validation defect.
+- **The payload's actual presence in the output file is verified a different way.** Because
+  `extractText()` structurally cannot confirm this mode, `packages/pdf-engine`'s
+  `readUnicodeTagsPayload()` reads the output PDF's font `/ToUnicode` CMap directly (public
+  `pdf-lib` APIs, independent of `pdfjs-dist`) immediately after injection. If the payload is
+  genuinely absent, job creation hard-fails with `INJECTION_FAILED` (a real defect in the
+  injector, not a PDF.js limitation); when it is present (the normal case), a
+  `UNICODE_TAGS_NOT_EXTRACTABLE` warning is recorded in `serverValidation.warnings` explaining
+  that the payload is present but invisible to this project's own PDF.js-based extraction.
+- **The copy-paste-robustness hypothesis this mode exists to test is about real LLM providers'
+  document ingestion, not about this app's own validation layer.** Whether a given provider's
+  PDF-parsing/ingestion pipeline surfaces Unicode Tag characters (e.g. when a student copies page
+  text into a chat) is an open empirical question that the Model Test benchmark measures —
+  `unicode_tags` is a selectable benchmark condition alongside `original`/`white_text`/
+  `render_mode_3`/`visible_positive_control`/`xmp_only`. This app's own PDF.js-based parser view
+  is known in advance to never see the payload, regardless of what any provider does.
+- **Raster-based robustness transforms are expected to destroy this channel entirely, for two
+  independent, compounding reasons**: `print_to_pdf`/`ocr_regeneration`/`screenshot_ocr` rebuild
+  page content from a rasterized image (discarding any invisible text object outright, the same
+  risk `render_mode_3` already carries), and even if the tag-carrying text object somehow
+  survived a transform, `pdfjs-dist`'s Cf-category filtering would still hide it from this app's
+  own post-transform extraction.
+- **ASCII-only.** `payloadLanguage="ko"` is rejected for this mode specifically with
+  `422 PROMPT_ENCODING_FAILED` — the Unicode Tag block only has a defined mapping for the ASCII
+  range (0x20–0x7E); see [Instruction and payload constraints](#instruction-and-payload-constraints)
+  below.
+
 ## `xmp_only` caveats
 
 `xmp_only` (PDF XMP metadata injection) writes the instruction into the catalog's `/Metadata`
@@ -85,9 +134,12 @@ accessibility side effects, but with its own risk profile:
 - The hidden instruction must be **printable ASCII** (plus `\n`) when `payloadLanguage="en"`
   (the default) — anything else is rejected with `PROMPT_ENCODING_FAILED` (see
   `packages/prompt-lint`'s `NON_PRINTABLE_ASCII_RE` / `CONTROL_CHAR_RE` checks). This ASCII gate
-  applies uniformly across **all four** injection modes, including `xmp_only` (which never draws
+  applies uniformly across **all five** injection modes, including `xmp_only` (which never draws
   glyphs and so has no font-rendering reason to require ASCII) — kept uniform for predictability
-  rather than carving out a mode-specific exception.
+  rather than carving out a mode-specific exception. `unicode_tags` goes further: it rejects
+  `payloadLanguage="ko"` outright (not just non-ASCII text under `"en"`), since its Unicode Tag
+  codec only has a defined mapping for the ASCII range — see
+  [`unicode_tags` caveats](#unicode_tags-caveats) above.
 - The instruction is capped at `PDFI_MAX_INSTRUCTION_CHARS` (default **1500** characters).
 - `payloadLanguage="ko"` lifts the ASCII restriction for Korean text and requires the bundled
   Korean font to be available on the server (`PDFI_FONT_DIR`, default
@@ -101,7 +153,11 @@ accessibility side effects, but with its own risk profile:
 `payloadLanguage="ko"` embeds a Korean (Noto Sans KR, static Regular, OFL-licensed) font subset
 for the three drawn-text modes (`white_text`, `render_mode_3`, `visible_positive_control`);
 `xmp_only` accepts non-ASCII Korean text too but never embeds a font (no glyphs are drawn into any
-page). The font is pre-subset with a WASM build of HarfBuzz (`subset-font`, BSD-3-Clause,
+page). `unicode_tags` is the one mode that does **not** accept `"ko"` at all — it is rejected
+outright with `422 PROMPT_ENCODING_FAILED` before any font embedding is attempted, since its
+Unicode Tag codec has no defined mapping outside printable ASCII (see
+[`unicode_tags` caveats](#unicode_tags-caveats) above). The font is pre-subset with a WASM build
+of HarfBuzz (`subset-font`, BSD-3-Clause,
 wrapping `harfbuzzjs`, MIT) to just the instruction's codepoints plus printable ASCII, then handed
 to `pdf-lib`'s own CID-keyed subset embedding path (`@pdf-lib/fontkit` provides the font
 registration `pdf-lib` needs to embed any font at all) — see `packages/pdf-engine/src/korean-font.ts`.

@@ -119,6 +119,58 @@ describe("fixture matrix: xmp_only injection + metadata extraction", () => {
   }
 });
 
+// Revision 3 (unicode_tags): pdfjs-dist's getTextContent() unconditionally
+// filters Unicode General_Category=Cf (Format) characters, and the entire
+// U+E0000-U+E007F Unicode Tags block is Cf — so extractText() (this app's
+// own server-side validation pipeline) can NEVER surface the tag-encoded
+// payload, on any fixture, regardless of which target string is searched.
+// This is a STRONGER, structural guarantee than render_mode_3's "recorded
+// either way" ambiguity above (pdfjs's Cf-category filtering is unconditional
+// library behavior, not parser-implementation-dependent uncertainty) — it is
+// closer in spirit to xmp_only's definite-false extraction assertion just
+// above than to render_mode_3's merely-recorded one. Verifying the payload is
+// genuinely present in the output PDF's raw ToUnicode CMap (independent of
+// pdfjs) is packages/pdf-engine's own test suite's responsibility
+// (readUnicodeTagsPayload, see packages/pdf-engine/test/inject-unicode-tags.test.ts
+// and read-unicode-tags-payload.test.ts), not this integration-level file's —
+// this describe block's job is specifically to confirm THIS APP's actual
+// validation pipeline (extractText, pdfjs-based) behaves as documented
+// (deterministically false), which is exactly what a downstream consumer of
+// injectPdf()+extractText() needs to know.
+describe("fixture matrix: unicode_tags injection + tag-encoded extraction (never pdfjs-extractable)", () => {
+  for (const fixtureName of GOOD_FIXTURES) {
+    test(`${fixtureName} x unicode_tags`, async () => {
+      const source = await Bun.file(path.join(FIXTURES_DIR, fixtureName)).bytes();
+      const sourceDoc = await PDFDocument.load(source);
+      const originalPageCount = sourceDoc.getPageCount();
+
+      const result = await injectPdf({
+        source: new Uint8Array(source),
+        instruction: TEST_INSTRUCTION,
+        mode: "unicode_tags",
+        targetPage: "last",
+        position: "bottom",
+      });
+
+      const reloaded = await PDFDocument.load(result.bytes);
+      expect(reloaded.getPageCount()).toBe(originalPageCount);
+      expect(result.pageGeometryBefore).toEqual(result.pageGeometryAfter);
+
+      // Deterministically false — no encoded-target search is meaningful any
+      // more (see the block comment above): pdfjs drops every Cf-category
+      // glyph before extractText() ever sees it, so searching for the plain
+      // instruction and searching for its tag-encoded form both fail the
+      // same way, for the same reason.
+      const extraction = await extractText({
+        bytes: result.bytes,
+        targetInstruction: TEST_INSTRUCTION,
+        targetPageIndex: result.pageIndex,
+      });
+      expect(extraction.targetPageMatch).toBe(false);
+    });
+  }
+});
+
 // Round 2 §0.1: payloadLanguage "ko" allows a non-ASCII instruction (via the
 // embedded Noto Sans KR subset) on the drawn-text modes; "en" (default)
 // rejects it with PROMPT_ENCODING_FAILED.
