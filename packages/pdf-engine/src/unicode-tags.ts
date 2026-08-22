@@ -4,13 +4,25 @@
  * architecture_decisions #4.
  *
  * Each printable-ASCII payload character c (0x20-0x7E) maps 1:1 to the tag
- * codepoint U+E0000 + codepoint(c) (e.g. 'a' 0x61 -> U+E0061). The payload is
- * framed with a BEGIN marker (U+E0001) prefixed and a CANCEL marker
- * (U+E007F) suffixed so a decoder can unambiguously locate the run even when
- * embedded inside other extracted text. `decodeUnicodeTags` additionally
- * tolerates frame markers being stripped (e.g. by a lossy copy/paste or a
- * provider's Unicode normalization) by falling back to any maximal run of
- * plain payload-range tag characters (U+E0020-U+E007E).
+ * codepoint U+E0000 + codepoint(c) (e.g. 'a' 0x61 -> U+E0061). `encodeUnicodeTags`
+ * frames the payload with a BEGIN marker (U+E0001) prefixed and a CANCEL
+ * marker (U+E007F) suffixed so a decoder can unambiguously locate the run
+ * even when embedded inside other extracted text — this framing is only
+ * meaningful when the encoded string is embedded LITERALLY (e.g. spliced
+ * directly into a plain-text string, as `packages/benchmark`'s
+ * `disclosure.test.ts` does to simulate stray tag noise). It must NOT be
+ * used to mark a glyph in a ToUnicode CMap (`beginbfchar` target): a CMap
+ * entry is keyed by glyph and shared by every drawn occurrence of that
+ * glyph, so a marker attached there is reproduced at every position the
+ * glyph is drawn, not just the intended one — `inject-unicode-tags.ts`
+ * (the only production caller that rewrites a ToUnicode CMap) deliberately
+ * does NOT use `encodeUnicodeTags`/BEGIN/CANCEL for this reason; see its
+ * module doc, "Why no BEGIN/CANCEL framing". `decodeUnicodeTags` tolerates
+ * frame markers being absent or stripped (e.g. by a lossy copy/paste, a
+ * provider's Unicode normalization, or a glyph-keyed-CMap-based source like
+ * `readUnicodeTagsPayload`) by falling back to any maximal run of plain
+ * payload-range tag characters (U+E0020-U+E007E) — for CMap-sourced text
+ * this fallback is the ONLY applicable path, not a fallback of last resort.
  */
 
 export const UNICODE_TAG_BASE = 0xe0000;

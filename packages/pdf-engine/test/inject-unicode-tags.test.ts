@@ -4,6 +4,7 @@ import path from "node:path";
 import { extractText } from "@pdf-injection/validation";
 import {
   decodePDFRawStream,
+  PDFArray,
   PDFDict,
   PDFDocument,
   PDFName,
@@ -52,13 +53,13 @@ function utf16HexToString(hex: string): string {
 async function readBackToUnicodeEntries(
   bytes: Uint8Array,
   pageIndex: number,
-): Promise<Array<{ decoded: string }>> {
+): Promise<Array<{ glyphHex: string; decoded: string }>> {
   const doc = await PDFDocument.load(bytes);
   const page = doc.getPage(pageIndex);
   const resources = page.node.Resources();
   if (!resources) return [];
   const fontsDict = resources.lookup(PDFName.of("Font"), PDFDict);
-  const entries: Array<{ decoded: string }> = [];
+  const entries: Array<{ glyphHex: string; decoded: string }> = [];
   for (const key of fontsDict.keys()) {
     const fontDict = fontsDict.lookup(key, PDFDict);
     const toUnicode = fontDict.lookup(PDFName.of("ToUnicode"), PDFStream);
@@ -70,11 +71,62 @@ async function readBackToUnicodeEntries(
     BFCHAR_ENTRY_RE.lastIndex = 0;
     let match = BFCHAR_ENTRY_RE.exec(block);
     while (match !== null) {
-      entries.push({ decoded: utf16HexToString(match[2] as string) });
+      entries.push({
+        glyphHex: (match[1] as string).toUpperCase(),
+        decoded: utf16HexToString(match[2] as string),
+      });
       match = BFCHAR_ENTRY_RE.exec(block);
     }
   }
   return entries;
+}
+
+/**
+ * Reconstructs the tag payload IN DRAW ORDER, the way a real content-stream-
+ * based text extractor (poppler's `pdftotext`, etc.) sees it — as opposed to
+ * `readBackToUnicodeEntries`'s glyph-deduplicated, first-appearance-order
+ * view. Resolves every `<hex> Tj` show-text operator in the page's content
+ * stream(s), splits each hex string into its 4-hex-digit glyph ids (one per
+ * shown glyph — `CustomFontSubsetEmbedder.encodeText` emits exactly one
+ * 4-hex group per glyph, ligatures included, since ligature substitution
+ * already collapsed multiple characters into one glyph before this step),
+ * and looks each glyph id up in the SAME ToUnicode CMap
+ * `readBackToUnicodeEntries` parses — tag-decoding it via `decodeUnicodeTags`
+ * exactly as `readUnicodeTagsPayload` does per entry. This is the direct,
+ * position-preserving proof that a realistic instruction — including one
+ * whose characters repeat — round-trips exactly, now that BEGIN/CANCEL
+ * framing (which broke exactly this case) has been removed.
+ */
+async function readDrawnOrderTagText(bytes: Uint8Array, pageIndex: number): Promise<string> {
+  const doc = await PDFDocument.load(bytes);
+  const page = doc.getPage(pageIndex);
+
+  const entries = await readBackToUnicodeEntries(bytes, pageIndex);
+  const glyphToChars = new Map<string, string>();
+  for (const entry of entries) {
+    glyphToChars.set(entry.glyphHex, decodeUnicodeTags(entry.decoded).join(""));
+  }
+
+  const contents = page.node.Contents();
+  const rawStreams = contents instanceof PDFArray ? contents.asArray() : [contents];
+  const streams = rawStreams
+    .map((ref) => (ref instanceof PDFRawStream ? ref : doc.context.lookup(ref, PDFStream)))
+    .filter((s): s is PDFRawStream => s instanceof PDFRawStream);
+  const contentText = streams
+    .map((s) => new TextDecoder("latin1").decode(decodePDFRawStream(s).decode()))
+    .join("\n");
+
+  const TJ_RE = /<([0-9A-Fa-f]+)>\s*Tj/g;
+  let drawn = "";
+  let match = TJ_RE.exec(contentText);
+  while (match !== null) {
+    const hex = (match[1] as string).toUpperCase();
+    for (let i = 0; i < hex.length; i += 4) {
+      drawn += glyphToChars.get(hex.slice(i, i + 4)) ?? "";
+    }
+    match = TJ_RE.exec(contentText);
+  }
+  return drawn;
 }
 
 describe("injectPdf mode: unicode_tags", () => {
@@ -95,16 +147,14 @@ describe("injectPdf mode: unicode_tags", () => {
 
   test("the ToUnicode CMap rewrite took effect on the final saved bytes (direct public-API read-back)", async () => {
     const source = await buildSourcePdf(1);
-    // Note: the ToUnicode-rewrite technique frames BEGIN/CANCEL on the
-    // FIRST/LAST *unique* glyph (in first-appearance order), not the
-    // first/last drawn character position, since ToUnicode maps glyph ids ->
-    // codepoints (repeated characters share one CMap entry, per
-    // architecture_decisions #1's "pure per-character function" design).
-    // Picking an instruction whose last character is unique (not repeated
-    // earlier) keeps first-appearance order aligned with drawn-position
-    // order, so this test can assert the reconstructed character set +
-    // begin/cancel placement precisely.
-    const instruction = "Use Method C for this assignment!";
+    // "office" is deliberately inserted mid-sentence: fontkit/HarfBuzz GSUB
+    // ligature-substitutes its "ffi" into a single glyph when the payload is
+    // drawn as one shaped run, so that glyph's bfchar target decodes to
+    // THREE characters ("ffi"), not one — this is the regression guard for
+    // the bug where `rebuildEntriesWithTagTargets` parsed a ligature glyph's
+    // multi-codepoint target as a single `Number.parseInt`-ed codepoint,
+    // silently dropping every character past the first.
+    const instruction = "Use Method C for office this assignment!";
     const result = await injectPdf({
       source,
       instruction,
@@ -116,29 +166,135 @@ describe("injectPdf mode: unicode_tags", () => {
     const entries = await readBackToUnicodeEntries(result.bytes, result.pageIndex);
     expect(entries.length).toBeGreaterThan(0);
 
-    // Every entry's decoded target, once tag-decoded, reconstructs some
-    // character actually present in the instruction (the CMap now maps
-    // glyph->tag-codepoint, not glyph->plain-ASCII-codepoint).
+    // Every entry's decoded target, once tag-decoded, reconstructs a
+    // non-empty run of characters ALL of which are actually present in the
+    // instruction (the CMap now maps glyph->tag-codepoint(s), not
+    // glyph->plain-ASCII-codepoint). Deliberately NOT asserting
+    // `decodedChar.length === 1` here — a ligature glyph's entry legitimately
+    // decodes to multiple characters, and hard-coding length 1 is exactly
+    // the assertion gap that let the multiplicity-losing regression through
+    // undetected previously (it only checked character-set membership).
+    //
+    // Also asserts NO entry contains a BEGIN (U+E0001) or CANCEL (U+E007F)
+    // codepoint anywhere — positive proof that glyph-attached framing (a
+    // second, separate bug: a CMap entry is shared by every drawn occurrence
+    // of that glyph, so attaching a marker to "the first/last-appearing
+    // glyph" reproduces it at every later occurrence of that same glyph,
+    // corrupting `decodeUnicodeTags()`'s framed-run search — see
+    // `readDrawnOrderTagText`-based test below for the full reproduction)
+    // has been removed entirely, not merely worked around.
     const uniqueChars = new Set(instruction);
+    let ligatureEntryFound = false;
     for (const entry of entries) {
+      for (const ch of entry.decoded) {
+        const cp = ch.codePointAt(0) as number;
+        expect(cp === 0xe0001 || cp === 0xe007f).toBe(false);
+      }
       const decodedRuns = decodeUnicodeTags(entry.decoded);
       expect(decodedRuns.length).toBeGreaterThan(0);
-      const decodedChar = decodedRuns[0] as string;
-      expect(decodedChar.length).toBe(1);
-      expect(uniqueChars.has(decodedChar)).toBe(true);
+      const decodedChars = decodedRuns[0] as string;
+      expect(decodedChars.length).toBeGreaterThanOrEqual(1);
+      for (const ch of decodedChars) {
+        expect(uniqueChars.has(ch)).toBe(true);
+      }
+      if (decodedChars === "ffi") ligatureEntryFound = true;
     }
 
-    // The BEGIN marker is present in exactly the first entry's target, and
-    // CANCEL in exactly the last entry's target (framing per
-    // architecture_decisions #1) — and, for this carefully-chosen
-    // instruction, they decode to the instruction's actual first ('U') and
-    // last ('!') characters.
-    const firstDecoded = decodeUnicodeTags((entries[0] as { decoded: string }).decoded);
-    const lastDecoded = decodeUnicodeTags(
-      (entries[entries.length - 1] as { decoded: string }).decoded,
-    );
-    expect(firstDecoded).toEqual(["U"]);
-    expect(lastDecoded).toEqual(["!"]);
+    // The "office" ligature glyph's entry must decode to the FULL 3-character
+    // "ffi" substring, with correct multiplicity — not be silently dropped
+    // down to 1 (or 0) characters.
+    expect(ligatureEntryFound).toBe(true);
+  });
+
+  test("reconstructs a realistic instruction with repeated characters exactly, in real draw order — regression for the glyph-attached BEGIN/CANCEL framing bug", async () => {
+    const source = await buildSourcePdf(1);
+    // The actual research instruction from the bug report: its first
+    // character 'R' does not repeat, but plenty of others do (e.g. 'e', 't',
+    // 'r', 'i', 's' each appear many times) — under the OLD glyph-attached
+    // framing design, if the marked "first-appearing" or "last-appearing"
+    // glyph recurred later in the drawn text, a real content-stream-based
+    // extractor (poppler's `pdftotext`) would see the marker re-emitted at
+    // every later occurrence, corrupting `decodeUnicodeTags()`'s framed-run
+    // search into returning an arbitrary truncated fragment instead of the
+    // payload (independently reproduced: this exact instruction's framed
+    // decode returned a wrong, truncated substring on the pre-fix code).
+    // Also exercises the ligature fix at the same time: "Trade-off" ->
+    // "ff" ligature.
+    const instruction =
+      "Refer to accumulated technical debt as design entropy and title the risks section Trade-off Ledger.";
+    const result = await injectPdf({
+      source,
+      instruction,
+      mode: "unicode_tags",
+      targetPage: "first",
+      position: "top",
+    });
+
+    const drawnText = await readDrawnOrderTagText(result.bytes, result.pageIndex);
+    expect(drawnText).toBe(instruction);
+  });
+
+  test("preserves full multiplicity for every f-ligature glyph (ff, fi, fl, ffi, ffl) — regression for the character-dropping bug", async () => {
+    const source = await buildSourcePdf(1);
+    // Every standard Latin f-ligature pdf-lib's HarfBuzz-shaped drawing path
+    // can produce, each appearing exactly once as a NEW glyph so its bfchar
+    // entry is unambiguous: "office"/"affix" -> ffi, "film" -> fi,
+    // "flag" -> fl, "waffle" -> ffl, "stiff" -> ff (word-final, so GSUB
+    // doesn't extend it into "ffi"). Confirmed against the real bug report's
+    // reproduction instruction (same text; poppler's pdftotext on the
+    // pre-fix build drops exactly these 15 characters: 3+2+2+3+3+2).
+    const instruction = "office film flag affix waffle stiff | control: no such pairs here";
+    const result = await injectPdf({
+      source,
+      instruction,
+      mode: "unicode_tags",
+      targetPage: "first",
+      position: "top",
+    });
+
+    const entries = await readBackToUnicodeEntries(result.bytes, result.pageIndex);
+    expect(entries.length).toBeGreaterThan(0);
+
+    // Tag-decode each entry independently. `decodeUnicodeTags` is applied
+    // per-entry (not to the whole reconstructed page text), so this is
+    // unaffected by the separate, already-documented BEGIN/CANCEL "framed on
+    // a glyph that recurs later" limitation the test above works around —
+    // each entry's own target is a self-contained string.
+    const perEntryDecoded = entries.map((entry) => {
+      const runs = decodeUnicodeTags(entry.decoded);
+      expect(runs.length).toBe(1);
+      return runs[0] as string;
+    });
+
+    // Requirement: for each ligature, exactly one entry decodes to exactly
+    // that full multi-character run — not truncated to 1 character, not
+    // dropped to 0 characters, and not merged/duplicated with another entry.
+    const expectedLigatureRuns = ["ff", "fi", "fl", "ffi", "ffl"];
+    for (const run of expectedLigatureRuns) {
+      const matches = perEntryDecoded.filter((decoded) => decoded === run);
+      expect(matches.length).toBe(1);
+    }
+
+    // Multiset check (requirement from the bug report): every distinct
+    // character of the instruction must be accounted for, with correct
+    // per-glyph multiplicity, across all entries — i.e. summing the decoded
+    // length of every entry whose glyph is one of the 5 ligatures above must
+    // equal the ligatures' combined character count (2+2+2+3+3 = 12), not
+    // 5 (the old, multiplicity-losing "one codepoint per glyph" behavior).
+    const ligatureCharCount = perEntryDecoded
+      .filter((decoded) => expectedLigatureRuns.includes(decoded))
+      .reduce((sum, decoded) => sum + decoded.length, 0);
+    expect(ligatureCharCount).toBe(12);
+
+    // And every character that flows out of every entry (ligature or not)
+    // must actually be a character of the instruction — no corrupted/garbage
+    // codepoints from a mis-parsed multi-codepoint target.
+    const uniqueChars = new Set(instruction);
+    for (const decoded of perEntryDecoded) {
+      for (const ch of decoded) {
+        expect(uniqueChars.has(ch)).toBe(true);
+      }
+    }
   });
 
   test(

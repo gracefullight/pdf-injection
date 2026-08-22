@@ -45,6 +45,16 @@ function utf16HexToString(hex: string): string {
  * benchmark mock provider's `detectInstructionFound`) — without a full
  * content-stream operator parser.
  *
+ * `injectUnicodeTags()` writes no BEGIN/CANCEL frame markers (removed —
+ * glyph-keyed framing was structurally unable to be positionally correct;
+ * see its module doc, "Why no BEGIN/CANCEL framing"), so every `decodeUnicodeTags()`
+ * call here always takes its tolerant "maximal run of payload-range tag
+ * characters" path, never the framed-run path. A **ligature glyph** (e.g.
+ * the glyph fontkit/HarfBuzz GSUB-substitutes for "ffi") decodes to its
+ * full multi-character run in one pass through that path — the returned
+ * string therefore accounts for every character of every unique glyph with
+ * correct per-glyph multiplicity, not just one character per glyph.
+ *
  * Returns one string per font (across every page) that has at least one
  * tag-decodable `/ToUnicode` entry; an empty array when no font in the
  * document carries a Unicode Tag payload (e.g. the `original` condition, or

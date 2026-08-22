@@ -15,12 +15,12 @@ import {
   showText,
   TextRenderingMode,
 } from "pdf-lib";
-import { type BfCharEntry, parseBfCharEntries } from "./cmap-bfchar";
+import { type BfCharEntry, decodeCMapTargetChars, parseBfCharEntries } from "./cmap-bfchar";
 import { InjectionFailedError, PdfEngineError } from "./errors";
 import type { InjectTextResult } from "./inject-white-text";
 import { embedKoreanFont } from "./korean-font";
 import { DEFAULT_MARGIN_X, layoutTextBlock, wrapTextToLines } from "./text-layout";
-import { UNICODE_TAG_BASE, UNICODE_TAG_BEGIN, UNICODE_TAG_CANCEL } from "./unicode-tags";
+import { UNICODE_TAG_BASE } from "./unicode-tags";
 
 export interface InjectUnicodeTagsInput {
   doc: PDFDocument;
@@ -61,23 +61,34 @@ function surrogatePairHex(codepoint: number): string {
 }
 
 /**
- * Rebuilds each bfchar entry's target as a Unicode-Tag-block codepoint
- * (U+E0000 + the entry's original ASCII codepoint), UTF-16-surrogate-pair
- * encoded. The FIRST entry (in CMap-write order, which pdf-lib's
- * `CustomFontSubsetEmbedder` assigns in first-appearance order of the drawn
- * text's glyphs — see this file's module doc) additionally gets the BEGIN
- * marker's surrogate pair prefixed, and the LAST entry gets the CANCEL
- * marker's surrogate pair suffixed — both as extra concatenated hex groups
- * within the SAME multi-codepoint bfchar target (PDF-spec-legal; the exact
- * mechanism pdf-lib's own CMap builder uses for ligature glyphs).
+ * Rebuilds each bfchar entry's target as a sequence of Unicode-Tag-block
+ * codepoints (U+E0000 + each original character's codepoint), each
+ * UTF-16-surrogate-pair encoded. Most entries' original target decodes to a
+ * single character, but a **ligature glyph** (fontkit/HarfBuzz GSUB
+ * substitution applied to the shaped payload run — e.g. "ff", "fi", "fl",
+ * "ffi", "ffl" each become one glyph) has a target that decodes to MULTIPLE
+ * characters (see `decodeCMapTargetChars`'s doc). Every one of those
+ * characters is mapped to its own tag codepoint and the results are
+ * concatenated into the SAME entry's target, preserving full multiplicity —
+ * this mirrors exactly how pdf-lib's own CMap builder encodes a
+ * multi-codepoint ligature target in the first place.
+ *
+ * **No BEGIN/CANCEL framing marker is attached to any entry** (removed —
+ * see "Why no BEGIN/CANCEL framing" in this file's module doc). Deliberately
+ * NOT reusing `i === 0` / `i === entries.length - 1` (CMap-write / glyph
+ * first-appearance order) as a stand-in for "first/last drawn character": a
+ * ToUnicode CMap entry is keyed by GLYPH, shared by every drawn occurrence
+ * of that glyph, so a marker attached to one entry would be reproduced at
+ * every position that glyph is drawn — not just the intended one. There is
+ * no way to make a glyph-keyed marker positionally correct in general.
  */
 function rebuildEntriesWithTagTargets(entries: BfCharEntry[]): BfCharEntry[] {
-  return entries.map((entry, i) => {
-    const asciiCode = Number.parseInt(entry.targetHex, 16);
-    const tagHex = surrogatePairHex(UNICODE_TAG_BASE + asciiCode);
-    const beginHex = i === 0 ? surrogatePairHex(UNICODE_TAG_BEGIN) : "";
-    const cancelHex = i === entries.length - 1 ? surrogatePairHex(UNICODE_TAG_CANCEL) : "";
-    return { glyphHex: entry.glyphHex, targetHex: `${beginHex}${tagHex}${cancelHex}` };
+  return entries.map((entry) => {
+    const chars = decodeCMapTargetChars(entry.targetHex);
+    const tagHex = chars
+      .map((ch) => surrogatePairHex(UNICODE_TAG_BASE + (ch.codePointAt(0) as number)))
+      .join("");
+    return { glyphHex: entry.glyphHex, targetHex: tagHex };
   });
 }
 
@@ -127,11 +138,36 @@ function buildToUnicodeCMapText(entries: BfCharEntry[]): string {
  * primitives `inject-xmp-only.ts` already uses for its own `/Metadata`
  * stream surgery — locates the font dict via the exact resource key
  * `page.node.newFontDictionary()` returned (resource keys survive a
- * save/reload cycle verbatim) and its `/ToUnicode` stream, rebuilds the
- * bfchar targets as Unicode-Tag-block codepoints framed with BEGIN/CANCEL
- * markers, and reassigns the font dict's `/ToUnicode` key to the rebuilt
+ * save/reload cycle verbatim) and its `/ToUnicode` stream, rebuilds every
+ * bfchar target as Unicode-Tag-block codepoints (no BEGIN/CANCEL framing —
+ * see below), and reassigns the font dict's `/ToUnicode` key to the rebuilt
  * stream. Round 2 addendum §7 / plan session 20260822-190520
  * architecture_decisions #1.
+ *
+ * **Why no BEGIN/CANCEL framing (removed; AMENDED post-launch fix):** the
+ * original design attached a BEGIN marker to whichever glyph was
+ * first-to-appear (CMap-write order) and a CANCEL marker to whichever glyph
+ * was last-to-appear, intending to let a decoder unambiguously locate the
+ * payload run when embedded inside other extracted text. That design is
+ * structurally unsound for a ToUnicode CMap: the CMap maps GLYPH ID ->
+ * unicode target, so if the marked glyph is drawn more than once (a common
+ * letter recurring anywhere in an ordinary sentence — e.g. 'o' or the
+ * instruction's own first character reappearing later), a real
+ * content-stream-based extractor (poppler's `pdftotext`, etc.) reproduces
+ * the SAME marker at EVERY occurrence of that glyph, not just the intended
+ * one — corrupting `decodeUnicodeTags()`'s framed-run search (verified:
+ * reproducing the bug report's realistic instruction, whose first
+ * character 'o' recurs in "control"/"no", made the framed decode return an
+ * arbitrary truncated mid-sentence fragment instead of the actual payload).
+ * There is no glyph-keyed way to make positional framing correct in
+ * general, so framing is dropped entirely: every drawn character maps
+ * directly to its own tag codepoint, and `decodeUnicodeTags()`'s tolerant
+ * "maximal run of payload-range tag characters" fallback — always the
+ * primary and only path a decoder needs for THIS injector's output, since
+ * no ordinary page content uses the Unicode Tags block — delimits the
+ * payload from surrounding text without needing any marker at all. See
+ * `readUnicodeTagsPayload`'s module doc for the exact guarantee this
+ * provides.
  */
 export async function injectUnicodeTags(
   input: InjectUnicodeTagsInput,
@@ -212,7 +248,8 @@ export async function injectUnicodeTags(
     }
 
     // Step 4: regex-parse the existing beginbfchar entries and rebuild them
-    // with UTF-16-surrogate-pair-encoded, BEGIN/CANCEL-framed tag targets.
+    // with UTF-16-surrogate-pair-encoded tag targets (no BEGIN/CANCEL
+    // framing — see this file's module doc, "Why no BEGIN/CANCEL framing").
     const cmapBytes = decodePDFRawStream(toUnicodeStream).decode();
     const cmapText = new TextDecoder("utf-8").decode(cmapBytes);
     const entries = parseBfCharEntries(cmapText);

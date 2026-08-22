@@ -36,6 +36,30 @@ describe("readUnicodeTagsPayload", () => {
     }
   });
 
+  test("a ligature glyph (e.g. 'ffi') contributes ALL of its characters to the payload, not just one", async () => {
+    // Regression for the bug where a ligature glyph's multi-codepoint
+    // ToUnicode target was mis-parsed as a single codepoint, silently
+    // dropping every character past the first for that glyph.
+    const source = await buildSourcePdf(1);
+    const instruction = "office assignment";
+    const result = await injectPdf({
+      source,
+      instruction,
+      mode: "unicode_tags",
+      targetPage: "first",
+      position: "top",
+    });
+
+    const payloads = await readUnicodeTagsPayload(result.bytes);
+    expect(payloads.length).toBeGreaterThan(0);
+
+    // "office" ligature-substitutes "ffi" into one glyph; that glyph's
+    // decoded contribution must still be the full 3-character "ffi", not a
+    // single dropped/truncated character.
+    const combined = payloads.join("");
+    expect(combined).toContain("ffi");
+  });
+
   test("returns an empty array for an untouched (original) PDF with no injected text", async () => {
     const source = await buildSourcePdf(1);
     const payloads = await readUnicodeTagsPayload(source);

@@ -38,3 +38,28 @@ export function parseBfCharEntries(cmapText: string): BfCharEntry[] {
   }
   return entries;
 }
+
+/**
+ * Decodes a bfchar `targetHex` string into the sequence of characters it
+ * represents. A target is one or more concatenated 4-hex-digit groups, each
+ * group a single UTF-16 code unit (see pdf-lib's `CMap.js`
+ * `cmapCodePointFormat`: BMP codepoints get exactly one group, astral
+ * codepoints get two groups forming a surrogate pair). Most glyphs map to a
+ * single character (one group), but a **ligature glyph** (e.g. "ff", "fi",
+ * "ffl" — produced by fontkit/HarfBuzz GSUB substitution when drawing a
+ * shaped text run) maps to MULTIPLE groups, one per original character the
+ * ligature glyph replaced. Splitting into 4-hex groups and reassembling via
+ * `String.fromCharCode` (not `Number.parseInt`-ing the whole string as one
+ * value) is required to preserve that multiplicity — treating a multi-group
+ * target as a single numeric codepoint silently corrupts/drops the extra
+ * characters. `Array.from` on the resulting string iterates by Unicode code
+ * point, so any astral-codepoint group pair is correctly reassembled into
+ * one returned character rather than two unpaired surrogate halves.
+ */
+export function decodeCMapTargetChars(targetHex: string): string[] {
+  const units: number[] = [];
+  for (let i = 0; i < targetHex.length; i += 4) {
+    units.push(Number.parseInt(targetHex.slice(i, i + 4), 16));
+  }
+  return Array.from(String.fromCharCode(...units));
+}
