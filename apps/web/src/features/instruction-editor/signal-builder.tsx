@@ -1,6 +1,6 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -43,11 +43,45 @@ function defaultSignalFor(type: SignalType): ExpectedSignal {
   }
 }
 
-function splitList(value: string): string[] {
+export function splitList(value: string): string[] {
   return value
     .split(",")
     .map((v) => v.trim())
     .filter((v) => v.length > 0);
+}
+
+interface CommaListInputProps {
+  id: string;
+  values: string[];
+  onValuesChange: (values: string[]) => void;
+}
+
+/**
+ * Comma-separated list input that keeps the raw text the user is typing.
+ * Normalizing `values.join(", ")` back into the field on every keystroke made
+ * it impossible to type a comma or a space (the trailing separator was trimmed
+ * away immediately); the parsed list is only derived from the raw text.
+ */
+function CommaListInput({ id, values, onValuesChange }: CommaListInputProps) {
+  const [raw, setRaw] = useState(() => values.join(", "));
+  // Re-sync only when the list changed externally (e.g. draft restore, signal swap).
+  useEffect(() => {
+    if (splitList(raw).join("\u0000") !== values.join("\u0000")) {
+      setRaw(values.join(", "));
+    }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: raw is the local echo of values; resyncing on raw would undo typing
+  }, [values]);
+  return (
+    <Input
+      id={id}
+      value={raw}
+      onChange={(event) => {
+        setRaw(event.target.value);
+        onValuesChange(splitList(event.target.value));
+      }}
+      onBlur={() => setRaw(splitList(raw).join(", "))}
+    />
+  );
 }
 
 export function SignalBuilder({ signals, onChange }: SignalBuilderProps) {
@@ -184,12 +218,10 @@ export function SignalBuilder({ signals, onChange }: SignalBuilderProps) {
                   }
                 />
                 <Label htmlFor={`signal-${index}-aliases`}>Aliases (comma-separated)</Label>
-                <Input
+                <CommaListInput
                   id={`signal-${index}-aliases`}
-                  value={signal.aliases.join(", ")}
-                  onChange={(event) =>
-                    updateSignal(index, { ...signal, aliases: splitList(event.target.value) })
-                  }
+                  values={signal.aliases}
+                  onValuesChange={(aliases) => updateSignal(index, { ...signal, aliases })}
                 />
               </div>
             )}
@@ -197,12 +229,10 @@ export function SignalBuilder({ signals, onChange }: SignalBuilderProps) {
             {(signal.type === "ordered_terms" || signal.type === "section_order") && (
               <div className="flex flex-col gap-2">
                 <Label htmlFor={`signal-${index}-values`}>Values, in order (comma-separated)</Label>
-                <Input
+                <CommaListInput
                   id={`signal-${index}-values`}
-                  value={signal.values.join(", ")}
-                  onChange={(event) =>
-                    updateSignal(index, { ...signal, values: splitList(event.target.value) })
-                  }
+                  values={signal.values}
+                  onValuesChange={(values) => updateSignal(index, { ...signal, values })}
                 />
               </div>
             )}
