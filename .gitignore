@@ -6,3 +6,21 @@
 docs/plans/
 .migration-backup/
 .qwen/tmp/
+
+# pdf-injection
+node_modules/
+.pdf-injection-data/
+test-results/
+playwright-report/
+tests/e2e/.tmp/
+tests/e2e/.auth/
+*.tsbuildinfo
+.env
+.env.local
+dist/
+build/
+coverage/
+
+
+# oma docs generated artifacts
+docs/generated/

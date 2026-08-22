@@ -1,0 +1,74 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/coverage",
+      "!.pdf-injection-data",
+      "!tests/fixtures",
+      "!tests/golden/**/*.json",
+      "!tests/e2e/.tmp",
+      "!tests/e2e/.auth",
+      "!test-results",
+      "!playwright-report",
+      "!packages/pdf-engine/fonts",
+      "!**/*.lock",
+      "!bun.lock",
+      "!research/results",
+      "!.agents",
+      "!**/*.tsbuildinfo",
+      "!.claude",
+      "!.cursor",
+      "!.qwen",
+      "!.codex",
+      "!.grok",
+      "!.zcode",
+      "!.serena",
+      "!.github"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noNonNullAssertion": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

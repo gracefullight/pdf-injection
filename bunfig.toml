@@ -1,0 +1,10 @@
+[test]
+root = "."
+coverage = false
+# Playwright specs under tests/e2e/ use the same *.spec.ts naming bun:test
+# matches by default; they run only via `bun run test:e2e` (Playwright's own
+# runner against live dev servers), never via `bun test`.
+pathIgnorePatterns = ["tests/e2e/**"]
+
+[install]
+peer = true

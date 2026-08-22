@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "scripts/**/*.ts",
+    "tests/integration/**/*.ts",
+    "tests/golden/**/*.ts",
+    "tests/e2e/**/*.ts"
+  ],
+  "exclude": ["node_modules", "**/node_modules", "tests/fixtures"]
+}

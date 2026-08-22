@@ -1,0 +1,35 @@
+{
+  "name": "pdf-injection",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PDF Injection Web PoC — PDF-native hidden instruction authoring and validation tool",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tests/e2e"
+  ],
+  "packageManager": "bun@1.3.14",
+  "engines": {
+    "bun": ">=1.3.14"
+  },
+  "scripts": {
+    "test": "bun test",
+    "test:e2e": "bun run --cwd tests/e2e test",
+    "typecheck": "bun run --filter '*' typecheck",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "fixtures:generate": "bun run scripts/generate-fixtures.ts",
+    "golden:update": "bun run scripts/update-golden.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.10",
+    "@pdf-injection/contracts": "workspace:*",
+    "@pdf-injection/pdf-engine": "workspace:*",
+    "@pdf-injection/prompt-lint": "workspace:*",
+    "@pdf-injection/validation": "workspace:*",
+    "bun-types": "^1.4.0",
+    "pdf-lib": "^1.17.1",
+    "typescript": "^5.9.3"
+  }
+}
