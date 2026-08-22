@@ -2,7 +2,11 @@ import { describe, expect, test } from "bun:test";
 import { sha256Hex } from "@pdf-injection/validation";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { injectPdf } from "../src/inject";
-import { buildXmpPacket, PDF-INJECTION_XMP_NAMESPACE, readXmpPayload } from "../src/inject-xmp-only";
+import {
+  buildXmpPacket,
+  PDF_INJECTION_XMP_NAMESPACE,
+  readXmpPayload,
+} from "../src/inject-xmp-only";
 import { getPageContentBytes } from "./pdf-bytes-helpers";
 
 async function buildSourcePdf(pageCount = 3): Promise<Uint8Array> {
@@ -91,7 +95,7 @@ describe("injectPdf mode=xmp_only", () => {
 
   test("buildXmpPacket escapes XML-significant characters and includes the pdf-injection namespace", () => {
     const xml = buildXmpPacket('Use "Method C" & <discuss>', "abc123");
-    expect(xml).toContain(PDF-INJECTION_XMP_NAMESPACE);
+    expect(xml).toContain(PDF_INJECTION_XMP_NAMESPACE);
     expect(xml).toContain("&quot;Method C&quot;");
     expect(xml).toContain("&amp;");
     expect(xml).toContain("&lt;discuss&gt;");

@@ -27,18 +27,18 @@ flowchart LR
     L -->|POST client-validation| C
     K -->|POST client-validation| C
 
-    C -. optional, PS_QPDF_ENABLED .-> N["qpdf --check via Bun.spawn"]
+    C -. optional, PDFI_QPDF_ENABLED .-> N["qpdf --check via Bun.spawn"]
 
     C --> O["background-runner.ts — bounded async queue"]
     O --> P["packages/benchmark — anthropic/openai/mock adapters"]
-    P -. PS_ALLOW_EXTERNAL_PROVIDERS=true .-> Q[External LLM provider API]
+    P -. PDFI_ALLOW_EXTERNAL_PROVIDERS=true .-> Q[External LLM provider API]
     O --> R["packages/robustness — print-to-PDF / OCR-regen / screenshot-OCR"]
     R --> S["packages/detector — matchSignals, scoring, calibration"]
     O -->|(model_test_runs / robustness_runs)| I
 
     C --> T["variant-sets / student-keyed-sets — one job per variant/student"]
     T --> I
-    C -. PS_RESEARCH_MODE=true .-> U["POST /jobs/:jobId/submissions"]
+    C -. PDFI_RESEARCH_MODE=true .-> U["POST /jobs/:jobId/submissions"]
     U --> S
     U --> I
 ```
@@ -48,7 +48,7 @@ benchmark adapters (`packages/benchmark`), robustness transform adapters
 (`packages/robustness`), and the deterministic detector (`packages/detector`) that both submission
 analysis and robustness signal-survival checks share. The provider-calling and research-mode
 branches (`Q`, `U`) are dashed because they only activate when their respective env-var gates
-(`PS_ALLOW_EXTERNAL_PROVIDERS`, `PS_RESEARCH_MODE`) are set — see
+(`PDFI_ALLOW_EXTERNAL_PROVIDERS`, `PDFI_RESEARCH_MODE`) are set — see
 [`docs/api.md`](api.md#limits-server-enforced-configurable-via-env--see-readmemd)
 and [`docs/ethics-and-privacy.md`](ethics-and-privacy.md).
 
@@ -63,7 +63,7 @@ and [`docs/ethics-and-privacy.md`](ethics-and-privacy.md).
 | `packages/detector` | Deterministic `ExpectedSignal` matchers (`exact_phrase`, `regex`, `methodology_label`, `ordered_terms`, `section_order`, regex matching under a Worker-based timeout) returning match evidence only — no verdict field. Plus Phase 4 `scoring.ts` (per-group weighted scores), `calibration.ts` (false-positive rate vs. baseline texts), `statistics.ts` (Fisher's exact test + Holm-Bonferroni correction), and `smoke-test-gate.ts` (PRD §23.2). Used by `apps/api`'s submissions and robustness services |
 | `packages/benchmark` | Phase 3 provider adapters (`packages/benchmark/src/providers/anthropic.ts`, `packages/benchmark/src/providers/openai.ts`, `packages/benchmark/src/providers/mock.ts` — all structurally the same `ProviderAdapter` interface), `runMatrix()` (provider x condition x repeat orchestration with bounded concurrency and retry), `disclosure.ts`/`refusal.ts` (heuristic detection on raw responses), `export.ts` (JSON/CSV export). Used by `apps/api`'s model-tests service |
 | `packages/robustness` | Phase 5 transform adapters: `print-to-pdf.ts` / `ocr-text-layer.ts` (rasterize + rebuild, with/without an OCR'd invisible text layer), `text-transforms.ts` (`paraphrase`/`human_edit` deterministic local fallbacks, `translation` provider-only), `survival.ts` (before/after signal-match evidence via `packages/detector`), `capabilities.ts` (live probes for `@napi-rs/canvas`/`tesseract.js` availability, resolved through `pdfjs-dist`'s own module root — see `native-canvas.ts`) |
-| `apps/api` | Elysia app: router → service → repository, across 7 route files (`health`, `jobs`, `model-tests`, `robustness`, `variant-sets`, `student-keyed-sets`, `submissions`). `job.service.ts` runs the full pipeline (inspect → lint → inject → round-trip validate → text-extract → qpdf → report → manifest → persist) synchronously inside `POST /api/v1/jobs`, bounded by `PS_MAX_PROCESSING_MS`; model-test/robustness runs execute asynchronously via `apps/api/src/lib/background-runner.ts`. `jobs.repository.ts`, `runs.repository.ts`, `variant-sets.repository.ts`, `submissions.repository.ts` are the sole `bun:sqlite` access points (see [SQLite schema](#sqlite-schema) below) |
+| `apps/api` | Elysia app: router → service → repository, across 7 route files (`health`, `jobs`, `model-tests`, `robustness`, `variant-sets`, `student-keyed-sets`, `submissions`). `job.service.ts` runs the full pipeline (inspect → lint → inject → round-trip validate → text-extract → qpdf → report → manifest → persist) synchronously inside `POST /api/v1/jobs`, bounded by `PDFI_MAX_PROCESSING_MS`; model-test/robustness runs execute asynchronously via `apps/api/src/lib/background-runner.ts`. `jobs.repository.ts`, `runs.repository.ts`, `variant-sets.repository.ts`, `submissions.repository.ts` are the sole `bun:sqlite` access points (see [SQLite schema](#sqlite-schema) below) |
 | `apps/web` | React UI across four core screens (Upload / Instruction / Generate / Validation) plus the Model Test / Robustness / Submissions / Variants tabs and screens; computes PDF.js render + `pixelmatch` diff + client-side text extraction in the browser and posts the results back via `POST /jobs/:jobId/client-validation`; calls round-1 JSON endpoints through an Eden Treaty client and §1-4 endpoints through a typed-fetch layer (see below) |
 
 ## Eden Treaty type sharing
@@ -141,7 +141,7 @@ through `api.ts`'s `export *` re-exports.
 ### Architecture decision: synchronous processing, no queue (`POST /jobs` only)
 
 `POST /api/v1/jobs` processes the whole pipeline inline rather than enqueuing a background job,
-now bounded by `PS_MAX_PROCESSING_MS` (default 60 s; exceeding it raises
+now bounded by `PDFI_MAX_PROCESSING_MS` (default 60 s; exceeding it raises
 `504 PROCESSING_TIMEOUT` and leaves no job row or files behind — `apps/api/src/lib/time-limit.ts`).
 The PoC's performance target (a 50-page PDF in ≤ 30 s) is well within a single HTTP request, and
 a queue would add state and polling complexity the PRD explicitly avoids where possible. Clients
@@ -167,7 +167,7 @@ transforms) can legitimately take much longer than one HTTP request should block
    instruction/settings from `manifest.json` and caches the result at
    `<jobDir>/conditions/<mode>.pdf` so repeated runs against the same job reuse it.
 3. For each `(provider, condition, repeat)` triple, `packages/benchmark`'s `runMatrix()` calls the
-   provider adapter (bounded by `PS_MODEL_TEST_CONCURRENCY`), records the raw response, runs
+   provider adapter (bounded by `PDFI_MODEL_TEST_CONCURRENCY`), records the raw response, runs
    `packages/detector`'s `matchSignals()` against it, and flags `disclosure` (hidden instruction
    text or a long window of it appears in the response) and `refusal` (provider stop-reason or
    heuristic).
@@ -180,7 +180,7 @@ transforms) can legitimately take much longer than one HTTP request should block
 
 ### Data flow: robustness runs (§4)
 
-1. `POST /jobs/:jobId/robustness` (gated on `PS_RESEARCH_MODE=true`) inserts a `robustness_runs`
+1. `POST /jobs/:jobId/robustness` (gated on `PDFI_RESEARCH_MODE=true`) inserts a `robustness_runs`
    row and submits a background task, mirroring the model-test flow.
 2. For each requested `PdfTransform`: `print_to_pdf` and `ocr_regeneration` both rasterize every
    page via `packages/robustness`'s `render-pages.ts` (using `@napi-rs/canvas`, resolved through
@@ -213,7 +213,7 @@ injected instruction instead, so there is no separate distribution step — the 
 
 ### Data flow: submissions (§3)
 
-`POST /jobs/:jobId/submissions` (gated on `PS_RESEARCH_MODE=true` and per-request
+`POST /jobs/:jobId/submissions` (gated on `PDFI_RESEARCH_MODE=true` and per-request
 `acknowledgeNoRealStudentData: true`) reads text directly, or OCRs an uploaded image/PDF via
 `tesseract.js`/`pdfjs-dist` first, then: (1) `packages/detector`'s `matchSignals()` against the
 job's `ExpectedSignal[]`, grouped into `methodology`/`lexical`/`structural` via `scoring.ts`; (2)
@@ -228,23 +228,23 @@ calibration.
 
 ## Storage layout
 
-Artifacts are stored on disk under `PS_STORAGE_DIR` (default `./.pdf-injection-data`), one
+Artifacts are stored on disk under `PDFI_STORAGE_DIR` (default `./.pdf-injection-data`), one
 subdirectory per job, named exactly `<jobId>` (a server-generated UUID — never a client-supplied
 path segment):
 
 ```text
-<PS_STORAGE_DIR>/
+<PDFI_STORAGE_DIR>/
 └── <jobId>/
     ├── source.pdf         # original upload, byte-for-byte
     ├── output.pdf         # injected PDF (absent if injection hard-failed)
     ├── manifest.json      # PrivateManifest — contains the plaintext instruction
     ├── report.json        # ValidationReport
     ├── conditions/        # cached condition PDFs for model-test runs (<mode>.pdf, incl. xmp_only)
-    └── submissions/       # per-submission uploaded/derived text + OCR source files (§3, PS_RESEARCH_MODE)
+    └── submissions/       # per-submission uploaded/derived text + OCR source files (§3, PDFI_RESEARCH_MODE)
 ```
 
 Variant sets and student-keyed sets are **not** nested inside a single job's directory (they own
-multiple member jobs): each set gets its own `<PS_STORAGE_DIR>/sets/<setId>/` directory holding
+multiple member jobs): each set gets its own `<PDFI_STORAGE_DIR>/sets/<setId>/` directory holding
 `distribution.json` (variant sets) or `mapping.json` (student-keyed sets — the private
 `studentId,key,jobId,outputSha256` data, only ever persisted here plus each member's own
 `manifest.json`), while each member's own `source.pdf`/`output.pdf`/`manifest.json`/`report.json`
@@ -347,7 +347,7 @@ Notable properties:
 - All queries are parameterized (`$name` placeholders via `Database#query().run()/.get()/.all()`)
   — no string interpolation into SQL anywhere in any repository.
 - Two background `setInterval`s (both unref'd, so neither blocks process/test exit):
-  `sweepExpiredJobs()` (every `PS_SWEEP_INTERVAL_MS`, deletes any job whose `expires_at` has
+  `sweepExpiredJobs()` (every `PDFI_SWEEP_INTERVAL_MS`, deletes any job whose `expires_at` has
   passed — cascading to its runs/submissions rows both via SQL `ON DELETE CASCADE` and via
   `deleteJobDir()` removing the job's files) and `sweepExpiredSets()` (variant sets and
   student-keyed sets have their own `expires_at`, since their set-level storage —

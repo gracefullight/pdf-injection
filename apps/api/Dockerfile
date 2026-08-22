@@ -25,9 +25,9 @@ RUN bun install --frozen-lockfile
 ENV NODE_ENV=production
 # Persisted job artifacts + sqlite DB live under this directory; mount a
 # volume here in docker-compose so data survives container restarts.
-ENV PS_STORAGE_DIR=/app/data
-ENV PS_DB_PATH=/app/data/pdf-injection.sqlite
-ENV PS_PORT=3001
+ENV PDFI_STORAGE_DIR=/app/data
+ENV PDFI_DB_PATH=/app/data/pdf-injection.sqlite
+ENV PDFI_PORT=3001
 
 # Run as the non-root `bun` user oven/bun images ship (UID/GID 1000), not
 # root. /app/data is the volume mount point (see docker-compose.yml) and
@@ -40,6 +40,6 @@ EXPOSE 3001
 
 # oven/bun images don't ship curl/wget; use bun's own fetch instead.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD bun -e "fetch('http://localhost:' + (process.env.PS_PORT || 3001) + '/api/v1/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+  CMD bun -e "fetch('http://localhost:' + (process.env.PDFI_PORT || 3001) + '/api/v1/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 CMD ["bun", "run", "--cwd", "apps/api", "start"]

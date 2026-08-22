@@ -73,7 +73,7 @@ async function loadManifest(config: AppConfig, jobId: string): Promise<PrivateMa
 
 /**
  * Validates every requested provider against the gating rules (contract
- * §2): `anthropic`/`openai` need `PS_ALLOW_EXTERNAL_PROVIDERS=true` AND
+ * §2): `anthropic`/`openai` need `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` AND
  * `acknowledgeExternalTransfer: true` AND a configured API key; `mock` is
  * always allowed. Throws the first violation found (order matches the
  * contract's own ordering: disabled -> not acknowledged -> not configured).
@@ -172,7 +172,7 @@ async function runModelTestJob(
 
     if (config.researchResultsDir) {
       // Opt-in side-channel copy (contract §2: "Also copied into
-      // research/results/ ONLY when PS_RESEARCH_RESULTS_DIR is set").
+      // research/results/ ONLY when PDFI_RESEARCH_RESULTS_DIR is set").
       // Best-effort: a failure here must never fail the run itself.
       try {
         await mkdir(config.researchResultsDir, { recursive: true });
@@ -181,7 +181,7 @@ async function runModelTestJob(
           JSON.stringify(run, null, 2),
         );
       } catch (err) {
-        console.error("PS_RESEARCH_RESULTS_DIR copy failed:", (err as Error).name);
+        console.error("PDFI_RESEARCH_RESULTS_DIR copy failed:", (err as Error).name);
       }
     }
   } catch (err) {

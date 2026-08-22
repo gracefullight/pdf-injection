@@ -3,7 +3,7 @@ import { ApiError } from "../errors";
 /**
  * Races `fn` against a wall-clock timer. If the timer wins, the returned
  * promise rejects with `ApiError("PROCESSING_TIMEOUT")` (contract §0.3:
- * `PS_MAX_PROCESSING_MS` -> 504, no row/files) — `fn` is NOT cancelled (JS
+ * `PDFI_MAX_PROCESSING_MS` -> 504, no row/files) — `fn` is NOT cancelled (JS
  * has no true cancellation for arbitrary async work), it simply keeps
  * running in the background and its eventual result is discarded by the
  * caller of `withTimeLimit` itself.

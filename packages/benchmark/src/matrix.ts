@@ -39,7 +39,7 @@ export interface RunMatrixInput {
   hiddenInstruction: string;
   /** 0-based page index the instruction targets. Defaults to 0. Forwarded to the `mock` adapter only. */
   targetPageIndex?: number;
-  /** Bounded parallelism for provider calls. Defaults to 2 (PS_MODEL_TEST_CONCURRENCY default, contract §0.2). */
+  /** Bounded parallelism for provider calls. Defaults to 2 (PDFI_MODEL_TEST_CONCURRENCY default, contract §0.2). */
   concurrency?: number;
   onProgress?: (progress: { done: number; total: number }) => void;
   /** When aborted, no new calls are started; already-in-flight calls are allowed to finish. Results/aggregates only cover completed calls. */

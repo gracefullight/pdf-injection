@@ -33,7 +33,7 @@ export interface BuildManifestInput {
     pdfLib: string;
     pdfJs: string;
     qpdf: string | null;
-    pdf-injection: string;
+    pdfInjection: string;
   };
   createdAt?: string;
 }

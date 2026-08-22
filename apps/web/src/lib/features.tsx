@@ -55,9 +55,9 @@ export type FeatureKey = keyof Features;
 
 /** The exact env var a professor/operator would set to enable each server-gated feature. */
 export const FEATURE_ENV_VAR: Partial<Record<FeatureKey, string>> = {
-  externalProviders: "PS_ALLOW_EXTERNAL_PROVIDERS",
-  researchMode: "PS_RESEARCH_MODE",
-  koPayload: "PS_FONT_DIR",
+  externalProviders: "PDFI_ALLOW_EXTERNAL_PROVIDERS",
+  researchMode: "PDFI_RESEARCH_MODE",
+  koPayload: "PDFI_FONT_DIR",
 };
 
 /** ocrAvailable / canvasAvailable / qpdfAvailable are native-dependency capabilities, not env toggles. */

@@ -7,7 +7,7 @@ import type {
 import { withRetryOnce } from "./retry";
 import type { AskTextInput, AskWithPdfInput, ProviderAdapter, ProviderAnswer } from "./types";
 
-/** PS_ANTHROPIC_MODEL default per contract §0.2. */
+/** PDFI_ANTHROPIC_MODEL default per contract §0.2. */
 export const DEFAULT_ANTHROPIC_MODEL = "claude-opus-5";
 const MAX_TOKENS = 16000;
 /** Client-side request timeout; retried requests reuse the same budget per call. */
@@ -57,7 +57,7 @@ export interface CreateAnthropicAdapterInput {
  */
 export function createAnthropicAdapter(input: CreateAnthropicAdapterInput = {}): ProviderAdapter {
   const apiKey = input.apiKey ?? process.env.ANTHROPIC_API_KEY ?? "";
-  const model = input.model ?? process.env.PS_ANTHROPIC_MODEL ?? DEFAULT_ANTHROPIC_MODEL;
+  const model = input.model ?? process.env.PDFI_ANTHROPIC_MODEL ?? DEFAULT_ANTHROPIC_MODEL;
   const configured = apiKey.length > 0;
 
   let client: Anthropic | null = null;

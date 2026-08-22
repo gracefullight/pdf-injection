@@ -27,12 +27,12 @@
           "name": {
             "type": "string",
             "enum": ["anthropic", "openai", "mock"],
-            "description": "ProviderName. \"mock\" is deterministic and always available (no API key); \"anthropic\"/\"openai\" require PS_ALLOW_EXTERNAL_PROVIDERS=true, a configured API key, and acknowledgeExternalTransfer:true."
+            "description": "ProviderName. \"mock\" is deterministic and always available (no API key); \"anthropic\"/\"openai\" require PDFI_ALLOW_EXTERNAL_PROVIDERS=true, a configured API key, and acknowledgeExternalTransfer:true."
           },
           "model": {
             "type": "string",
             "minLength": 1,
-            "description": "Overrides the provider's default model id (env PS_ANTHROPIC_MODEL / PS_OPENAI_MODEL) for this run only."
+            "description": "Overrides the provider's default model id (env PDFI_ANTHROPIC_MODEL / PDFI_OPENAI_MODEL) for this run only."
           }
         }
       }
@@ -62,7 +62,7 @@
       "type": "integer",
       "minimum": 1,
       "maximum": 10,
-      "description": "Repeats per (provider, condition) pair, for measuring inter-run variation (PRD §23.2). Server-side ceiling: LIMITS.maxModelTestRepeats / PS_MODEL_TEST_MAX_REPEATS (default 10)."
+      "description": "Repeats per (provider, condition) pair, for measuring inter-run variation (PRD §23.2). Server-side ceiling: LIMITS.maxModelTestRepeats / PDFI_MODEL_TEST_MAX_REPEATS (default 10)."
     },
     "outerPrompt": {
       "type": "string",

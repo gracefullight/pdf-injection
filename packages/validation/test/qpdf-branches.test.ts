@@ -49,7 +49,7 @@ function envWithFakeQpdf(
 }
 
 describe("qpdfCheck — fake binary branches", () => {
-  test("not_run when PS_QPDF_ENABLED is not 'true' (enabled: false), even with a resolvable binary", async () => {
+  test("not_run when PDFI_QPDF_ENABLED is not 'true' (enabled: false), even with a resolvable binary", async () => {
     const result = await qpdfCheck({
       filePath: "/tmp/does-not-matter.pdf",
       enabled: false,

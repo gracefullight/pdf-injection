@@ -106,7 +106,7 @@ export function providerAvailability(
     return {
       available: false,
       reason:
-        "Not available on this server. Ask the operator to set PS_ALLOW_EXTERNAL_PROVIDERS=true.",
+        "Not available on this server. Ask the operator to set PDFI_ALLOW_EXTERNAL_PROVIDERS=true.",
     };
   }
   return { available: true, reason: null };

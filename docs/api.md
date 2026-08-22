@@ -28,21 +28,21 @@ constant time — never the raw token:
 
 | Env var | Default | Error code |
 |---|---|---|
-| `PS_MAX_FILE_BYTES` | 26214400 (25 MB) | `FILE_TOO_LARGE` (413) |
-| `PS_MAX_PAGES` | 100 | `TOO_MANY_PAGES` (422) |
-| `PS_MAX_INSTRUCTION_CHARS` | 1500 | `PROMPT_TOO_LONG` (422) |
-| `PS_RETENTION_HOURS` | 24 | — (sweeper deletes expired jobs) |
-| `PS_STORAGE_DIR` | `./.pdf-injection-data` | — |
-| `PS_QPDF_ENABLED` | `false` | — |
-| `PS_MAX_PAGE_DIMENSION_PT` | 14400 | `INVALID_PDF` (page box too large) |
-| `PS_MAX_PROCESSING_MS` | 60000 | `PROCESSING_TIMEOUT` (504) |
-| `PS_MAX_VARIANTS` | 8 | `TOO_MANY_VARIANTS` (422) |
-| `PS_MAX_STUDENT_KEYS` | 500 | `TOO_MANY_STUDENTS` (422) |
-| `PS_MAX_SUBMISSION_BYTES` | 10485760 (10 MB) | `FILE_TOO_LARGE` (413) |
-| `PS_MAX_SUBMISSIONS_PER_JOB` | 500 | `VALIDATION_ERROR` (422) |
-| `PS_MODEL_TEST_MAX_REPEATS` | 10 | `VALIDATION_ERROR` (422) |
-| `PS_RESEARCH_MODE` | `false` | `RESEARCH_MODE_DISABLED` (403) — gates §3/§4 |
-| `PS_ALLOW_EXTERNAL_PROVIDERS` | `false` | `EXTERNAL_PROVIDERS_DISABLED` (403) — gates non-`mock` providers |
+| `PDFI_MAX_FILE_BYTES` | 26214400 (25 MB) | `FILE_TOO_LARGE` (413) |
+| `PDFI_MAX_PAGES` | 100 | `TOO_MANY_PAGES` (422) |
+| `PDFI_MAX_INSTRUCTION_CHARS` | 1500 | `PROMPT_TOO_LONG` (422) |
+| `PDFI_RETENTION_HOURS` | 24 | — (sweeper deletes expired jobs) |
+| `PDFI_STORAGE_DIR` | `./.pdf-injection-data` | — |
+| `PDFI_QPDF_ENABLED` | `false` | — |
+| `PDFI_MAX_PAGE_DIMENSION_PT` | 14400 | `INVALID_PDF` (page box too large) |
+| `PDFI_MAX_PROCESSING_MS` | 60000 | `PROCESSING_TIMEOUT` (504) |
+| `PDFI_MAX_VARIANTS` | 8 | `TOO_MANY_VARIANTS` (422) |
+| `PDFI_MAX_STUDENT_KEYS` | 500 | `TOO_MANY_STUDENTS` (422) |
+| `PDFI_MAX_SUBMISSION_BYTES` | 10485760 (10 MB) | `FILE_TOO_LARGE` (413) |
+| `PDFI_MAX_SUBMISSIONS_PER_JOB` | 500 | `VALIDATION_ERROR` (422) |
+| `PDFI_MODEL_TEST_MAX_REPEATS` | 10 | `VALIDATION_ERROR` (422) |
+| `PDFI_RESEARCH_MODE` | `false` | `RESEARCH_MODE_DISABLED` (403) — gates §3/§4 |
+| `PDFI_ALLOW_EXTERNAL_PROVIDERS` | `false` | `EXTERNAL_PROVIDERS_DISABLED` (403) — gates non-`mock` providers |
 
 ## Error envelope (all non-2xx responses)
 
@@ -57,9 +57,9 @@ Error codes (`ApiErrorCode` union in `@pdf-injection/contracts`):
 | `INVALID_PDF` | 400 | magic bytes / parse failure / abnormal page dimensions |
 | `PDF_ENCRYPTED` | 422 | encrypted source |
 | `PDF_SIGNED` | 422 | digital signature (`/Sig` field, or `/DocMDP`/`/UR3` in the catalog `/Perms`) present |
-| `FILE_TOO_LARGE` | 413 | over `PS_MAX_FILE_BYTES` |
-| `TOO_MANY_PAGES` | 422 | over `PS_MAX_PAGES` |
-| `PROMPT_TOO_LONG` | 422 | instruction > `PS_MAX_INSTRUCTION_CHARS` |
+| `FILE_TOO_LARGE` | 413 | over `PDFI_MAX_FILE_BYTES` |
+| `TOO_MANY_PAGES` | 422 | over `PDFI_MAX_PAGES` |
+| `PROMPT_TOO_LONG` | 422 | instruction > `PDFI_MAX_INSTRUCTION_CHARS` |
 | `PROMPT_ENCODING_FAILED` | 422 | non-printable-ASCII / null byte / control chars |
 | `PROMPT_LINT_ERROR` | 422 | other lint errors (empty prompt, empty expected signals) |
 | `VALIDATION_ERROR` | 422 | malformed multipart field / JSON body |
@@ -71,20 +71,20 @@ Error codes (`ApiErrorCode` union in `@pdf-injection/contracts`):
 | `JOB_FORBIDDEN` | 403 | missing or wrong `X-Job-Token` |
 | `JOB_NOT_READY` | 409 | artifact requested before it exists / job not completed |
 | `NOT_IMPLEMENTED` | 501 | reserved in `ApiErrorCode`; no route currently returns this — `POST /jobs/:jobId/model-tests` is now a real endpoint (see below) |
-| `EXTERNAL_PROVIDERS_DISABLED` | 403 | `anthropic`/`openai` requested while `PS_ALLOW_EXTERNAL_PROVIDERS=false` (`mock` is always allowed) |
-| `RESEARCH_MODE_DISABLED` | 403 | any §3/§4 (submissions, robustness) route while `PS_RESEARCH_MODE=false` |
+| `EXTERNAL_PROVIDERS_DISABLED` | 403 | `anthropic`/`openai` requested while `PDFI_ALLOW_EXTERNAL_PROVIDERS=false` (`mock` is always allowed) |
+| `RESEARCH_MODE_DISABLED` | 403 | any §3/§4 (submissions, robustness) route while `PDFI_RESEARCH_MODE=false` |
 | `PROVIDER_NOT_CONFIGURED` | 422 | external providers allowed but the selected provider's API key env var is unset |
 | `PROVIDER_ERROR` | 502 | the model provider returned an error |
 | `RUN_NOT_FOUND` | 404 | unknown/expired model-test or robustness run |
 | `RUN_NOT_READY` | 409 | export requested before the run finished |
 | `SUBMISSION_NOT_FOUND` | 404 | unknown/expired submission |
 | `VARIANT_SET_NOT_FOUND` | 404 | unknown/expired variant set or student-keyed set |
-| `TOO_MANY_VARIANTS` | 422 | variant count over `PS_MAX_VARIANTS` |
-| `TOO_MANY_STUDENTS` | 422 | student count over `PS_MAX_STUDENT_KEYS` |
+| `TOO_MANY_VARIANTS` | 422 | variant count over `PDFI_MAX_VARIANTS` |
+| `TOO_MANY_STUDENTS` | 422 | student count over `PDFI_MAX_STUDENT_KEYS` |
 | `OCR_UNAVAILABLE` | 422 | OCR requested (submissions image upload, screenshot-OCR robustness) but `tesseract.js`/its trained-data isn't available in this process (`health.features.ocrAvailable: false`) |
 | `CANVAS_UNAVAILABLE` | 422 | a robustness PDF transform (print-to-PDF, OCR regeneration) requires `@napi-rs/canvas` rendering but it isn't available (`health.features.canvasAvailable: false`) |
-| `PROCESSING_TIMEOUT` | 504 | `POST /jobs` exceeded `PS_MAX_PROCESSING_MS` — no job row or files are left behind |
-| `FONT_UNAVAILABLE` | 422 | `payloadLanguage="ko"` requested but the CJK font subset (`PS_FONT_DIR`) is not available on the server |
+| `PROCESSING_TIMEOUT` | 504 | `POST /jobs` exceeded `PDFI_MAX_PROCESSING_MS` — no job row or files are left behind |
+| `FONT_UNAVAILABLE` | 422 | `payloadLanguage="ko"` requested but the CJK font subset (`PDFI_FONT_DIR`) is not available on the server |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | a submission file's extension doesn't match its content, or has an extension outside txt/md/pdf/png/jpg |
 
 `QPDF_WARNING` is **not** an error code — it is surfaced as `validation.qpdfStatus: "warning"` in
@@ -113,15 +113,15 @@ the report.
 }
 ```
 
-  - `features.externalProviders` / `features.researchMode` mirror `PS_ALLOW_EXTERNAL_PROVIDERS` /
-    `PS_RESEARCH_MODE` directly.
+  - `features.externalProviders` / `features.researchMode` mirror `PDFI_ALLOW_EXTERNAL_PROVIDERS` /
+    `PDFI_RESEARCH_MODE` directly.
   - `features.ocrAvailable` / `features.canvasAvailable` are live-probed capabilities
     (`packages/robustness`'s `capabilities()`): whether `tesseract.js` (with its `eng`
     trained-data file) and `@napi-rs/canvas` (resolved through `pdfjs-dist`'s own module root) are
     actually usable in this process, not just installed. Both default to `true` on a normal
     install; they can be `false` in a sandboxed/offline environment.
   - `features.koPayload` mirrors `packages/pdf-engine`'s `koreanFontAvailable()` — whether the
-    `PS_FONT_DIR` CJK font subset can be loaded.
+    `PDFI_FONT_DIR` CJK font subset can be loaded.
 
 ### `POST /api/v1/jobs`
 
@@ -170,7 +170,7 @@ for the full pipeline).
     `PDF_HAS_OPEN_ACTION` warnings in `result.warnings`, never as hard-gate failures.
 - **Errors**: 400 / 413 / 422 as above — these are **pre-processing** rejections: no job row or
   files are created (except `FILE_TOO_LARGE` from the initial `Content-Length` check, which also
-  creates nothing). `504 PROCESSING_TIMEOUT` (over `PS_MAX_PROCESSING_MS`) is a mid-processing
+  creates nothing). `504 PROCESSING_TIMEOUT` (over `PDFI_MAX_PROCESSING_MS`) is a mid-processing
   abort — it also leaves no job row or files.
 
 ### `GET /api/v1/jobs/:jobId`
@@ -275,7 +275,7 @@ recomputes `overall`.
 ### Model tests (§2 — Phase 3 provider benchmark)
 
 All routes require `X-Job-Token` for the owning job. `mock` is always available; `anthropic`/
-`openai` require `PS_ALLOW_EXTERNAL_PROVIDERS=true`, the matching API key env var
+`openai` require `PDFI_ALLOW_EXTERNAL_PROVIDERS=true`, the matching API key env var
 (`ANTHROPIC_API_KEY`/`OPENAI_API_KEY`), and `acknowledgeExternalTransfer: true` in the request
 body — otherwise `403 EXTERNAL_PROVIDERS_DISABLED` (flag off) or `422 PROVIDER_NOT_CONFIGURED`
 (flag on, key missing). Runs execute in-process, asynchronously, via a bounded background queue
@@ -284,7 +284,7 @@ body — otherwise `403 EXTERNAL_PROVIDERS_DISABLED` (flag off) or `422 PROVIDER
 #### `POST /api/v1/jobs/:jobId/model-tests`
 
 Creates a run (`ModelTestRequest`: `providers`, `conditions` — a `BenchmarkCondition[]` or the
-literal `"all"` — `repeats` (≤ `PS_MODEL_TEST_MAX_REPEATS`, default 10), `outerPrompt` (optional,
+literal `"all"` — `repeats` (≤ `PDFI_MODEL_TEST_MAX_REPEATS`, default 10), `outerPrompt` (optional,
 defaults to the PRD §21.3 prompt), `acknowledgeExternalTransfer`). One condition PDF is generated
 per requested `BenchmarkCondition` (`original`, `white_text`, `render_mode_3`,
 `visible_positive_control`, `xmp_only`) and cached for reuse across repeats/providers.
@@ -313,7 +313,7 @@ non-overclaiming `interpretation` string (never "AI detected").
 
 Downloads the run as `application/json` or `text/csv`
 (`Content-Disposition: attachment; filename="..."`). `includeRaw=true` includes each call's raw
-provider response text; omitted/`false` excludes it. When `PS_RESEARCH_RESULTS_DIR` is set, the
+provider response text; omitted/`false` excludes it. When `PDFI_RESEARCH_RESULTS_DIR` is set, the
 same export is also copied there (see [`research/results/README.md`](../research/results/README.md)).
 
 - **Errors**: 403, 404, 409 (`RUN_NOT_READY` — run must be `completed`/`failed`/`cancelled`)
@@ -327,7 +327,7 @@ same id returns `404`.
 
 ### Robustness (§4 — Phase 5 transform survival)
 
-All routes require `PS_RESEARCH_MODE=true` (else `403 RESEARCH_MODE_DISABLED`) and `X-Job-Token`.
+All routes require `PDFI_RESEARCH_MODE=true` (else `403 RESEARCH_MODE_DISABLED`) and `X-Job-Token`.
 
 #### `POST /api/v1/jobs/:jobId/robustness`
 
@@ -385,7 +385,7 @@ Cancels (if running) and deletes the run and its artifacts.
 These two resource families are **not** scoped under `/jobs/:jobId` — each `POST` creates its own
 set (and one underlying job per variant/student) and returns its own `accessToken`, sent as
 `X-Job-Token` on every subsequent request for that set id. They do **not** require
-`PS_RESEARCH_MODE` (assignment-level A/B variant distribution is a Phase 1 feature, not a
+`PDFI_RESEARCH_MODE` (assignment-level A/B variant distribution is a Phase 1 feature, not a
 research-only one) — only §3/§4 (submissions, robustness) do.
 
 #### `POST /api/v1/variant-sets`
@@ -463,7 +463,7 @@ Deletes the set, every member job, and their artifacts.
 
 ### Submissions (§3 — Phase 4 submission-side detection, research only)
 
-All routes require `PS_RESEARCH_MODE=true` (else `403 RESEARCH_MODE_DISABLED`) and `X-Job-Token`
+All routes require `PDFI_RESEARCH_MODE=true` (else `403 RESEARCH_MODE_DISABLED`) and `X-Job-Token`
 for the owning job. **No real student data**: `POST /submissions` requires
 `acknowledgeNoRealStudentData: true` on every request — see
 [`docs/ethics-and-privacy.md`](ethics-and-privacy.md).
@@ -618,7 +618,7 @@ export interface PrivateManifest {
   expectedSignals: ExpectedSignal[];
   injection: { mode: InjectionMode; pageIndex: number; position: Position; fontSize: number; boundingBox: [number, number, number, number] };
   validation: ValidationSummary;
-  toolVersions: { bun: string; pdfLib: string; pdfJs: string; qpdf: string | null; pdf-injection: string };
+  toolVersions: { bun: string; pdfLib: string; pdfJs: string; qpdf: string | null; pdfInjection: string };
   createdAt: string;
   warning: "PRIVATE — contains the hidden instruction. Do not distribute to students.";
 }
@@ -681,11 +681,11 @@ signal for this mode.
 ## Notes
 
 - Filenames are sanitized (`[^A-Za-z0-9._-]` → `_`, max 100 chars, no extension) by
-  `sanitizeFilenameStem()`; storage paths are `PS_STORAGE_DIR/<jobId>/{source.pdf,output.pdf,manifest.json,report.json}`
+  `sanitizeFilenameStem()`; storage paths are `PDFI_STORAGE_DIR/<jobId>/{source.pdf,output.pdf,manifest.json,report.json}`
   — the client never supplies a path segment, and `:jobId` is validated as a UUID v4 before any
   path is built from it.
 - Instruction text is never written to server logs — only `promptSha256` is logged.
-- CORS is restricted to `PS_CORS_ORIGIN` (default `http://localhost:5173`), `credentials: false`,
+- CORS is restricted to `PDFI_CORS_ORIGIN` (default `http://localhost:5173`), `credentials: false`,
   with `X-Job-Token` in the allowed headers list.
 - Every response carries `Content-Security-Policy: default-src 'self'`,
   `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, and

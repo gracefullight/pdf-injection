@@ -63,16 +63,16 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
       env: {
-        PS_PORT: String(API_PORT),
-        PS_STORAGE_DIR: apiStorageDir,
-        PS_DB_PATH: apiDbPath,
-        PS_CORS_ORIGIN: `http://localhost:${WEB_PORT}`,
+        PDFI_PORT: String(API_PORT),
+        PDFI_STORAGE_DIR: apiStorageDir,
+        PDFI_DB_PATH: apiDbPath,
+        PDFI_CORS_ORIGIN: `http://localhost:${WEB_PORT}`,
         // Round-2 (r9): Phase 4/5 specs (submissions, robustness, model-test) need
-        // the research-mode-gated tabs enabled. PS_ALLOW_EXTERNAL_PROVIDERS is
+        // the research-mode-gated tabs enabled. PDFI_ALLOW_EXTERNAL_PROVIDERS is
         // deliberately left unset — every spec here uses the "mock" provider only,
         // so external-provider gating (403/422) stays exercised via apps/api's own
         // integration tests, not this E2E suite.
-        PS_RESEARCH_MODE: "true",
+        PDFI_RESEARCH_MODE: "true",
       },
     },
     {

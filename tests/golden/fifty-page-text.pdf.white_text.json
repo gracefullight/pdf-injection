@@ -911,7 +911,7 @@
     "ACCESSIBILITY_HIDDEN_TEXT"
   ],
   "fixture": "fifty-page-text.pdf",
-  "generatedAt": "2026-08-22T05:10:59.765Z",
+  "generatedAt": "2026-08-22T08:24:14.095Z",
   "kind": "inject",
   "maxVisualDiffRatio": 0.00001,
   "mode": "white_text",

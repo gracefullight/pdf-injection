@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { qpdfCheck } from "../src/qpdf";
 
 describe("qpdfCheck", () => {
-  test("returns not_run when PS_QPDF_ENABLED is not 'true'", async () => {
+  test("returns not_run when PDFI_QPDF_ENABLED is not 'true'", async () => {
     const result = await qpdfCheck({ filePath: "/tmp/does-not-matter.pdf", enabled: false });
     expect(result.status).toBe("not_run");
     expect(result.exitCode).toBeNull();

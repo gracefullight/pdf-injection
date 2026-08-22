@@ -1,4 +1,9 @@
-import type { PdfTransform, ProviderName, RunStatus, TextTransform } from "@pdf-injection/contracts";
+import type {
+  PdfTransform,
+  ProviderName,
+  RunStatus,
+  TextTransform,
+} from "@pdf-injection/contracts";
 
 export const ALL_PDF_TRANSFORMS: PdfTransform[] = ["print_to_pdf", "ocr_regeneration"];
 export const ALL_TEXT_TRANSFORMS: TextTransform[] = ["paraphrase", "translation", "human_edit"];
@@ -49,7 +54,7 @@ export function providerAvailability(
   if (!features.externalProviders) {
     return {
       available: false,
-      reason: "External providers disabled — set PS_ALLOW_EXTERNAL_PROVIDERS=true to enable.",
+      reason: "External providers disabled — set PDFI_ALLOW_EXTERNAL_PROVIDERS=true to enable.",
     };
   }
   return { available: true, reason: null };

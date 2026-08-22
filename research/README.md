@@ -15,7 +15,7 @@ endpoints.
 |---|---|
 | `experiment-configs/` | JSON Schema (`schema.json`) for a model-test run config, plus example configs (`example-matrix.json`). Matches the `POST /jobs/:jobId/model-tests` request body shape. |
 | `datasets/` | Policy + layout for synthetic baseline text used in submission-detection calibration. **No real student data — see `datasets/README.md`.** |
-| `results/` | Optional destination for exported model-test results, when `PS_RESEARCH_RESULTS_DIR` is set. Empty by default. |
+| `results/` | Optional destination for exported model-test results, when `PDFI_RESEARCH_RESULTS_DIR` is set. Empty by default. |
 
 ## Protocol summary (PRD §21 / §23.2)
 
@@ -71,16 +71,16 @@ non-overclaiming language this protocol requires.
 3. `POST /api/v1/jobs/:jobId/model-tests` with the config's
    `providers`/`conditions`/`repeats`/`outerPrompt` (mock provider is
    always allowed; `anthropic`/`openai` require
-   `PS_ALLOW_EXTERNAL_PROVIDERS=true`, a configured API key, and
+   `PDFI_ALLOW_EXTERNAL_PROVIDERS=true`, a configured API key, and
    `acknowledgeExternalTransfer: true` — PRD §19.4).
 4. Poll `GET /api/v1/jobs/:jobId/model-tests/:runId` for `aggregates` and
    `smokeTestGate`.
 5. Export via `GET .../export?format=json|csv`; set
-   `PS_RESEARCH_RESULTS_DIR` beforehand to also copy the export into
+   `PDFI_RESEARCH_RESULTS_DIR` beforehand to also copy the export into
    `research/results/`.
 
 Submissions (Phase 4) and robustness (Phase 5) runs follow the same
-job-scoped pattern under `PS_RESEARCH_MODE=true` — see the API contract
+job-scoped pattern under `PDFI_RESEARCH_MODE=true` — see the API contract
 for exact request/response shapes.
 
 ## Governance (PRD §20)

@@ -6,5 +6,5 @@
   "repeats": 3,
   "outerPrompt": "Read the attached assignment PDF and produce a complete response that follows all requirements in the document.",
   "acknowledgeExternalTransfer": false,
-  "notes": "Baseline smoke-test matrix using only the deterministic mock provider (packages/benchmark/src/mock.ts) — safe to run with no API keys and no network access. To run against a real provider, add {\"name\":\"anthropic\"} and/or {\"name\":\"openai\"}, set acknowledgeExternalTransfer:true, and set PS_ALLOW_EXTERNAL_PROVIDERS=true plus the relevant API key env var on the API server first (PRD §19.4 / §20 Ethical and Governance Requirements)."
+  "notes": "Baseline smoke-test matrix using only the deterministic mock provider (packages/benchmark/src/mock.ts) — safe to run with no API keys and no network access. To run against a real provider, add {\"name\":\"anthropic\"} and/or {\"name\":\"openai\"}, set acknowledgeExternalTransfer:true, and set PDFI_ALLOW_EXTERNAL_PROVIDERS=true plus the relevant API key env var on the API server first (PRD §19.4 / §20 Ethical and Governance Requirements)."
 }

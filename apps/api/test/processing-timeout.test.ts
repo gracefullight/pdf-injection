@@ -3,13 +3,13 @@ import { existsSync, readdirSync } from "node:fs";
 import * as pdfEngine from "@pdf-injection/pdf-engine";
 import { buildCreateJobRequest, DEFAULT_SIGNALS, fixtureFile, testApp } from "./helpers";
 
-// PS_MAX_PROCESSING_MS (contract §0.3): a slow injection must abort with 504
+// PDFI_MAX_PROCESSING_MS (contract §0.3): a slow injection must abort with 504
 // PROCESSING_TIMEOUT and leave no job row or files behind. Simulated here by
 // spying on @pdf-injection/pdf-engine's injectPdf() (via spyOn on the
 // imported namespace object — see hard-gate-failure.test.ts's module doc
 // for why this is used instead of mock.module(), which leaks process-wide)
-// to resolve well after a (test-only, very short) PS_MAX_PROCESSING_MS.
-describe("POST /api/v1/jobs — PS_MAX_PROCESSING_MS", () => {
+// to resolve well after a (test-only, very short) PDFI_MAX_PROCESSING_MS.
+describe("POST /api/v1/jobs — PDFI_MAX_PROCESSING_MS", () => {
   test("504 PROCESSING_TIMEOUT, no job row, no files left on disk", async () => {
     const spy = spyOn(pdfEngine, "injectPdf").mockImplementation(async (input) => {
       await new Promise((resolve) => setTimeout(resolve, 300));

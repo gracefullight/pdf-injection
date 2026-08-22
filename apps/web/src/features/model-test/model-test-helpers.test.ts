@@ -203,7 +203,7 @@ describe("providerAvailability", () => {
   it("anthropic/openai are unavailable with a reason when externalProviders is off", () => {
     const result = providerAvailability("anthropic", { externalProviders: false });
     expect(result.available).toBe(false);
-    expect(result.reason).toContain("PS_ALLOW_EXTERNAL_PROVIDERS");
+    expect(result.reason).toContain("PDFI_ALLOW_EXTERNAL_PROVIDERS");
   });
 
   it("anthropic/openai are available (pending server-side key check) when externalProviders is on", () => {

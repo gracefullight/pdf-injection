@@ -32,7 +32,7 @@ function buildSubmissionRequest(
 }
 
 describe("POST /api/v1/jobs/:jobId/submissions", () => {
-  test("PS_RESEARCH_MODE=false -> 403 RESEARCH_MODE_DISABLED", async () => {
+  test("PDFI_RESEARCH_MODE=false -> 403 RESEARCH_MODE_DISABLED", async () => {
     const { app } = testApp({ researchMode: false });
     const file = await fixtureFile("five-page-text.pdf");
     const { jobId, token } = await createTestJob(app, file);
@@ -246,7 +246,7 @@ describe("POST /api/v1/jobs/:jobId/submissions", () => {
   test("research mode disabled AFTER data was collected -> 403 on GET list/statistics/single and DELETE too (not just POST)", async () => {
     // Regression for QA HIGH #1: the gate must cover every submissions
     // endpoint, not just the write path — previously collected data must
-    // not remain readable/deletable once PS_RESEARCH_MODE is turned off.
+    // not remain readable/deletable once PDFI_RESEARCH_MODE is turned off.
     const { app: writerApp, config } = testApp({ researchMode: true });
     const file = await fixtureFile("five-page-text.pdf");
     const { jobId, token } = await createTestJob(writerApp, file);

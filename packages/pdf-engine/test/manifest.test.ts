@@ -44,7 +44,7 @@ function buildInput(overrides: Partial<Parameters<typeof buildManifest>[0]> = {}
       pdfLib: "1.17.1",
       pdfJs: "4.10.38",
       qpdf: null,
-      pdf-injection: "0.1.0",
+      pdfInjection: "0.1.0",
     },
     ...overrides,
   };
@@ -90,7 +90,7 @@ describe("buildManifest", () => {
 
   test("carries through toolVersions and validation summary", () => {
     const manifest = buildManifest(buildInput());
-    expect(manifest.toolVersions.pdf-injection).toBe("0.1.0");
+    expect(manifest.toolVersions.pdfInjection).toBe("0.1.0");
     expect(manifest.validation).toEqual(summary);
   });
 });

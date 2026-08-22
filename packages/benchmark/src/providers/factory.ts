@@ -25,7 +25,7 @@ export const DEFAULT_MODEL: Record<ProviderName, string> = {
  * Builds a `ProviderAdapter` for `name`. Never makes a network call itself —
  * callers must check `isConfigured()` before using `anthropic`/`openai`
  * adapters for real requests (contract §2: gated behind
- * `PS_ALLOW_EXTERNAL_PROVIDERS`, `acknowledgeExternalTransfer`, and the
+ * `PDFI_ALLOW_EXTERNAL_PROVIDERS`, `acknowledgeExternalTransfer`, and the
  * relevant API key). `mock` is always configured.
  */
 export function createProvider(input: CreateProviderInput): ProviderAdapter {
@@ -34,12 +34,12 @@ export function createProvider(input: CreateProviderInput): ProviderAdapter {
     case "anthropic":
       return createAnthropicAdapter({
         apiKey: env.ANTHROPIC_API_KEY,
-        model: input.model ?? env.PS_ANTHROPIC_MODEL,
+        model: input.model ?? env.PDFI_ANTHROPIC_MODEL,
       });
     case "openai":
       return createOpenAiAdapter({
         apiKey: env.OPENAI_API_KEY,
-        model: input.model ?? env.PS_OPENAI_MODEL,
+        model: input.model ?? env.PDFI_OPENAI_MODEL,
       });
     case "mock":
       return createMockAdapter({ model: input.model, context: input.mockContext });

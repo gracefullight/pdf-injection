@@ -29,7 +29,7 @@
     "PDF_CONTAINS_EMBEDDED_FILES"
   ],
   "fixture": "embedded-file.pdf",
-  "generatedAt": "2026-08-22T05:10:59.965Z",
+  "generatedAt": "2026-08-22T08:24:14.308Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

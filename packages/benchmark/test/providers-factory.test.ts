@@ -62,7 +62,7 @@ describe("createProvider gating (no network)", () => {
 
     const withEnvOverride = createProvider({
       name: "openai",
-      env: { PS_OPENAI_MODEL: "gpt-5.5-mini" },
+      env: { PDFI_OPENAI_MODEL: "gpt-5.5-mini" },
     });
     expect(withEnvOverride.model).toBe("gpt-5.5-mini");
 

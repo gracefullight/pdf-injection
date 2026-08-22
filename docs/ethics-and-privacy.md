@@ -54,7 +54,7 @@ instruction**, the expected signals, and file/prompt hashes. This file:
 - Carries a warning string directly in its JSON body:
   `"warning": "PRIVATE — contains the hidden instruction. Do not distribute to students."`
 - Is deleted, along with every other artifact for that job, on `DELETE /api/v1/jobs/:jobId` or
-  when the retention sweeper expires the job (default `PS_RETENTION_HOURS=24`).
+  when the retention sweeper expires the job (default `PDFI_RETENTION_HOURS=24`).
 
 The web app's Private Manifest tab shows a masked preview of the instruction plus a prominent
 warning before allowing download — see `apps/web/src/features/validation-result/private-manifest-tab.tsx`.
@@ -65,7 +65,7 @@ warning before allowing download — see `apps/web/src/features/validation-resul
 outer prompt to a third-party LLM provider (`anthropic`/`openai`) when explicitly enabled. Three
 independent things must all be true before that happens:
 
-1. `PS_ALLOW_EXTERNAL_PROVIDERS=true` on the server (off by default) — otherwise
+1. `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` on the server (off by default) — otherwise
    `403 EXTERNAL_PROVIDERS_DISABLED` for any non-`mock` provider.
 2. The relevant API key (`ANTHROPIC_API_KEY`/`OPENAI_API_KEY`) is configured — otherwise
    `422 PROVIDER_NOT_CONFIGURED`.
@@ -112,7 +112,7 @@ false-positive rate against other submissions on the same job labeled `"baseline
 **research scaffold, not a production intake path for real coursework**, and it is deliberately
 hard to reach by accident:
 
-1. **Off by default.** Every submissions route requires `PS_RESEARCH_MODE=true` on the server —
+1. **Off by default.** Every submissions route requires `PDFI_RESEARCH_MODE=true` on the server —
    `403 RESEARCH_MODE_DISABLED` otherwise.
 2. **Per-request acknowledgement required.** `POST /submissions` requires
    `acknowledgeNoRealStudentData: true` on every single request — there is no way to submit
@@ -128,7 +128,7 @@ hard to reach by accident:
    full response shape.
 5. **A real study with real students requires institutional ethics/IRB review** (governance
    requirement 6 and the [IRB note](#irb-note) below) before any real submission is ever analyzed
-   — enabling `PS_RESEARCH_MODE` does not substitute for that review, it only removes the
+   — enabling `PDFI_RESEARCH_MODE` does not substitute for that review, it only removes the
    technical gate.
 
 See [`docs/research-protocol.md`](research-protocol.md) for how to run this research protocol end
@@ -144,14 +144,14 @@ that review.
 
 ## Privacy defaults
 
-- **No external LLM calls by default.** `PS_ALLOW_EXTERNAL_PROVIDERS=false` (default) blocks the
+- **No external LLM calls by default.** `PDFI_ALLOW_EXTERNAL_PROVIDERS=false` (default) blocks the
   `anthropic`/`openai` providers on `POST /jobs/:jobId/model-tests` and robustness text
   transforms; only the `mock` provider (no network calls) is reachable. See
   [External provider transfer consent](#external-provider-transfer-consent-phase-35) above.
-- **No submission analysis by default.** `PS_RESEARCH_MODE=false` (default) disables every
+- **No submission analysis by default.** `PDFI_RESEARCH_MODE=false` (default) disables every
   `/submissions*` and `/robustness*` route. See
   [Submissions research mode](#submissions-research-mode-phase-4--no-real-student-data) above.
-- **24-hour default retention.** `PS_RETENTION_HOURS` (default `24`) controls how long job
+- **24-hour default retention.** `PDFI_RETENTION_HOURS` (default `24`) controls how long job
   artifacts live before a background sweeper deletes them (source PDF, output PDF, manifest,
   report, and the SQLite row) — this cascades to any model-test/robustness runs and submissions
   scoped to that job. Variant sets and student-keyed sets have their own independent retention

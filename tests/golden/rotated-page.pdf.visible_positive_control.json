@@ -27,7 +27,7 @@
   "expectedPageCount": 1,
   "expectedWarnings": [],
   "fixture": "rotated-page.pdf",
-  "generatedAt": "2026-08-22T05:10:59.868Z",
+  "generatedAt": "2026-08-22T08:24:14.214Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

@@ -35,7 +35,7 @@ export function submissionsRoutes(deps: SubmissionsRouteDeps) {
   return new Elysia()
     .onBeforeHandle(() => {
       // Defense in depth: contract §3 gates the ENTIRE submissions section
-      // (not just POST) behind PS_RESEARCH_MODE. Each service function
+      // (not just POST) behind PDFI_RESEARCH_MODE. Each service function
       // (submission.service.ts) also checks this independently — this
       // route-level gate just fails closed before any request reaches a
       // handler at all, rather than relying solely on every service

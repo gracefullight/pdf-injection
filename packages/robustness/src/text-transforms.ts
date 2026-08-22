@@ -104,7 +104,7 @@ function humanEditTransform(text: string, opts: TransformTextOptions): Transform
 // whether clause reordering is applied per sentence, so different seeds
 // still produce different (but reproducible) paraphrases.
 // TODO(oma-deferred): replace with a real paraphrase provider call
-// (anthropic/openai via @pdf-injection/benchmark) when PS_ALLOW_EXTERNAL_PROVIDERS
+// (anthropic/openai via @pdf-injection/benchmark) when PDFI_ALLOW_EXTERNAL_PROVIDERS
 // is configured; this table is a deterministic, offline-safe stand-in.
 const SYNONYM_TABLE: Record<string, string> = {
   analyze: "examine",

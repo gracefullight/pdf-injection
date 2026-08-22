@@ -10,7 +10,7 @@ Per PRD §19.4 (Privacy) and §20 (Ethical and Governance Requirements):
 - **This MVP does not accept real student submissions.** `POST
   /api/v1/jobs/:jobId/submissions` requires
   `acknowledgeNoRealStudentData: true` and is gated behind
-  `PS_RESEARCH_MODE=true`; it is a research-protocol scaffold, not a
+  `PDFI_RESEARCH_MODE=true`; it is a research-protocol scaffold, not a
   production intake path for actual coursework.
 - Any dataset committed under this directory, or referenced by a
   `research/experiment-configs/*.json` config, **must be synthetic** —

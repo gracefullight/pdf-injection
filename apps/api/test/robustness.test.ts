@@ -38,8 +38,8 @@ async function pollUntilDone(
   throw new Error(`Run ${runId} did not finish within ${maxAttempts} polls`);
 }
 
-describe("robustness endpoints — PS_RESEARCH_MODE gate", () => {
-  test("PS_RESEARCH_MODE=false -> 403 RESEARCH_MODE_DISABLED on every route", async () => {
+describe("robustness endpoints — PDFI_RESEARCH_MODE gate", () => {
+  test("PDFI_RESEARCH_MODE=false -> 403 RESEARCH_MODE_DISABLED on every route", async () => {
     const { app } = testApp({ researchMode: false });
     const { jobId, accessToken } = await createCompletedJob(app);
 

@@ -41,13 +41,13 @@ describe("deriveFeatures", () => {
 describe("resolveFeatureGateMessage", () => {
   it("names the exact env var for externalProviders, phrased as admin guidance", () => {
     expect(resolveFeatureGateMessage("externalProviders")).toBe(
-      "Not available on this server (PS_ALLOW_EXTERNAL_PROVIDERS is not set). Ask the operator to set PS_ALLOW_EXTERNAL_PROVIDERS=true to enable it.",
+      "Not available on this server (PDFI_ALLOW_EXTERNAL_PROVIDERS is not set). Ask the operator to set PDFI_ALLOW_EXTERNAL_PROVIDERS=true to enable it.",
     );
   });
 
   it("names the exact env var for researchMode, phrased as admin guidance", () => {
     expect(resolveFeatureGateMessage("researchMode")).toBe(
-      "Not available on this server (PS_RESEARCH_MODE is not set). Ask the operator to set PS_RESEARCH_MODE=true to enable it.",
+      "Not available on this server (PDFI_RESEARCH_MODE is not set). Ask the operator to set PDFI_RESEARCH_MODE=true to enable it.",
     );
   });
 
@@ -62,8 +62,8 @@ describe("resolveFeatureGateMessage", () => {
   });
 
   it("honors an explicit envVar override", () => {
-    expect(resolveFeatureGateMessage("ocrAvailable", "PS_CUSTOM_FLAG")).toBe(
-      "Not available on this server (PS_CUSTOM_FLAG is not set). Ask the operator to set PS_CUSTOM_FLAG=true to enable it.",
+    expect(resolveFeatureGateMessage("ocrAvailable", "PDFI_CUSTOM_FLAG")).toBe(
+      "Not available on this server (PDFI_CUSTOM_FLAG is not set). Ask the operator to set PDFI_CUSTOM_FLAG=true to enable it.",
     );
   });
 

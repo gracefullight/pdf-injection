@@ -3,7 +3,7 @@ import type { Response, ResponseInputItem } from "openai/resources/responses/res
 import { withRetryOnce } from "./retry";
 import type { AskTextInput, AskWithPdfInput, ProviderAdapter, ProviderAnswer } from "./types";
 
-/** PS_OPENAI_MODEL default per contract §0.2. */
+/** PDFI_OPENAI_MODEL default per contract §0.2. */
 export const DEFAULT_OPENAI_MODEL = "gpt-5.5";
 const TIMEOUT_MS = 600_000;
 
@@ -39,7 +39,7 @@ export interface CreateOpenAiAdapterInput {
  */
 export function createOpenAiAdapter(input: CreateOpenAiAdapterInput = {}): ProviderAdapter {
   const apiKey = input.apiKey ?? process.env.OPENAI_API_KEY ?? "";
-  const model = input.model ?? process.env.PS_OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL;
+  const model = input.model ?? process.env.PDFI_OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL;
   const configured = apiKey.length > 0;
 
   let client: OpenAI | null = null;

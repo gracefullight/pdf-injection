@@ -1,4 +1,9 @@
-import type { InjectionMode, PayloadLanguage, Position, TargetPage } from "@pdf-injection/contracts";
+import type {
+  InjectionMode,
+  PayloadLanguage,
+  Position,
+  TargetPage,
+} from "@pdf-injection/contracts";
 
 export interface InjectionSettings {
   mode: InjectionMode;

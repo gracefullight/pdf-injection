@@ -45,13 +45,13 @@ export interface ServeConfig {
   distDir?: URL;
   /** Port to listen on. Defaults to $PORT or 80. Pass 0 for an OS-assigned ephemeral port (tests). */
   port?: number;
-  /** Target origin for /api/* requests. Defaults to $PS_API_PROXY_TARGET or http://api:3001. */
+  /** Target origin for /api/* requests. Defaults to $PDFI_API_PROXY_TARGET or http://api:3001. */
   apiProxyTarget?: string;
 }
 
 const DEFAULT_DIST_DIR = new URL("./dist/", import.meta.url);
 const DEFAULT_PORT = Number(process.env.PORT ?? 80);
-const DEFAULT_API_PROXY_TARGET = process.env.PS_API_PROXY_TARGET ?? "http://api:3001";
+const DEFAULT_API_PROXY_TARGET = process.env.PDFI_API_PROXY_TARGET ?? "http://api:3001";
 
 /**
  * Resolves `relative` against `distDir`, returning null (instead of

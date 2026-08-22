@@ -145,7 +145,7 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
     expect(getAfterDelete.status).toBe(404);
   });
 
-  test("non-mock provider without PS_ALLOW_EXTERNAL_PROVIDERS -> 403 EXTERNAL_PROVIDERS_DISABLED", async () => {
+  test("non-mock provider without PDFI_ALLOW_EXTERNAL_PROVIDERS -> 403 EXTERNAL_PROVIDERS_DISABLED", async () => {
     const { app } = testApp({ allowExternalProviders: false });
     const { jobId, accessToken } = await createCompletedJob(app);
 
@@ -166,7 +166,7 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
     expect(body.error.code).toBe("EXTERNAL_PROVIDERS_DISABLED");
   });
 
-  test("PS_ALLOW_EXTERNAL_PROVIDERS=true but no acknowledgeExternalTransfer -> 422 VALIDATION_ERROR", async () => {
+  test("PDFI_ALLOW_EXTERNAL_PROVIDERS=true but no acknowledgeExternalTransfer -> 422 VALIDATION_ERROR", async () => {
     const { app } = testApp({ allowExternalProviders: true });
     const { jobId, accessToken } = await createCompletedJob(app);
 
@@ -187,7 +187,7 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
     expect(body.error.code).toBe("VALIDATION_ERROR");
   });
 
-  test("PS_ALLOW_EXTERNAL_PROVIDERS=true + acknowledged but missing API key -> 422 PROVIDER_NOT_CONFIGURED", async () => {
+  test("PDFI_ALLOW_EXTERNAL_PROVIDERS=true + acknowledged but missing API key -> 422 PROVIDER_NOT_CONFIGURED", async () => {
     const { app } = testApp({ allowExternalProviders: true });
     const { jobId, accessToken } = await createCompletedJob(app);
 
@@ -208,7 +208,7 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
     expect(body.error.code).toBe("PROVIDER_NOT_CONFIGURED");
   });
 
-  test("repeats over PS_MODEL_TEST_MAX_REPEATS -> 422 VALIDATION_ERROR", async () => {
+  test("repeats over PDFI_MODEL_TEST_MAX_REPEATS -> 422 VALIDATION_ERROR", async () => {
     const { app } = testApp({ modelTestMaxRepeats: 3 });
     const { jobId, accessToken } = await createCompletedJob(app);
 

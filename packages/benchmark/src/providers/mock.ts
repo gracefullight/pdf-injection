@@ -87,7 +87,7 @@ function buildMockAnswer(params: {
  * always allowed, no API key needed).
  *
  * // TODO(oma-deferred): a real provider call (anthropic/openai) is used
- * // instead of this mock whenever PS_ALLOW_EXTERNAL_PROVIDERS=true,
+ * // instead of this mock whenever PDFI_ALLOW_EXTERNAL_PROVIDERS=true,
  * // acknowledgeExternalTransfer=true, and the relevant API key is present.
  *
  * Determinism: seeded by `sha256(pdfBytes) + ":" + sha256(prompt)` (contract

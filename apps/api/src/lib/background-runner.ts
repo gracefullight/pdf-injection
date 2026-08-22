@@ -2,7 +2,7 @@
  * In-process background-run queue for §2 model-tests and §4 robustness runs
  * (contract: "Background runs (model tests, robustness) are in-process async
  * with sqlite persistence and polling endpoints"). Bounded concurrency across
- * concurrently *running* jobs (distinct from `PS_MODEL_TEST_CONCURRENCY`,
+ * concurrently *running* jobs (distinct from `PDFI_MODEL_TEST_CONCURRENCY`,
  * which bounds provider calls *within* a single run — that's handled inside
  * `runMatrix()`); an `AbortController` per run so `DELETE .../:runId` can
  * cancel an in-flight run.

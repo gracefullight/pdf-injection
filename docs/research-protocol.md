@@ -15,9 +15,9 @@ running any step against real API keys or anything resembling student data.
 
 - The API running locally (`bun run --cwd apps/api dev`, or the Docker Compose stack — see
   [`README.md`](../README.md#quick-start)).
-- `PS_RESEARCH_MODE=true` if you intend to exercise submissions/robustness (§3/§4); leave it
+- `PDFI_RESEARCH_MODE=true` if you intend to exercise submissions/robustness (§3/§4); leave it
   `false` if you only need model-tests (§2), which is ungated by research mode (only by
-  `PS_ALLOW_EXTERNAL_PROVIDERS` for non-`mock` providers).
+  `PDFI_ALLOW_EXTERNAL_PROVIDERS` for non-`mock` providers).
 - A completed job to run against: `POST /api/v1/jobs` with any `tests/fixtures/*.pdf` fixture, or
   point at an existing `jobId`.
 
@@ -46,7 +46,7 @@ Start from [`research/experiment-configs/example-matrix.json`](../research/exper
 4. Inspect `aggregates[]` (per provider/condition rate) and `smokeTestGate` — see
    [Interpreting the smoke-test gate](#interpreting-the-smoke-test-gate) below.
 5. Export with `GET /api/v1/jobs/:jobId/model-tests/:runId/export?format=json` (or `csv`); set
-   `PS_RESEARCH_RESULTS_DIR` beforehand to also copy the export into
+   `PDFI_RESEARCH_RESULTS_DIR` beforehand to also copy the export into
    [`research/results/`](../research/results/README.md).
 
 This mock-only run validates the whole pipeline (condition-PDF generation, aggregation, the gate
@@ -56,7 +56,7 @@ formula, export) before spending any real API budget or transferring anything to
 
 To add `anthropic` and/or `openai`:
 
-1. On the **server**, set `PS_ALLOW_EXTERNAL_PROVIDERS=true` and the relevant API key
+1. On the **server**, set `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and the relevant API key
    (`ANTHROPIC_API_KEY` / `OPENAI_API_KEY`) — see [`README.md`](../README.md#environment-variables).
 2. In the **request body**, add `{"name": "anthropic"}` and/or `{"name": "openai"}` to
    `providers`, and set `acknowledgeExternalTransfer: true` — this is a separate, per-request
@@ -65,8 +65,8 @@ To add `anthropic` and/or `openai`:
 3. Without either the server flag or the request-body acknowledgement, the run fails with
    `403 EXTERNAL_PROVIDERS_DISABLED`; with the flag on but no API key configured, it fails with
    `422 PROVIDER_NOT_CONFIGURED`.
-4. `PS_MODEL_TEST_CONCURRENCY` (default 2) bounds how many provider calls run in parallel within
-   one run; `PS_MODEL_TEST_MAX_REPEATS` (default 10) bounds `repeats` server-side regardless of
+4. `PDFI_MODEL_TEST_CONCURRENCY` (default 2) bounds how many provider calls run in parallel within
+   one run; `PDFI_MODEL_TEST_MAX_REPEATS` (default 10) bounds `repeats` server-side regardless of
    what the config file requests.
 
 Every `ModelTestResult` records provider, model id, execution date, an `outerPromptSha256` and
@@ -106,7 +106,7 @@ PDF-authoring/validation pipeline (Phase 0–2) works correctly, and it must nev
 
 ## Robustness matrix (§4 / PRD §26–28 Phase 5)
 
-Requires `PS_RESEARCH_MODE=true`. `POST /api/v1/jobs/:jobId/robustness` takes:
+Requires `PDFI_RESEARCH_MODE=true`. `POST /api/v1/jobs/:jobId/robustness` takes:
 
 - `pdfTransforms`: any of `print_to_pdf`, `ocr_regeneration`, `screenshot_ocr` — see
   [`docs/architecture.md`](architecture.md#data-flow-robustness-runs-4) for what each one does
@@ -131,7 +131,7 @@ directly and get back OCR'd text + per-signal extraction, no run/runId lifecycle
 
 ## Submissions calibration + statistics (§3 / PRD §26 Phase 4)
 
-Requires `PS_RESEARCH_MODE=true` and, per submission, `acknowledgeNoRealStudentData: true` (see
+Requires `PDFI_RESEARCH_MODE=true` and, per submission, `acknowledgeNoRealStudentData: true` (see
 [`docs/ethics-and-privacy.md`](ethics-and-privacy.md#submissions-research-mode-phase-4--no-real-student-data)
 — **only synthetic text**, following [`research/datasets/README.md`](../research/datasets/README.md)'s
 layout).

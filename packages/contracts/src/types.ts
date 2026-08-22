@@ -73,7 +73,7 @@ export interface ValidationSummary {
   changedPixelRatio: number | null; // null until client validation posted
   qpdfStatus: QpdfStatus;
   /**
-   * Whether the XMP /Metadata payload (pdf-injection:instruction) is present.
+   * Whether the XMP /Metadata payload (pdfi:instruction) is present.
    * `null` for every mode except "xmp_only", where it must be `true` or
    * overall = FAIL. See computeOverall().
    */
@@ -146,7 +146,7 @@ export interface PrivateManifest {
     pdfLib: string;
     pdfJs: string;
     qpdf: string | null;
-    pdf-injection: string;
+    pdfInjection: string;
   };
   createdAt: string;
   warning: "PRIVATE — contains the hidden instruction. Do not distribute to students.";

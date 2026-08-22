@@ -2,8 +2,8 @@ import { PDFDocument, PDFName, PDFStream } from "pdf-lib";
 import { InjectionFailedError, PdfEngineError } from "./errors";
 import type { InjectTextResult } from "./inject-white-text";
 
-/** Custom XMP namespace for the pdf-injection:instruction / pdf-injection:promptSha256 properties. */
-export const PDF-INJECTION_XMP_NAMESPACE = "http://pdf-injection.dev/ns/1.0/";
+/** Custom XMP namespace for the pdfi:instruction / pdfi:promptSha256 properties. */
+export const PDF_INJECTION_XMP_NAMESPACE = "http://pdf-injection.dev/ns/1.0/";
 
 export interface InjectXmpOnlyInput {
   doc: PDFDocument;
@@ -22,8 +22,8 @@ function escapeXml(value: string): string {
 
 /**
  * Builds an XMP packet carrying the hidden instruction in a `dc:description`
- * (standard, provider-agnostic) and a custom `pdf-injection:instruction` +
- * `pdf-injection:promptSha256` pair (round-trip verifiable, unambiguous).
+ * (standard, provider-agnostic) and a custom `pdfi:instruction` +
+ * `pdfi:promptSha256` pair (round-trip verifiable, unambiguous).
  * PRD §10.6.
  */
 export function buildXmpPacket(instruction: string, promptSha256: string): string {
@@ -34,14 +34,14 @@ export function buildXmpPacket(instruction: string, promptSha256: string): strin
     `  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">\n` +
     `    <rdf:Description rdf:about=""\n` +
     `      xmlns:dc="http://purl.org/dc/elements/1.1/"\n` +
-    `      xmlns:pdf-injection="${PDF-INJECTION_XMP_NAMESPACE}">\n` +
+    `      xmlns:pdfi="${PDF_INJECTION_XMP_NAMESPACE}">\n` +
     `      <dc:description>\n` +
     `        <rdf:Alt>\n` +
     `          <rdf:li xml:lang="x-default">${escaped}</rdf:li>\n` +
     `        </rdf:Alt>\n` +
     `      </dc:description>\n` +
-    `      <pdf-injection:instruction>${escaped}</pdf-injection:instruction>\n` +
-    `      <pdf-injection:promptSha256>${promptSha256}</pdf-injection:promptSha256>\n` +
+    `      <pdfi:instruction>${escaped}</pdfi:instruction>\n` +
+    `      <pdfi:promptSha256>${promptSha256}</pdfi:promptSha256>\n` +
     `    </rdf:Description>\n` +
     `  </rdf:RDF>\n` +
     `</x:xmpmeta>\n` +
@@ -85,8 +85,8 @@ export interface XmpPayload {
   promptSha256: string | null;
 }
 
-const INSTRUCTION_RE = /<pdf-injection:instruction>([\s\S]*?)<\/pdf-injection:instruction>/;
-const PROMPT_SHA256_RE = /<pdf-injection:promptSha256>([\s\S]*?)<\/pdf-injection:promptSha256>/;
+const INSTRUCTION_RE = /<pdfi:instruction>([\s\S]*?)<\/pdfi:instruction>/;
+const PROMPT_SHA256_RE = /<pdfi:promptSha256>([\s\S]*?)<\/pdfi:promptSha256>/;
 
 function unescapeXml(value: string): string {
   return value

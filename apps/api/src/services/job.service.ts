@@ -195,7 +195,7 @@ function toolVersions(deps: JobServiceDeps, pdfJsVersion: string, qpdfDetected: 
     pdfLib: "1.17.1",
     pdfJs: pdfJsVersion,
     qpdf: deps.config.qpdfEnabled && qpdfDetected ? "detected" : null,
-    pdf-injection: "0.1.0",
+    pdfInjection: "0.1.0",
   };
 }
 
@@ -281,7 +281,7 @@ export async function createJob(
   };
 
   // Processing (injectPdf -> round-trip validate -> extract -> qpdf ->
-  // report -> manifest -> persist) is wrapped in PS_MAX_PROCESSING_MS. On
+  // report -> manifest -> persist) is wrapped in PDFI_MAX_PROCESSING_MS. On
   // timeout, the outer catch below deletes the job dir (source.pdf was
   // already written above) and rethrows without a row ever having been
   // inserted -> "no row/files" per contract §0.3. The `signal.aborted`

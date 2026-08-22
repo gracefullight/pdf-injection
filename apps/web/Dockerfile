@@ -40,7 +40,7 @@ COPY --from=build /app/apps/web/serve.ts ./serve.ts
 # serve.ts and .agents/state/memories/result-qa-r1b-session-20260822-132343.md.
 ENV NODE_ENV=production
 ENV PORT=80
-ENV PS_API_PROXY_TARGET=http://api:3001
+ENV PDFI_API_PROXY_TARGET=http://api:3001
 
 # Run as the non-root `bun` user oven/bun images ship (UID/GID 1000), not
 # root. This stage only serves static files + proxies /api, so it never

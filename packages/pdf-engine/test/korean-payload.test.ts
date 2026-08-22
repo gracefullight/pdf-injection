@@ -137,8 +137,8 @@ describe("payloadLanguage gating", () => {
 
   test("'ko' + non-ASCII with a missing font directory throws FontUnavailableError (FONT_UNAVAILABLE)", async () => {
     const source = await buildAsciiOnlyPdf(1);
-    const previous = process.env.PS_FONT_DIR;
-    process.env.PS_FONT_DIR = "/nonexistent/pdf-injection-fonts-dir";
+    const previous = process.env.PDFI_FONT_DIR;
+    process.env.PDFI_FONT_DIR = "/nonexistent/pdf-injection-fonts-dir";
     try {
       await expect(
         injectPdf({
@@ -151,8 +151,8 @@ describe("payloadLanguage gating", () => {
         }),
       ).rejects.toThrow(FontUnavailableError);
     } finally {
-      if (previous === undefined) delete process.env.PS_FONT_DIR;
-      else process.env.PS_FONT_DIR = previous;
+      if (previous === undefined) delete process.env.PDFI_FONT_DIR;
+      else process.env.PDFI_FONT_DIR = previous;
     }
   });
 });

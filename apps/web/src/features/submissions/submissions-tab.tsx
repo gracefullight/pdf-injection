@@ -17,7 +17,7 @@ export interface SubmissionsTabProps {
 }
 
 /**
- * Screen 4 "Submissions" tab (research mode, PS_RESEARCH_MODE) — Phase 4
+ * Screen 4 "Submissions" tab (research mode, PDFI_RESEARCH_MODE) — Phase 4
  * submission detection research per phase3-5 contract §3 and PRD §20 (canary
  * match is never sole evidence; uncertainty + alternatives always shown).
  * Gated by r6's `FeatureGate`/`useFeatures()` (src/lib/features.tsx).

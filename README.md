@@ -1,5 +1,6 @@
 # PDF Injection — PDF-Native Hidden Instruction Authoring and Validation
 
+
 PDF Injection is a research proof-of-concept tool for professors and academic-integrity /
 LLM-ingestion researchers. It lets a professor upload an assignment PDF, write a hidden
 instruction and expected signals, generate a new PDF with a machine-readable text object
@@ -32,7 +33,7 @@ private manifest (Phase 0–2) are implemented, and so are the Phase 3–5 resea
 provider benchmarking (`POST /jobs/:jobId/model-tests`), deterministic submission-side signal
 detection (`POST /jobs/:jobId/submissions`), and robustness transforms
 (`POST /jobs/:jobId/robustness`). The provider-calling and submission-analysis endpoints are
-disabled by default (`PS_ALLOW_EXTERNAL_PROVIDERS=false`, `PS_RESEARCH_MODE=false`) — see
+disabled by default (`PDFI_ALLOW_EXTERNAL_PROVIDERS=false`, `PDFI_RESEARCH_MODE=false`) — see
 [Environment variables](#environment-variables) and [`docs/research-protocol.md`](docs/research-protocol.md).
 Every path that would send data to a third-party model provider, or analyze anything resembling
 student work, is gated and off unless explicitly enabled. See
@@ -100,8 +101,8 @@ full upload → instruction → generate → validate → download → delete wo
 servers it starts itself** (still no build step — its `webServer` config runs
 `bun run --cwd apps/api dev` and `bun run --cwd apps/web dev`, on scratch storage/SQLite under
 `tests/e2e/.tmp/` so it never touches the default `.pdf-injection-data`). The API `webServer` sets
-`PS_RESEARCH_MODE=true` (so the submissions/robustness/model-test tabs are reachable) but leaves
-`PS_ALLOW_EXTERNAL_PROVIDERS` unset — every spec uses the `mock` provider only, so no API keys or
+`PDFI_RESEARCH_MODE=true` (so the submissions/robustness/model-test tabs are reachable) but leaves
+`PDFI_ALLOW_EXTERNAL_PROVIDERS` unset — every spec uses the `mock` provider only, so no API keys or
 network access are needed to run the suite.
 
 10 spec files cover 11 scenarios: `workflow.spec.ts` (round-1, 2 scenarios — `white_text` and
@@ -112,7 +113,7 @@ on the 1-page `one-page-text.pdf` fixture to keep `tesseract.js` OCR runtime bou
 later cycle to cover the two robustness transforms `robustness.spec.ts`, which covers
 `print_to_pdf` + `human_edit` + screenshot OCR, doesn't exercise), and
 `research-mode-gate.spec.ts` (asserts the Submissions/Robustness tabs show the
-`PS_RESEARCH_MODE=true` gate message when research mode is off — simulated via a
+`PDFI_RESEARCH_MODE=true` gate message when research mode is off — simulated via a
 `GET /health` route interception rather than restarting the API with a different env, since the
 `webServer` config is shared by every other spec).
 
@@ -155,39 +156,39 @@ comment-per-site would just be noise.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PS_MAX_FILE_BYTES` | `26214400` (25 MB) | Max source PDF upload size |
-| `PS_MAX_PAGES` | `100` | Max page count a source PDF may have |
-| `PS_MAX_INSTRUCTION_CHARS` | `1500` | Max hidden-instruction length |
-| `PS_RETENTION_HOURS` | `24` | Hours before the retention sweeper deletes a job's artifacts |
-| `PS_STORAGE_DIR` | `./.pdf-injection-data` | Directory for per-job artifact files (`source.pdf`, `output.pdf`, `manifest.json`, `report.json`) |
-| `PS_DB_PATH` | `./.pdf-injection-data/pdf-injection.sqlite` | `bun:sqlite` database file path |
-| `PS_QPDF_ENABLED` | `false` | Enable `qpdf --check` as an additional (optional) validation step; requires the `qpdf` binary on `PATH` |
-| `PS_MAX_PAGE_DIMENSION_PT` | `14400` | Max MediaBox/CropBox dimension (points) before a PDF is rejected as structurally abnormal |
-| `PS_CORS_ORIGIN` | `http://localhost:5173` | Allowed CORS origin for the web app |
-| `PS_SWEEP_INTERVAL_MS` | `600000` | How often (ms) the retention sweeper scans for expired jobs |
-| `PS_PORT` | `3001` | Port the API listens on (`bun run dev` / `bun run start`) |
-| `PS_RESEARCH_MODE` | `false` | Gates §3 submissions (`POST/GET /jobs/:jobId/submissions*`) and §4 robustness (`POST/GET /jobs/:jobId/robustness*`) endpoints — `403 RESEARCH_MODE_DISABLED` when off. Off by default: this PoC must not receive real student data |
-| `PS_ALLOW_EXTERNAL_PROVIDERS` | `false` | Gates the `anthropic`/`openai` providers for §2 model-tests and §4 robustness text transforms — `403 EXTERNAL_PROVIDERS_DISABLED` when off. The `mock` provider is always allowed regardless. Off by default: no PDF/text content leaves the server without explicit opt-in |
-| `ANTHROPIC_API_KEY` | (unset) | Anthropic API key, used server-side only when `PS_ALLOW_EXTERNAL_PROVIDERS=true` and a request selects provider `"anthropic"`; missing key → `422 PROVIDER_NOT_CONFIGURED`. Never sent to the browser |
+| `PDFI_MAX_FILE_BYTES` | `26214400` (25 MB) | Max source PDF upload size |
+| `PDFI_MAX_PAGES` | `100` | Max page count a source PDF may have |
+| `PDFI_MAX_INSTRUCTION_CHARS` | `1500` | Max hidden-instruction length |
+| `PDFI_RETENTION_HOURS` | `24` | Hours before the retention sweeper deletes a job's artifacts |
+| `PDFI_STORAGE_DIR` | `./.pdf-injection-data` | Directory for per-job artifact files (`source.pdf`, `output.pdf`, `manifest.json`, `report.json`) |
+| `PDFI_DB_PATH` | `./.pdf-injection-data/pdf-injection.sqlite` | `bun:sqlite` database file path |
+| `PDFI_QPDF_ENABLED` | `false` | Enable `qpdf --check` as an additional (optional) validation step; requires the `qpdf` binary on `PATH` |
+| `PDFI_MAX_PAGE_DIMENSION_PT` | `14400` | Max MediaBox/CropBox dimension (points) before a PDF is rejected as structurally abnormal |
+| `PDFI_CORS_ORIGIN` | `http://localhost:5173` | Allowed CORS origin for the web app |
+| `PDFI_SWEEP_INTERVAL_MS` | `600000` | How often (ms) the retention sweeper scans for expired jobs |
+| `PDFI_PORT` | `3001` | Port the API listens on (`bun run dev` / `bun run start`) |
+| `PDFI_RESEARCH_MODE` | `false` | Gates §3 submissions (`POST/GET /jobs/:jobId/submissions*`) and §4 robustness (`POST/GET /jobs/:jobId/robustness*`) endpoints — `403 RESEARCH_MODE_DISABLED` when off. Off by default: this PoC must not receive real student data |
+| `PDFI_ALLOW_EXTERNAL_PROVIDERS` | `false` | Gates the `anthropic`/`openai` providers for §2 model-tests and §4 robustness text transforms — `403 EXTERNAL_PROVIDERS_DISABLED` when off. The `mock` provider is always allowed regardless. Off by default: no PDF/text content leaves the server without explicit opt-in |
+| `ANTHROPIC_API_KEY` | (unset) | Anthropic API key, used server-side only when `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and a request selects provider `"anthropic"`; missing key → `422 PROVIDER_NOT_CONFIGURED`. Never sent to the browser |
 | `OPENAI_API_KEY` | (unset) | Same gating as `ANTHROPIC_API_KEY`, for provider `"openai"` |
-| `PS_ANTHROPIC_MODEL` | `claude-opus-5` | Model id used by the `anthropic` provider adapter |
-| `PS_OPENAI_MODEL` | `gpt-5.5` | Model id used by the `openai` provider adapter |
-| `PS_MAX_PROCESSING_MS` | `60000` | Per-job processing time limit; exceeding it aborts the request with `504 PROCESSING_TIMEOUT` and leaves no job row or files behind |
-| `PS_MAX_VARIANTS` | `8` | Max A/B/C… variants in a single variant set (`TOO_MANY_VARIANTS`) |
-| `PS_MAX_STUDENT_KEYS` | `500` | Max students in a single student-keyed set (`TOO_MANY_STUDENTS`) |
-| `PS_MAX_SUBMISSION_BYTES` | `10485760` (10 MB) | Max bytes for a single submission upload (txt/md/pdf/image) |
-| `PS_MAX_SUBMISSIONS_PER_JOB` | `500` | Max submissions stored per job |
-| `PS_MODEL_TEST_MAX_REPEATS` | `10` | Max `repeats` accepted by `POST /jobs/:jobId/model-tests` |
-| `PS_MODEL_TEST_CONCURRENCY` | `2` | Bounded parallelism for provider calls within a single model-test run |
-| `PS_FONT_DIR` | `packages/pdf-engine/fonts` | Directory containing the CJK font subset (Noto Sans KR, OFL) used for `payloadLanguage="ko"` |
-| `PS_RESEARCH_RESULTS_DIR` | (unset) | When set, a completed model-test run's export (JSON/CSV) is also copied here — see [`research/results/README.md`](research/results/README.md). Unset by default (no copy) |
+| `PDFI_ANTHROPIC_MODEL` | `claude-opus-5` | Model id used by the `anthropic` provider adapter |
+| `PDFI_OPENAI_MODEL` | `gpt-5.5` | Model id used by the `openai` provider adapter |
+| `PDFI_MAX_PROCESSING_MS` | `60000` | Per-job processing time limit; exceeding it aborts the request with `504 PROCESSING_TIMEOUT` and leaves no job row or files behind |
+| `PDFI_MAX_VARIANTS` | `8` | Max A/B/C… variants in a single variant set (`TOO_MANY_VARIANTS`) |
+| `PDFI_MAX_STUDENT_KEYS` | `500` | Max students in a single student-keyed set (`TOO_MANY_STUDENTS`) |
+| `PDFI_MAX_SUBMISSION_BYTES` | `10485760` (10 MB) | Max bytes for a single submission upload (txt/md/pdf/image) |
+| `PDFI_MAX_SUBMISSIONS_PER_JOB` | `500` | Max submissions stored per job |
+| `PDFI_MODEL_TEST_MAX_REPEATS` | `10` | Max `repeats` accepted by `POST /jobs/:jobId/model-tests` |
+| `PDFI_MODEL_TEST_CONCURRENCY` | `2` | Bounded parallelism for provider calls within a single model-test run |
+| `PDFI_FONT_DIR` | `packages/pdf-engine/fonts` | Directory containing the CJK font subset (Noto Sans KR, OFL) used for `payloadLanguage="ko"` |
+| `PDFI_RESEARCH_RESULTS_DIR` | (unset) | When set, a completed model-test run's export (JSON/CSV) is also copied here — see [`research/results/README.md`](research/results/README.md). Unset by default (no copy) |
 
 ### `apps/web` (see [`apps/web/.env.example`](apps/web/.env.example))
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `VITE_API_BASE_URL` | `/api` | Base URL the web client uses for API calls (proxied by Vite in dev) |
-| `VITE_API_PROXY_TARGET` | `http://localhost:3001` | Target the Vite dev server proxies `/api` requests to (matches `PS_PORT`) |
+| `VITE_API_PROXY_TARGET` | `http://localhost:3001` | Target the Vite dev server proxies `/api` requests to (matches `PDFI_PORT`) |
 
 The web app's Eden Treaty client (`apps/web/src/lib/api.ts`) requires an absolute origin: when
 `VITE_API_BASE_URL` is left at its default relative `/api`, it is resolved to
@@ -200,7 +201,7 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PS_API_PROXY_TARGET` | `http://api:3001` | Target the production static-file server (`apps/web/serve.ts`, built into the `apps/web` Docker image) proxies `/api/*` requests to. Not read by Vite's dev server (that's `VITE_API_PROXY_TARGET` above) — only relevant when running via `docker compose up` (see [`docker-compose.yml`](docker-compose.yml)), where it targets the `api` service by its Compose network hostname. |
+| `PDFI_API_PROXY_TARGET` | `http://api:3001` | Target the production static-file server (`apps/web/serve.ts`, built into the `apps/web` Docker image) proxies `/api/*` requests to. Not read by Vite's dev server (that's `VITE_API_PROXY_TARGET` above) — only relevant when running via `docker compose up` (see [`docker-compose.yml`](docker-compose.yml)), where it targets the `api` service by its Compose network hostname. |
 
 ## Repository structure
 
@@ -255,7 +256,7 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 ├── research/                 # PRD §21/§23.2 experiment scaffolding — see docs/research-protocol.md
 │   ├── experiment-configs/   # JSON Schema + example model-test run config (mock provider, no API keys)
 │   ├── datasets/             # Policy + layout for synthetic baseline text (no real student data)
-│   └── results/              # Optional export destination when PS_RESEARCH_RESULTS_DIR is set
+│   └── results/              # Optional export destination when PDFI_RESEARCH_RESULTS_DIR is set
 ├── tests/
 │   ├── fixtures/             # Generated + one hand-crafted PDF fixture (see tests/fixtures/README.md)
 │   ├── golden/                # Golden-file regression tests for injectPdf/extractText/checkMetadataPayload
@@ -288,7 +289,7 @@ font registration `pdf-lib` needs to embed it at all) — this combination rende
 weight with full, correctly-shaped glyphs and extracts with an exact `pdfjs-dist` text match for
 all three modes, at a few KB of embedded font size (well inside the "<400KB output growth" budget
 for every mode). Missing the font on the server returns `422 FONT_UNAVAILABLE`
-(`PS_FONT_DIR`-configurable; see [Environment variables](#environment-variables)).
+(`PDFI_FONT_DIR`-configurable; see [Environment variables](#environment-variables)).
 
 ## Validation and the PDF.js disclaimer
 
@@ -312,18 +313,18 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 
 ## Privacy defaults
 
-- **No external LLM calls happen by default.** `PS_ALLOW_EXTERNAL_PROVIDERS=false` (default)
+- **No external LLM calls happen by default.** `PDFI_ALLOW_EXTERNAL_PROVIDERS=false` (default)
   blocks the `anthropic`/`openai` providers on `POST /jobs/:jobId/model-tests` and robustness text
   transforms with `403 EXTERNAL_PROVIDERS_DISABLED`; only the deterministic `mock` provider is
   reachable. Enabling external providers requires the flag, a configured API key, and the caller
   to pass `acknowledgeExternalTransfer: true` on the request itself.
 - **Research-mode endpoints (submissions, robustness) are off by default.**
-  `PS_RESEARCH_MODE=false` returns `403 RESEARCH_MODE_DISABLED` for every
+  `PDFI_RESEARCH_MODE=false` returns `403 RESEARCH_MODE_DISABLED` for every
   `/jobs/:jobId/submissions*` and `/jobs/:jobId/robustness*` route. `POST /jobs/:jobId/submissions`
   additionally requires `acknowledgeNoRealStudentData: true` per request — see
   [`docs/ethics-and-privacy.md`](docs/ethics-and-privacy.md).
 - Job artifacts (and model-test/robustness/submission runs scoped to a job) are retained for
-  `PS_RETENTION_HOURS` (default 24 hours), after which a background sweeper deletes them; a job
+  `PDFI_RETENTION_HOURS` (default 24 hours), after which a background sweeper deletes them; a job
   can also be deleted immediately via `DELETE /api/v1/jobs/:jobId` (cascades to its runs and
   submissions).
 - The hidden instruction text is never written to `bun:sqlite` or to server logs — only its
@@ -338,13 +339,13 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 | [`pdf-lib`](https://pdf-lib.js.org) | MIT | PDF loading, modification, low-level injection operators |
 | [`pdfjs-dist`](https://mozilla.github.io/pdf.js/) (PDF.js) | Apache-2.0 | Browser + server-side rendering and text extraction |
 | [`pixelmatch`](https://github.com/mapbox/pixelmatch) | ISC | Client-side pixel-diff comparison |
-| [`qpdf`](https://qpdf.sourceforge.io/) | Apache-2.0 | Optional external structural-validation binary (`PS_QPDF_ENABLED`) — not a package dependency, invoked via `Bun.spawn` when installed |
+| [`qpdf`](https://qpdf.sourceforge.io/) | Apache-2.0 | Optional external structural-validation binary (`PDFI_QPDF_ENABLED`) — not a package dependency, invoked via `Bun.spawn` when installed |
 | [`@pdf-lib/fontkit`](https://github.com/Hopding/fontkit) | MIT | Font registration/embedding support `pdf-lib` needs for `payloadLanguage="ko"` (`packages/pdf-engine`) |
 | [`subset-font`](https://github.com/papandreou/subset-font) | BSD-3-Clause | Pre-subsets the Korean font with HarfBuzz before `pdf-lib` embeds it (`payloadLanguage="ko"`, `packages/pdf-engine`) |
 | [`harfbuzzjs`](https://github.com/harfbuzz/harfbuzzjs) | MIT | WASM HarfBuzz shaping/subsetting engine `subset-font` wraps (transitive dependency) |
 | [`fflate`](https://github.com/101arrowz/fflate) | MIT | ZIP archive building for variant-set / student-keyed-set downloads (`apps/api`) |
-| [`@anthropic-ai/sdk`](https://github.com/anthropics/anthropic-sdk-typescript) | MIT | Anthropic provider adapter (`packages/benchmark`) — only invoked when `PS_ALLOW_EXTERNAL_PROVIDERS=true` and `ANTHROPIC_API_KEY` is set |
-| [`openai`](https://github.com/openai/openai-node) | Apache-2.0 | OpenAI provider adapter (`packages/benchmark`) — only invoked when `PS_ALLOW_EXTERNAL_PROVIDERS=true` and `OPENAI_API_KEY` is set |
+| [`@anthropic-ai/sdk`](https://github.com/anthropics/anthropic-sdk-typescript) | MIT | Anthropic provider adapter (`packages/benchmark`) — only invoked when `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and `ANTHROPIC_API_KEY` is set |
+| [`openai`](https://github.com/openai/openai-node) | Apache-2.0 | OpenAI provider adapter (`packages/benchmark`) — only invoked when `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and `OPENAI_API_KEY` is set |
 | [`tesseract.js`](https://github.com/naptha/tesseract.js) | Apache-2.0 | OCR for the screenshot-OCR robustness transform and OCR-regenerated PDF text layer (`packages/robustness`) — downloads its `eng` trained-data file over the network on first use, cached thereafter |
 | [`@napi-rs/canvas`](https://github.com/Brooooooklyn/canvas) | MIT | Native canvas rendering for print-to-PDF / OCR-regeneration page rasterization (`packages/robustness`) — resolved as an optional dependency through `pdfjs-dist`'s own module root (see `packages/robustness/src/native-canvas.ts`), not a direct dependency of this codebase |
 | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR) (static Regular) | OFL-1.1 | The bundled `payloadLanguage="ko"` CJK font (`packages/pdf-engine/fonts/`), a font asset — not an npm package dependency |

@@ -88,9 +88,9 @@ accessibility side effects, but with its own risk profile:
   applies uniformly across **all four** injection modes, including `xmp_only` (which never draws
   glyphs and so has no font-rendering reason to require ASCII) — kept uniform for predictability
   rather than carving out a mode-specific exception.
-- The instruction is capped at `PS_MAX_INSTRUCTION_CHARS` (default **1500** characters).
+- The instruction is capped at `PDFI_MAX_INSTRUCTION_CHARS` (default **1500** characters).
 - `payloadLanguage="ko"` lifts the ASCII restriction for Korean text and requires the bundled
-  Korean font to be available on the server (`PS_FONT_DIR`, default
+  Korean font to be available on the server (`PDFI_FONT_DIR`, default
   `packages/pdf-engine/fonts/`) — see
   [Korean payload (`payloadLanguage="ko"`) mechanism](#korean-payload-payloadlanguageko-mechanism)
   below. No language besides `"en"`/`"ko"` is supported; `PrivateManifest.prompt.language` records
@@ -109,7 +109,7 @@ This renders at the correct weight with full, correctly-shaped glyphs and extrac
 `pdfjs-dist` text match, verified for all three drawn-text modes including
 `visible_positive_control`.
 
-- Missing the font on the server (e.g. `PS_FONT_DIR` misconfigured, or the font file removed)
+- Missing the font on the server (e.g. `PDFI_FONT_DIR` misconfigured, or the font file removed)
   returns `422 FONT_UNAVAILABLE` rather than silently falling back to a Latin-only font or failing
   extraction.
 - No language besides Korean has a supported non-ASCII payload path; adding another script would
@@ -122,10 +122,10 @@ This renders at the correct weight with full, correctly-shaped glyphs and extrac
 - **Digitally signed PDFs are rejected outright** (`PDF_SIGNED`) — a `/Sig` field or `/DocMDP`
   entry is enough to trigger this gate; modifying a signed PDF would invalidate its signature
   anyway.
-- Source PDFs over `PS_MAX_PAGES` (default 100) or `PS_MAX_FILE_BYTES` (default 25 MB) are
+- Source PDFs over `PDFI_MAX_PAGES` (default 100) or `PDFI_MAX_FILE_BYTES` (default 25 MB) are
   rejected.
 - `qpdf` structural validation is **optional and off by default**
-  (`PS_QPDF_ENABLED=false`); it requires the `qpdf` binary to be present on `PATH`. When disabled
+  (`PDFI_QPDF_ENABLED=false`); it requires the `qpdf` binary to be present on `PATH`. When disabled
   or the binary is missing, `qpdfCheck()` always returns `{ status: "not_run" }` and never blocks
   a job — a clean `qpdf --check` result is treated as one extra validation signal, not proof of
   full PDF-specification compliance.
@@ -138,7 +138,7 @@ are all implemented — see [`docs/api.md`](api.md) and
 [`docs/research-protocol.md`](research-protocol.md). What remains true of every one of them:
 
 - **Off by default, gated behind explicit env vars and per-request acknowledgements.**
-  `PS_ALLOW_EXTERNAL_PROVIDERS=false` and `PS_RESEARCH_MODE=false` are the defaults; see
+  `PDFI_ALLOW_EXTERNAL_PROVIDERS=false` and `PDFI_RESEARCH_MODE=false` are the defaults; see
   [`docs/ethics-and-privacy.md`](ethics-and-privacy.md#external-provider-transfer-consent-phase-35).
 - **Detection is deterministic, evidence-only, never a verdict.** `packages/detector`'s
   `matchSignals()` (`exact_phrase`, `regex`, `methodology_label`, `ordered_terms`,
@@ -192,7 +192,7 @@ are all implemented — see [`docs/api.md`](api.md) and
 
 The soft target is a 50-page PDF processed in ≤ 30 seconds and a first-page browser preview in
 ≤ 3 seconds; these remain soft targets, not SLAs the server measures itself against. What **is**
-a hard, enforced limit is `PS_MAX_PROCESSING_MS` (default 60000 ms) on `POST /jobs`: exceeding it
+a hard, enforced limit is `PDFI_MAX_PROCESSING_MS` (default 60000 ms) on `POST /jobs`: exceeding it
 aborts the request with `504 PROCESSING_TIMEOUT` and leaves no job row or files behind (see
 [`docs/validation.md`](validation.md#processing-time-limit)) — a much longer ceiling than the
 30-second soft target, meant to catch pathological inputs, not to certify normal-case latency.

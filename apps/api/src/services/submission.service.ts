@@ -270,7 +270,7 @@ function buildAnalysis(
   };
 }
 
-/** POST /jobs/:jobId/submissions. Requires PS_RESEARCH_MODE. */
+/** POST /jobs/:jobId/submissions. Requires PDFI_RESEARCH_MODE. */
 export async function createSubmission(
   deps: SubmissionServiceDeps,
   job: StoredJobRow,
@@ -402,7 +402,7 @@ export async function listSubmissions(
   deps: SubmissionServiceDeps,
   job: StoredJobRow,
 ): Promise<SubmissionListResponse> {
-  // Contract §3: the ENTIRE submissions section requires PS_RESEARCH_MODE=true,
+  // Contract §3: the ENTIRE submissions section requires PDFI_RESEARCH_MODE=true,
   // not just POST. Gated here (and in getSubmission/deleteSubmission) so
   // previously-collected submission data isn't readable/deletable once
   // research mode is turned off — matches this MVP's "must not receive real

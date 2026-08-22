@@ -12,14 +12,14 @@ into `ValidationSummary.overall` (see [`docs/api.md`](api.md#overall-computation
 Runs before injection, on the raw upload:
 
 - PDF magic bytes (`%PDF-`) and MIME check
-- File size vs. `PS_MAX_FILE_BYTES`
+- File size vs. `PDFI_MAX_FILE_BYTES`
 - Parse with `pdf-lib`
 - Encryption detection (`PDF_ENCRYPTED`)
 - Digital signature detection — `/Sig` field, or `/DocMDP`/`/UR3` in the catalog `/Perms` (`PDF_SIGNED`)
-- Page count vs. `PS_MAX_PAGES` (`TOO_MANY_PAGES`)
+- Page count vs. `PDFI_MAX_PAGES` (`TOO_MANY_PAGES`)
 - Page geometry snapshot (MediaBox, CropBox, rotation, width, height) per page, used later as the
   "before" side of the round-trip comparison
-- Page dimension sanity check vs. `PS_MAX_PAGE_DIMENSION_PT` (`INVALID_PDF`)
+- Page dimension sanity check vs. `PDFI_MAX_PAGE_DIMENSION_PT` (`INVALID_PDF`)
 - Risk-flag detection (`SourceInspection.riskFlags`): JavaScript, embedded files, external URIs
   (including nested/inline actions), and an `/OpenAction` in the source PDF. None of these block
   the job — PDF Injection never executes anything from the source PDF — they are surfaced as
@@ -104,7 +104,7 @@ recalibration, but they are not currently configurable via environment variables
 ### Processing time limit
 
 The entire `POST /api/v1/jobs` pipeline (steps 1–5 plus manifest/report persistence) is wrapped in
-a wall-clock budget: `PS_MAX_PROCESSING_MS` (default 60000 ms). If processing has not completed
+a wall-clock budget: `PDFI_MAX_PROCESSING_MS` (default 60000 ms). If processing has not completed
 within that window, the request is aborted with `504 PROCESSING_TIMEOUT` and — unlike a hard-gate
 validation failure, which still creates a `status: "failed"` job row so the professor can inspect
 the report — **no job row and no artifact files are left behind** at all
@@ -115,7 +115,7 @@ limit (see [`docs/limitations.md`](limitations.md#performance)).
 
 ### 7. Optional qpdf validation (`qpdfCheck()`, `packages/validation`)
 
-If `PS_QPDF_ENABLED=true` **and** the `qpdf` binary is found on `PATH`, the server runs
+If `PDFI_QPDF_ENABLED=true` **and** the `qpdf` binary is found on `PATH`, the server runs
 `qpdf --check output.pdf` via `Bun.spawn` and records exit code, stdout, stderr, and
 warning/error counts. When disabled or the binary is missing, `qpdfCheck()` **never throws** —
 it returns `{ status: "not_run" }`, and job processing proceeds normally. A clean qpdf result
@@ -145,7 +145,7 @@ Only four values are ever shown, everywhere in the UI and reports: `PASS`,
 ## End-to-end coverage of this pipeline
 
 `tests/e2e` (Playwright, `bun run test:e2e` — see [`README.md`](../README.md#end-to-end-tests))
-exercises this entire validation pipeline against live dev servers (`PS_RESEARCH_MODE=true`, mock
+exercises this entire validation pipeline against live dev servers (`PDFI_RESEARCH_MODE=true`, mock
 provider only) across 10 spec files / 11 scenarios. The round-1 `workflow.spec.ts` covers
 `white_text` and `render_mode_3`: it uploads a fixture, generates a job, lets the browser compute
 and post the client-side render/diff/extraction results, downloads and parses the resulting
@@ -160,7 +160,7 @@ extraction round-trip (`serverValidation.textExtraction.targetPageMatch: true`);
 specs (`model-test`, `variants`, `student-keyed`, `submissions`, `robustness`,
 `robustness-ocr-paraphrase` — `ocr_regeneration` + `paraphrase` on a 1-page fixture, covering the
 two transforms `robustness.spec.ts`'s `print_to_pdf` + `human_edit` run doesn't — and
-`research-mode-gate`) exercise the §1-4 research flows and the `PS_RESEARCH_MODE` gate itself end
+`research-mode-gate`) exercise the §1-4 research flows and the `PDFI_RESEARCH_MODE` gate itself end
 to end. Every spec screenshots its validation tabs as evidence. This suite does not replace the
 server/browser validation logic described above; it verifies that logic end-to-end.
 

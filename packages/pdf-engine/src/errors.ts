@@ -83,7 +83,7 @@ export class ValidationError extends PdfEngineError {
 /**
  * Non-ASCII instruction requested with payloadLanguage "ko" but the CJK font
  * subset (Noto Sans KR) is not available on this server (missing font file,
- * PS_FONT_DIR misconfigured, or fontkit embedding failed). Round 2 §0.1.
+ * PDFI_FONT_DIR misconfigured, or fontkit embedding failed). Round 2 §0.1.
  */
 export class FontUnavailableError extends PdfEngineError {
   constructor(message: string) {

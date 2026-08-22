@@ -63,7 +63,7 @@
   "expectedPageCount": 3,
   "expectedWarnings": [],
   "fixture": "mixed-page-size.pdf",
-  "generatedAt": "2026-08-22T05:10:59.885Z",
+  "generatedAt": "2026-08-22T08:24:14.228Z",
   "kind": "inject",
   "maxVisualDiffRatio": 1e-7,
   "mode": "xmp_only",

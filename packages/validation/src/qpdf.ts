@@ -2,7 +2,7 @@ import type { QpdfStatus } from "@pdf-injection/contracts";
 
 export interface QpdfCheckInput {
   filePath: string;
-  /** Gate: server env PS_QPDF_ENABLED === "true". Defaults to reading process.env. */
+  /** Gate: server env PDFI_QPDF_ENABLED === "true". Defaults to reading process.env. */
   enabled?: boolean;
   /** Injectable for tests; defaults to `Bun.which(binary, { PATH: env?.PATH ?? process.env.PATH })`. */
   which?: (binary: string) => string | null;
@@ -36,13 +36,13 @@ const NOT_RUN: QpdfCheckResult = {
 };
 
 /**
- * Runs `qpdf --check <file>` via Bun.spawn, gated by PS_QPDF_ENABLED and the
+ * Runs `qpdf --check <file>` via Bun.spawn, gated by PDFI_QPDF_ENABLED and the
  * qpdf binary's presence. Never throws — returns {status:"not_run"} when
  * disabled or missing, so a job can always complete without qpdf installed.
  * PRD §13.5.
  */
 export async function qpdfCheck(input: QpdfCheckInput): Promise<QpdfCheckResult> {
-  const enabled = input.enabled ?? process.env.PS_QPDF_ENABLED === "true";
+  const enabled = input.enabled ?? process.env.PDFI_QPDF_ENABLED === "true";
   if (!enabled) {
     return { ...NOT_RUN };
   }

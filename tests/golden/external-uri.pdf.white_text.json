@@ -30,7 +30,7 @@
     "PDF_CONTAINS_EXTERNAL_URIS"
   ],
   "fixture": "external-uri.pdf",
-  "generatedAt": "2026-08-22T05:10:59.970Z",
+  "generatedAt": "2026-08-22T08:24:14.314Z",
   "kind": "inject",
   "maxVisualDiffRatio": 0.00001,
   "mode": "white_text",

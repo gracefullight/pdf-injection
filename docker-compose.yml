@@ -10,7 +10,7 @@
 #   Web:  http://localhost:5173/
 #
 # All secrets/keys below default to empty and external providers stay
-# disabled (PS_ALLOW_EXTERNAL_PROVIDERS=false) unless explicitly overridden
+# disabled (PDFI_ALLOW_EXTERNAL_PROVIDERS=false) unless explicitly overridden
 # via a local `.env` file (never commit one) or the shell environment.
 
 services:
@@ -20,35 +20,35 @@ services:
       dockerfile: apps/api/Dockerfile
     image: pdf-injection-api:local
     ports:
-      - "${PS_PORT:-3001}:3001"
+      - "${PDFI_PORT:-3001}:3001"
     environment:
       # --- Round 1 limits/paths (see apps/api/.env.example) ---
-      PS_MAX_FILE_BYTES: "${PS_MAX_FILE_BYTES:-26214400}"
-      PS_MAX_PAGES: "${PS_MAX_PAGES:-100}"
-      PS_MAX_INSTRUCTION_CHARS: "${PS_MAX_INSTRUCTION_CHARS:-1500}"
-      PS_RETENTION_HOURS: "${PS_RETENTION_HOURS:-24}"
-      PS_STORAGE_DIR: /app/data
-      PS_DB_PATH: /app/data/pdf-injection.sqlite
-      PS_QPDF_ENABLED: "${PS_QPDF_ENABLED:-false}"
-      PS_MAX_PAGE_DIMENSION_PT: "${PS_MAX_PAGE_DIMENSION_PT:-14400}"
-      PS_CORS_ORIGIN: "${PS_CORS_ORIGIN:-http://localhost:5173}"
-      PS_SWEEP_INTERVAL_MS: "${PS_SWEEP_INTERVAL_MS:-600000}"
-      PS_PORT: "3001"
+      PDFI_MAX_FILE_BYTES: "${PDFI_MAX_FILE_BYTES:-26214400}"
+      PDFI_MAX_PAGES: "${PDFI_MAX_PAGES:-100}"
+      PDFI_MAX_INSTRUCTION_CHARS: "${PDFI_MAX_INSTRUCTION_CHARS:-1500}"
+      PDFI_RETENTION_HOURS: "${PDFI_RETENTION_HOURS:-24}"
+      PDFI_STORAGE_DIR: /app/data
+      PDFI_DB_PATH: /app/data/pdf-injection.sqlite
+      PDFI_QPDF_ENABLED: "${PDFI_QPDF_ENABLED:-false}"
+      PDFI_MAX_PAGE_DIMENSION_PT: "${PDFI_MAX_PAGE_DIMENSION_PT:-14400}"
+      PDFI_CORS_ORIGIN: "${PDFI_CORS_ORIGIN:-http://localhost:5173}"
+      PDFI_SWEEP_INTERVAL_MS: "${PDFI_SWEEP_INTERVAL_MS:-600000}"
+      PDFI_PORT: "3001"
       # --- Round 2 §0.2: providers / research mode (default OFF) ---
-      PS_ALLOW_EXTERNAL_PROVIDERS: "${PS_ALLOW_EXTERNAL_PROVIDERS:-false}"
-      PS_RESEARCH_MODE: "${PS_RESEARCH_MODE:-false}"
+      PDFI_ALLOW_EXTERNAL_PROVIDERS: "${PDFI_ALLOW_EXTERNAL_PROVIDERS:-false}"
+      PDFI_RESEARCH_MODE: "${PDFI_RESEARCH_MODE:-false}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
-      PS_ANTHROPIC_MODEL: "${PS_ANTHROPIC_MODEL:-claude-opus-5}"
-      PS_OPENAI_MODEL: "${PS_OPENAI_MODEL:-gpt-5.5}"
-      PS_MAX_PROCESSING_MS: "${PS_MAX_PROCESSING_MS:-60000}"
-      PS_MAX_VARIANTS: "${PS_MAX_VARIANTS:-8}"
-      PS_MAX_STUDENT_KEYS: "${PS_MAX_STUDENT_KEYS:-500}"
-      PS_MODEL_TEST_MAX_REPEATS: "${PS_MODEL_TEST_MAX_REPEATS:-10}"
-      PS_MODEL_TEST_CONCURRENCY: "${PS_MODEL_TEST_CONCURRENCY:-2}"
-      PS_FONT_DIR: "${PS_FONT_DIR:-packages/pdf-engine/fonts}"
+      PDFI_ANTHROPIC_MODEL: "${PDFI_ANTHROPIC_MODEL:-claude-opus-5}"
+      PDFI_OPENAI_MODEL: "${PDFI_OPENAI_MODEL:-gpt-5.5}"
+      PDFI_MAX_PROCESSING_MS: "${PDFI_MAX_PROCESSING_MS:-60000}"
+      PDFI_MAX_VARIANTS: "${PDFI_MAX_VARIANTS:-8}"
+      PDFI_MAX_STUDENT_KEYS: "${PDFI_MAX_STUDENT_KEYS:-500}"
+      PDFI_MODEL_TEST_MAX_REPEATS: "${PDFI_MODEL_TEST_MAX_REPEATS:-10}"
+      PDFI_MODEL_TEST_CONCURRENCY: "${PDFI_MODEL_TEST_CONCURRENCY:-2}"
+      PDFI_FONT_DIR: "${PDFI_FONT_DIR:-packages/pdf-engine/fonts}"
       # Optional: copy model-test exports into research/results/ (unset = off).
-      PS_RESEARCH_RESULTS_DIR: "${PS_RESEARCH_RESULTS_DIR:-}"
+      PDFI_RESEARCH_RESULTS_DIR: "${PDFI_RESEARCH_RESULTS_DIR:-}"
     volumes:
       - pdf-injection-data:/app/data
     restart: unless-stopped
@@ -59,9 +59,9 @@ services:
       dockerfile: apps/web/Dockerfile
     image: pdf-injection-web:local
     ports:
-      - "${PS_WEB_PORT:-5173}:80"
+      - "${PDFI_WEB_PORT:-5173}:80"
     environment:
-      PS_API_PROXY_TARGET: http://api:3001
+      PDFI_API_PROXY_TARGET: http://api:3001
     depends_on:
       api:
         condition: service_healthy

@@ -6,7 +6,7 @@ import type { PDFDocument, PDFFont } from "pdf-lib";
 import subsetFont from "subset-font";
 import { FontUnavailableError } from "./errors";
 
-/** PS_FONT_DIR default — see .agents/results/api-contracts/pdf-injection-phase3-5-api.md §0.2 */
+/** PDFI_FONT_DIR default — see .agents/results/api-contracts/pdf-injection-phase3-5-api.md §0.2 */
 const DEFAULT_FONT_DIR = path.join(import.meta.dir, "..", "fonts");
 // Cycle-4 QA fix: a genuine static Regular instance (not the raw Google
 // Fonts variable font used through cycle 3), served by Google's font CDN
@@ -18,10 +18,10 @@ const DEFAULT_FONT_DIR = path.join(import.meta.dir, "..", "fonts");
 const FONT_FILENAME = "NotoSansKR-Regular.ttf";
 
 function resolveFontDir(): string {
-  return process.env.PS_FONT_DIR ?? DEFAULT_FONT_DIR;
+  return process.env.PDFI_FONT_DIR ?? DEFAULT_FONT_DIR;
 }
 
-/** Cached per resolved font path (tests may point PS_FONT_DIR at different dirs). */
+/** Cached per resolved font path (tests may point PDFI_FONT_DIR at different dirs). */
 const fontBytesCache = new Map<string, Uint8Array>();
 const fontkitRegisteredDocs = new WeakSet<PDFDocument>();
 
@@ -36,7 +36,7 @@ async function loadFontBytes(): Promise<Uint8Array> {
     return bytes;
   } catch (err) {
     throw new FontUnavailableError(
-      `Korean (payloadLanguage="ko") CJK font not found at ${fontPath}. Set PS_FONT_DIR or restore ` +
+      `Korean (payloadLanguage="ko") CJK font not found at ${fontPath}. Set PDFI_FONT_DIR or restore ` +
         `packages/pdf-engine/fonts/${FONT_FILENAME} (OFL-licensed Noto Sans KR). (${(err as Error).message})`,
     );
   }
@@ -118,7 +118,7 @@ export async function embedKoreanFont(doc: PDFDocument, text: string): Promise<P
   }
 }
 
-/** True if the Noto Sans KR font file is present under the resolved PS_FONT_DIR. Used by health.features.koPayload. */
+/** True if the Noto Sans KR font file is present under the resolved PDFI_FONT_DIR. Used by health.features.koPayload. */
 export async function koreanFontAvailable(): Promise<boolean> {
   try {
     await loadFontBytes();

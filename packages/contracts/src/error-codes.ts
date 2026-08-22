@@ -82,12 +82,12 @@ export const ERROR_MESSAGES: Record<ApiErrorCode, LocalizedMessage> = {
     ko: "Provider benchmark는 Phase 2 기능이며 기본적으로 비활성화돼 있습니다.",
   },
   EXTERNAL_PROVIDERS_DISABLED: {
-    en: "External model providers are disabled on this server. Set PS_ALLOW_EXTERNAL_PROVIDERS=true to enable them.",
-    ko: "이 서버에서는 외부 모델 provider가 비활성화돼 있습니다. 활성화하려면 PS_ALLOW_EXTERNAL_PROVIDERS=true로 설정하세요.",
+    en: "External model providers are disabled on this server. Set PDFI_ALLOW_EXTERNAL_PROVIDERS=true to enable them.",
+    ko: "이 서버에서는 외부 모델 provider가 비활성화돼 있습니다. 활성화하려면 PDFI_ALLOW_EXTERNAL_PROVIDERS=true로 설정하세요.",
   },
   RESEARCH_MODE_DISABLED: {
-    en: "Research-mode features (submissions, robustness) are disabled on this server. Set PS_RESEARCH_MODE=true to enable them.",
-    ko: "연구용 기능(submissions, robustness)이 이 서버에서 비활성화돼 있습니다. 활성화하려면 PS_RESEARCH_MODE=true로 설정하세요.",
+    en: "Research-mode features (submissions, robustness) are disabled on this server. Set PDFI_RESEARCH_MODE=true to enable them.",
+    ko: "연구용 기능(submissions, robustness)이 이 서버에서 비활성화돼 있습니다. 활성화하려면 PDFI_RESEARCH_MODE=true로 설정하세요.",
   },
   PROVIDER_NOT_CONFIGURED: {
     en: "The selected provider is missing an API key on this server.",
