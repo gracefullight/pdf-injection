@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts", "../../packages/pdf-engine/src/subset-font.d.ts"],
+  "exclude": ["node_modules"]
+}
