@@ -4,6 +4,9 @@ import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getHealth } from "@/lib/api";
 
+/** `health.features.ollama` — API contract addendum §6 (Ollama local provider). */
+export type OllamaFeature = HealthResponse["features"]["ollama"];
+
 /** Flattened view of `GET /api/v1/health`'s `features` object plus top-level `qpdfAvailable`. */
 export interface Features {
   externalProviders: boolean;
@@ -12,7 +15,14 @@ export interface Features {
   canvasAvailable: boolean;
   koPayload: boolean;
   qpdfAvailable: boolean;
+  ollama: OllamaFeature;
 }
+
+const FALLBACK_OLLAMA_FEATURE: OllamaFeature = {
+  available: false,
+  baseUrl: "http://localhost:11434",
+  models: [],
+};
 
 /** Conservative defaults while health hasn't loaded yet (or the request failed) — every gated feature stays off. */
 export const FALLBACK_FEATURES: Features = {
@@ -22,18 +32,23 @@ export const FALLBACK_FEATURES: Features = {
   canvasAvailable: false,
   koPayload: false,
   qpdfAvailable: false,
+  ollama: FALLBACK_OLLAMA_FEATURE,
 };
 
 /** Pure — testable without mocking TanStack Query. */
 export function deriveFeatures(health: HealthResponse | undefined): Features {
   if (!health) return FALLBACK_FEATURES;
+  const { features } = health;
   return {
-    externalProviders: health.features.externalProviders,
-    researchMode: health.features.researchMode,
-    ocrAvailable: health.features.ocrAvailable,
-    canvasAvailable: health.features.canvasAvailable,
-    koPayload: health.features.koPayload,
+    externalProviders: features.externalProviders,
+    researchMode: features.researchMode,
+    ocrAvailable: features.ocrAvailable,
+    canvasAvailable: features.canvasAvailable,
+    koPayload: features.koPayload,
     qpdfAvailable: health.qpdfAvailable,
+    // Defensive fallback against a stale/older API server not yet redeployed with this field,
+    // even though `HealthResponse` now types it as required.
+    ollama: features.ollama ?? FALLBACK_OLLAMA_FEATURE,
   };
 }
 

@@ -1,14 +1,22 @@
 import type { BenchmarkCondition, ModelTestRequest, ProviderName } from "@pdf-injection/contracts";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   ALL_BENCHMARK_CONDITIONS,
   DEFAULT_OUTER_PROMPT,
+  isLocalProvider,
   MAX_REPEATS,
   MIN_REPEATS,
   providerAvailability,
@@ -22,11 +30,12 @@ export interface ModelTestRunFormProps {
   error: string | null;
 }
 
-const PROVIDER_OPTIONS: ProviderName[] = ["mock", "anthropic", "openai"];
+const PROVIDER_OPTIONS: ProviderName[] = ["mock", "ollama", "anthropic", "openai"];
 
 /** Real provider display names — CSS `capitalize` mangled "openai" into "Openai" (r11 review M-15). */
 const PROVIDER_LABELS: Record<ProviderName, string> = {
   mock: "Mock (local simulation)",
+  ollama: "Ollama (local)",
   anthropic: "Anthropic",
   openai: "OpenAI",
 };
@@ -40,20 +49,30 @@ const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
 };
 
 export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTestRunFormProps) {
-  const [acknowledged, setAcknowledged] = useState(false);
+  // Default provider selection: Ollama when detected on this machine, else Mock (contract
+  // addendum §6). `features.ollama.available` isn't known synchronously on first render (it
+  // comes from the health query), so this effect upgrades the initial ["mock"] default to
+  // ["ollama"] once health resolves — but only if the user hasn't already touched the
+  // selection themselves.
+  const userTouchedProvidersRef = useRef(false);
   const [selectedProviders, setSelectedProviders] = useState<ProviderName[]>(["mock"]);
+  useEffect(() => {
+    if (userTouchedProvidersRef.current || !features.ollama.available) return;
+    setSelectedProviders((prev) => (prev.length === 1 && prev[0] === "mock" ? ["ollama"] : prev));
+  }, [features.ollama.available]);
   const [modelIds, setModelIds] = useState<Partial<Record<ProviderName, string>>>({});
   const [conditions, setConditions] = useState<BenchmarkCondition[]>(ALL_BENCHMARK_CONDITIONS);
   const [repeats, setRepeats] = useState(1);
   const [outerPrompt, setOuterPrompt] = useState(DEFAULT_OUTER_PROMPT);
 
-  const needsAcknowledgement = selectedProviders.some((provider) => provider !== "mock");
-  const canRun =
-    selectedProviders.length > 0 &&
-    conditions.length > 0 &&
-    (!needsAcknowledgement || acknowledged);
+  // Non-local providers (anthropic/openai) require external-transfer consent; it's granted
+  // implicitly by selecting the provider (PRD FR-20: env gate + explicit provider selection is
+  // the opt-in) rather than via a separate acknowledgement checkbox.
+  const needsAcknowledgement = selectedProviders.some((provider) => !isLocalProvider(provider));
+  const canRun = selectedProviders.length > 0 && conditions.length > 0;
 
   function toggleProvider(provider: ProviderName, checked: boolean) {
+    userTouchedProvidersRef.current = true;
     setSelectedProviders((prev) =>
       checked ? [...prev, provider] : prev.filter((p) => p !== provider),
     );
@@ -65,15 +84,20 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
 
   function handleSubmit() {
     if (!canRun) return;
+    const providersPayload = selectedProviders.map((name) => {
+      const defaultModel =
+        name === "ollama" && features.ollama.models.length > 0
+          ? features.ollama.models[0]
+          : undefined;
+      const model = (modelIds[name] ?? defaultModel)?.trim();
+      return model ? { name, model } : { name };
+    });
     const request: ModelTestRequest = {
-      providers: selectedProviders.map((name) => {
-        const model = modelIds[name]?.trim();
-        return model ? { name, model } : { name };
-      }),
+      providers: providersPayload,
       conditions: conditions.length === ALL_BENCHMARK_CONDITIONS.length ? "all" : conditions,
       repeats,
       outerPrompt: outerPrompt.trim() || undefined,
-      acknowledgeExternalTransfer: needsAcknowledgement ? acknowledged : false,
+      acknowledgeExternalTransfer: needsAcknowledgement,
     };
     onRun(request);
   }
@@ -83,9 +107,9 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
       <Alert data-testid="model-test-privacy-warning">
         <AlertTitle>Before you run a model test</AlertTitle>
         <AlertDescription>
-          For any provider other than "mock", the PDF and its hidden instruction will be sent to
-          that provider over the network. The "mock" provider never leaves this machine: it is a
-          deterministic local simulation, not a real model call.
+          Selecting Anthropic or OpenAI sends the PDF and its hidden instruction to that provider
+          over the network. Mock and Ollama (local) never leave this machine: Mock is a
+          deterministic local simulation, and Ollama runs entirely on this server.
         </AlertDescription>
       </Alert>
 
@@ -107,17 +131,52 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
                 <Label htmlFor={`model-test-provider-${provider}`} className="font-normal">
                   {PROVIDER_LABELS[provider]}
                 </Label>
-                {checked && available && (
-                  <Input
-                    className="ml-2 h-8 max-w-56"
-                    placeholder="model id (optional)"
-                    data-testid={`model-test-provider-${provider}-model-input`}
-                    value={modelIds[provider] ?? ""}
-                    onChange={(event) =>
-                      setModelIds((prev) => ({ ...prev, [provider]: event.target.value }))
-                    }
-                  />
-                )}
+                {checked &&
+                  available &&
+                  (provider === "ollama" ? (
+                    features.ollama.models.length > 0 ? (
+                      <Select
+                        value={modelIds.ollama ?? features.ollama.models[0]}
+                        onValueChange={(value) =>
+                          setModelIds((prev) => ({ ...prev, ollama: value }))
+                        }
+                      >
+                        <SelectTrigger
+                          className="ml-2 h-8 max-w-56"
+                          data-testid="model-test-provider-ollama-model-select"
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {features.ollama.models.map((model) => (
+                            <SelectItem key={model} value={model}>
+                              {model}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        className="ml-2 h-8 max-w-56"
+                        placeholder="model id (e.g. llama3.1)"
+                        data-testid="model-test-provider-ollama-model-input"
+                        value={modelIds.ollama ?? ""}
+                        onChange={(event) =>
+                          setModelIds((prev) => ({ ...prev, ollama: event.target.value }))
+                        }
+                      />
+                    )
+                  ) : (
+                    <Input
+                      className="ml-2 h-8 max-w-56"
+                      placeholder="model id (optional)"
+                      data-testid={`model-test-provider-${provider}-model-input`}
+                      value={modelIds[provider] ?? ""}
+                      onChange={(event) =>
+                        setModelIds((prev) => ({ ...prev, [provider]: event.target.value }))
+                      }
+                    />
+                  ))}
               </div>
               {!available && reason && (
                 <p
@@ -131,21 +190,6 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
           );
         })}
       </fieldset>
-
-      {needsAcknowledgement && (
-        <div className="flex items-start gap-2">
-          <Checkbox
-            id="model-test-acknowledge"
-            data-testid="model-test-acknowledge-checkbox"
-            checked={acknowledged}
-            onCheckedChange={(value) => setAcknowledged(value === true)}
-          />
-          <Label htmlFor="model-test-acknowledge" className="font-normal">
-            I understand the PDF and hidden instruction will be sent to the selected external
-            provider(s).
-          </Label>
-        </div>
-      )}
 
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm font-medium text-foreground">Conditions</legend>

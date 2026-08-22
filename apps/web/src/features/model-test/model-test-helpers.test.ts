@@ -5,11 +5,15 @@ import {
   formatDeltaPp,
   formatLatency,
   formatPercent,
+  isLocalProvider,
   nextPollingState,
   providerAvailability,
   shouldPollRun,
   sortAggregates,
 } from "@/features/model-test/model-test-helpers";
+
+const OLLAMA_UNAVAILABLE = { available: false, baseUrl: "http://localhost:11434" };
+const OLLAMA_AVAILABLE = { available: true, baseUrl: "http://localhost:11434" };
 
 describe("shouldPollRun", () => {
   it("polls while queued or running", () => {
@@ -190,26 +194,66 @@ describe("deriveGateCardView", () => {
 
 describe("providerAvailability", () => {
   it("mock is always available", () => {
-    expect(providerAvailability("mock", { externalProviders: false })).toEqual({
+    expect(
+      providerAvailability("mock", { externalProviders: false, ollama: OLLAMA_UNAVAILABLE }),
+    ).toEqual({
       available: true,
       reason: null,
     });
-    expect(providerAvailability("mock", { externalProviders: true })).toEqual({
+    expect(
+      providerAvailability("mock", { externalProviders: true, ollama: OLLAMA_UNAVAILABLE }),
+    ).toEqual({
       available: true,
       reason: null,
     });
   });
 
   it("anthropic/openai are unavailable with a reason when externalProviders is off", () => {
-    const result = providerAvailability("anthropic", { externalProviders: false });
+    const result = providerAvailability("anthropic", {
+      externalProviders: false,
+      ollama: OLLAMA_UNAVAILABLE,
+    });
     expect(result.available).toBe(false);
     expect(result.reason).toContain("PDFI_ALLOW_EXTERNAL_PROVIDERS");
   });
 
   it("anthropic/openai are available (pending server-side key check) when externalProviders is on", () => {
-    expect(providerAvailability("openai", { externalProviders: true })).toEqual({
+    expect(
+      providerAvailability("openai", { externalProviders: true, ollama: OLLAMA_UNAVAILABLE }),
+    ).toEqual({
       available: true,
       reason: null,
     });
+  });
+
+  it("ollama is unavailable with a hint naming the base URL when not detected", () => {
+    const result = providerAvailability("ollama", {
+      externalProviders: false,
+      ollama: OLLAMA_UNAVAILABLE,
+    });
+    expect(result.available).toBe(false);
+    expect(result.reason).toContain("http://localhost:11434");
+    expect(result.reason).toContain("Ollama not detected");
+  });
+
+  it("ollama is available when detected, independent of externalProviders", () => {
+    expect(
+      providerAvailability("ollama", { externalProviders: false, ollama: OLLAMA_AVAILABLE }),
+    ).toEqual({
+      available: true,
+      reason: null,
+    });
+  });
+});
+
+describe("isLocalProvider", () => {
+  it("mock and ollama are local (no external-transfer acknowledgement needed)", () => {
+    expect(isLocalProvider("mock")).toBe(true);
+    expect(isLocalProvider("ollama")).toBe(true);
+  });
+
+  it("anthropic and openai are not local", () => {
+    expect(isLocalProvider("anthropic")).toBe(false);
+    expect(isLocalProvider("openai")).toBe(false);
   });
 });

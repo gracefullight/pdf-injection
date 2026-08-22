@@ -28,6 +28,13 @@ export interface ModelTestResultsProps {
   exporting: "json" | "csv" | null;
 }
 
+/** `ModelTestResult.ingestion` (contract addendum §6) — optional, so older result files lack it. */
+const INGESTION_LABELS: Record<NonNullable<ModelTestResult["ingestion"]>, string> = {
+  provider_native: "native PDF ingestion",
+  text_extraction: "text extraction (Ollama)",
+  mock: "mock ingestion",
+};
+
 function resultLabel(result: ModelTestResult): string {
   return `${result.provider}/${result.condition} #${result.repeat}`;
 }
@@ -186,6 +193,11 @@ export function ModelTestResults({ run, onExport, exporting }: ModelTestResultsP
                   {result.disclosure && <Badge variant="warning">disclosure</Badge>}
                   {result.refusal && <Badge variant="secondary">refusal</Badge>}
                   {result.error && <Badge variant="destructive">error</Badge>}
+                  {result.ingestion && (
+                    <Badge variant="outline" data-testid={`model-test-result-ingestion-${index}`}>
+                      {INGESTION_LABELS[result.ingestion]}
+                    </Badge>
+                  )}
                 </span>
               </button>
               {expanded.has(index) && (

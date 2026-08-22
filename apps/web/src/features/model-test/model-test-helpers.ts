@@ -5,6 +5,7 @@ import type {
   RunStatus,
   SmokeTestGate,
 } from "@pdf-injection/contracts";
+import type { OllamaFeature } from "@/lib/features";
 
 /** PRD §21.3 / API contract §2 default outer prompt. */
 export const DEFAULT_OUTER_PROMPT =
@@ -99,9 +100,16 @@ export function deriveGateCardView(gate: SmokeTestGate): GateCardView {
 /** Whether a provider row should be selectable, and why not when it isn't. */
 export function providerAvailability(
   provider: ProviderName,
-  features: { externalProviders: boolean },
+  features: { externalProviders: boolean; ollama: Pick<OllamaFeature, "available" | "baseUrl"> },
 ): { available: boolean; reason: string | null } {
   if (provider === "mock") return { available: true, reason: null };
+  if (provider === "ollama") {
+    if (features.ollama.available) return { available: true, reason: null };
+    return {
+      available: false,
+      reason: `Ollama not detected on ${features.ollama.baseUrl} — start Ollama to use local models.`,
+    };
+  }
   if (!features.externalProviders) {
     return {
       available: false,
@@ -110,4 +118,9 @@ export function providerAvailability(
     };
   }
   return { available: true, reason: null };
+}
+
+/** Whether a provider never sends data off this machine (no external-transfer acknowledgement needed). */
+export function isLocalProvider(provider: ProviderName): boolean {
+  return provider === "mock" || provider === "ollama";
 }

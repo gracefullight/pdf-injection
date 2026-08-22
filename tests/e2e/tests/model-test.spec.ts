@@ -38,9 +38,27 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
   await page.getByTestId("tab-model-test").click();
   await expect(page.getByTestId("model-test-tab")).toBeVisible();
   await expect(page.getByTestId("model-test-privacy-warning")).toBeVisible();
+  await expect(page.getByTestId("model-test-privacy-warning")).toContainText(
+    "Mock and Ollama (local) never leave this machine",
+  );
 
-  // Defaults already match what's needed: provider "mock" checked, all 5 conditions checked
-  // (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2.
+  // No standalone acknowledgement checkbox anymore (contract addendum §6) — consent is implicit
+  // in selecting a non-local provider, and the informational alert above stays visible instead.
+  await expect(page.getByTestId("model-test-acknowledge-checkbox")).toHaveCount(0);
+
+  // Ollama isn't running on this CI/dev machine, so `health.features.ollama.available` is
+  // false: the row is disabled with a hint naming the base URL, and the default provider
+  // selection falls back to "mock" rather than upgrading to "ollama".
+  await expect(page.getByTestId("model-test-provider-ollama")).toBeDisabled();
+  await expect(page.getByTestId("model-test-provider-ollama-reason")).toContainText(
+    "Ollama not detected on",
+  );
+  await expect(page.getByTestId("model-test-provider-ollama-reason")).toContainText(
+    "start Ollama to use local models",
+  );
+
+  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 5
+  // conditions checked (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2.
   await expect(page.getByTestId("model-test-provider-mock")).toBeChecked();
   for (const condition of CONDITIONS) {
     await expect(page.getByTestId(`model-test-condition-${condition}`)).toBeChecked();

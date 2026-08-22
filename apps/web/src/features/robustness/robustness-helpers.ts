@@ -4,6 +4,7 @@ import type {
   RunStatus,
   TextTransform,
 } from "@pdf-injection/contracts";
+import type { OllamaFeature } from "@/lib/features";
 
 export const ALL_PDF_TRANSFORMS: PdfTransform[] = ["print_to_pdf", "ocr_regeneration"];
 export const ALL_TEXT_TRANSFORMS: TextTransform[] = ["paraphrase", "translation", "human_edit"];
@@ -48,9 +49,16 @@ export function pdfTransformAvailability(
 
 export function providerAvailability(
   provider: ProviderName,
-  features: { externalProviders: boolean },
+  features: { externalProviders: boolean; ollama: Pick<OllamaFeature, "available" | "baseUrl"> },
 ): { available: boolean; reason: string | null } {
   if (provider === "mock") return { available: true, reason: null };
+  if (provider === "ollama") {
+    if (features.ollama.available) return { available: true, reason: null };
+    return {
+      available: false,
+      reason: `Ollama not detected on ${features.ollama.baseUrl} — start Ollama to use local models.`,
+    };
+  }
   if (!features.externalProviders) {
     return {
       available: false,
@@ -58,6 +66,11 @@ export function providerAvailability(
     };
   }
   return { available: true, reason: null };
+}
+
+/** Whether a provider never sends data off this machine (no external-transfer acknowledgement needed). */
+export function isLocalProvider(provider: ProviderName): boolean {
+  return provider === "mock" || provider === "ollama";
 }
 
 /** Splits a textarea's newline-separated content into non-empty, trimmed sample texts. */

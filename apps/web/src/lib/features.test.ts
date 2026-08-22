@@ -2,6 +2,12 @@ import { describe, expect, it } from "bun:test";
 import type { HealthResponse } from "@pdf-injection/contracts";
 import { deriveFeatures, FALLBACK_FEATURES, resolveFeatureGateMessage } from "@/lib/features";
 
+const DEFAULT_OLLAMA_FEATURE: HealthResponse["features"]["ollama"] = {
+  available: false,
+  baseUrl: "http://localhost:11434",
+  models: [],
+};
+
 function health(
   overrides: Partial<HealthResponse["features"]> = {},
   qpdfAvailable = true,
@@ -16,6 +22,7 @@ function health(
       ocrAvailable: false,
       canvasAvailable: false,
       koPayload: false,
+      ollama: DEFAULT_OLLAMA_FEATURE,
       ...overrides,
     },
   };
@@ -34,6 +41,31 @@ describe("deriveFeatures", () => {
       canvasAvailable: false,
       koPayload: false,
       qpdfAvailable: true,
+      ollama: DEFAULT_OLLAMA_FEATURE,
+    });
+  });
+
+  it("defaults ollama to unavailable when health.features.ollama is absent at runtime (stale API server predating contract §6)", () => {
+    const stale = health();
+    // Simulates a stale API server response predating contract §6, where `ollama` genuinely
+    // isn't on the wire despite `HealthResponse` now typing it as required.
+    // biome-ignore lint/suspicious/noExplicitAny: intentional runtime-shape simulation, not a real value
+    (stale.features as any).ollama = undefined;
+    expect(deriveFeatures(stale).ollama).toEqual(DEFAULT_OLLAMA_FEATURE);
+  });
+
+  it("carries ollama through when present on health.features", () => {
+    const withOllama = health({
+      ollama: {
+        available: true,
+        baseUrl: "http://localhost:11434",
+        models: ["llama3.1", "mistral"],
+      },
+    });
+    expect(deriveFeatures(withOllama).ollama).toEqual({
+      available: true,
+      baseUrl: "http://localhost:11434",
+      models: ["llama3.1", "mistral"],
     });
   });
 });

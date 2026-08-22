@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   ALL_PDF_TRANSFORMS,
   ALL_TEXT_TRANSFORMS,
+  isLocalProvider,
   parseCustomTexts,
   pdfTransformAvailability,
   providerAvailability,
@@ -49,7 +50,7 @@ const TEXT_TRANSFORM_LABELS: Record<TextTransform, string> = {
   human_edit: "Human edit",
 };
 
-const PROVIDER_OPTIONS: ProviderName[] = ["mock", "anthropic", "openai"];
+const PROVIDER_OPTIONS: ProviderName[] = ["mock", "ollama", "anthropic", "openai"];
 
 type TextSourceKind = "model_test_run" | "custom";
 
@@ -67,17 +68,16 @@ export function RobustnessRunForm({
   const [customTexts, setCustomTexts] = useState("");
   const [selectedRunId, setSelectedRunId] = useState<string>("");
   const [seed, setSeed] = useState("");
-  const [acknowledged, setAcknowledged] = useState(false);
 
-  const needsAcknowledgement = textTransforms.length > 0 && provider !== "mock";
+  // Non-local providers (anthropic/openai) require external-transfer consent; it's granted
+  // implicitly by selecting the provider rather than via a separate acknowledgement checkbox
+  // (contract addendum §6 — same rule as the model-test tab).
+  const needsAcknowledgement = textTransforms.length > 0 && !isLocalProvider(provider);
   const parsedCustomTexts = parseCustomTexts(customTexts);
   const hasValidTextSource =
     textTransforms.length === 0 ||
     (sourceKind === "custom" ? parsedCustomTexts.length > 0 : selectedRunId.length > 0);
-  const canRun =
-    (pdfTransforms.length > 0 || textTransforms.length > 0) &&
-    hasValidTextSource &&
-    (!needsAcknowledgement || acknowledged);
+  const canRun = (pdfTransforms.length > 0 || textTransforms.length > 0) && hasValidTextSource;
 
   function togglePdfTransform(transform: PdfTransform, checked: boolean) {
     setPdfTransforms((prev) =>
@@ -103,7 +103,7 @@ export function RobustnessRunForm({
       providers: textTransforms.length > 0 ? [{ name: provider }] : [],
       repeats: 1,
       seed: seed.trim() || undefined,
-      acknowledgeExternalTransfer: needsAcknowledgement ? acknowledged : false,
+      acknowledgeExternalTransfer: needsAcknowledgement,
     };
     onRun(request);
   }
@@ -161,6 +161,15 @@ export function RobustnessRunForm({
 
         {textTransforms.length > 0 && (
           <>
+            <Alert data-testid="robustness-privacy-warning">
+              <AlertTitle>Before you run a transform with a provider</AlertTitle>
+              <AlertDescription>
+                Selecting Anthropic or OpenAI sends the sample text to that provider over the
+                network. Mock and Ollama (local) never leave this machine: Mock is a deterministic
+                local simulation, and Ollama runs entirely on this server.
+              </AlertDescription>
+            </Alert>
+
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="robustness-provider">Provider (paraphrase/translation)</Label>
               <Select
@@ -186,27 +195,13 @@ export function RobustnessRunForm({
                   })}
                 </SelectContent>
               </Select>
-              {provider !== "mock" && (
+              {provider === "mock" && (
                 <p className="text-xs text-muted-foreground">
                   Translation has no mock implementation. It is only available when a real provider
                   is configured.
                 </p>
               )}
             </div>
-
-            {needsAcknowledgement && (
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="robustness-acknowledge"
-                  data-testid="robustness-acknowledge-checkbox"
-                  checked={acknowledged}
-                  onCheckedChange={(value) => setAcknowledged(value === true)}
-                />
-                <Label htmlFor="robustness-acknowledge" className="font-normal">
-                  I understand text will be sent to the selected external provider.
-                </Label>
-              </div>
-            )}
 
             <fieldset className="flex flex-col gap-1.5">
               <legend className="text-sm font-medium text-foreground">Text source</legend>

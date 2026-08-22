@@ -3,11 +3,15 @@ import {
   availabilityLabel,
   formatPercent,
   geometryLabel,
+  isLocalProvider,
   parseCustomTexts,
   pdfTransformAvailability,
   providerAvailability,
   shouldPollRun,
 } from "@/features/robustness/robustness-helpers";
+
+const OLLAMA_UNAVAILABLE = { available: false, baseUrl: "http://localhost:11434" };
+const OLLAMA_AVAILABLE = { available: true, baseUrl: "http://localhost:11434" };
 
 describe("shouldPollRun", () => {
   it("polls while queued or running, stops on terminal statuses", () => {
@@ -80,9 +84,42 @@ describe("pdfTransformAvailability", () => {
 
 describe("providerAvailability", () => {
   it("mock is always available; others need externalProviders on", () => {
-    expect(providerAvailability("mock", { externalProviders: false }).available).toBe(true);
-    expect(providerAvailability("anthropic", { externalProviders: false }).available).toBe(false);
-    expect(providerAvailability("anthropic", { externalProviders: true }).available).toBe(true);
+    expect(
+      providerAvailability("mock", { externalProviders: false, ollama: OLLAMA_UNAVAILABLE })
+        .available,
+    ).toBe(true);
+    expect(
+      providerAvailability("anthropic", { externalProviders: false, ollama: OLLAMA_UNAVAILABLE })
+        .available,
+    ).toBe(false);
+    expect(
+      providerAvailability("anthropic", { externalProviders: true, ollama: OLLAMA_UNAVAILABLE })
+        .available,
+    ).toBe(true);
+  });
+
+  it("ollama is gated by its own detection, independent of externalProviders", () => {
+    expect(
+      providerAvailability("ollama", { externalProviders: false, ollama: OLLAMA_UNAVAILABLE })
+        .available,
+    ).toBe(false);
+    expect(
+      providerAvailability("ollama", { externalProviders: false, ollama: OLLAMA_AVAILABLE })
+        .available,
+    ).toBe(true);
+    expect(
+      providerAvailability("ollama", { externalProviders: false, ollama: OLLAMA_UNAVAILABLE })
+        .reason,
+    ).toContain("http://localhost:11434");
+  });
+});
+
+describe("isLocalProvider", () => {
+  it("mock and ollama are local; anthropic/openai are not", () => {
+    expect(isLocalProvider("mock")).toBe(true);
+    expect(isLocalProvider("ollama")).toBe(true);
+    expect(isLocalProvider("anthropic")).toBe(false);
+    expect(isLocalProvider("openai")).toBe(false);
   });
 });
 
