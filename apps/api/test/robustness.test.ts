@@ -368,3 +368,30 @@ describe("POST /api/v1/jobs/:jobId/robustness/screenshots", () => {
     expect(res.status).toBe(415);
   });
 });
+
+describe("ollama provider (round-2 addendum §6) — local, no external-provider gate", () => {
+  test("unreachable Ollama -> 422 PROVIDER_NOT_CONFIGURED naming OLLAMA_BASE_URL, not EXTERNAL_PROVIDERS_DISABLED", async () => {
+    // allowExternalProviders stays false (default) — ollama must not be gated by it.
+    const { app } = testApp({ researchMode: true, ollamaBaseUrl: "http://127.0.0.1:1" });
+    const { jobId, accessToken } = await createCompletedJob(app);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/jobs/${jobId}/robustness`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Job-Token": accessToken },
+        body: JSON.stringify({
+          pdfTransforms: [],
+          textTransforms: ["human_edit"],
+          textSource: { kind: "custom", texts: ["Method A was used."] },
+          providers: [{ name: "ollama" }],
+          repeats: 1,
+          acknowledgeExternalTransfer: false,
+        }),
+      }),
+    );
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe("PROVIDER_NOT_CONFIGURED");
+    expect(body.error.message).toContain("OLLAMA_BASE_URL");
+  });
+});

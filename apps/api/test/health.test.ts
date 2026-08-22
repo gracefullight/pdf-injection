@@ -16,6 +16,11 @@ describe("GET /api/v1/health", () => {
       ocrAvailable: expect.any(Boolean),
       canvasAvailable: expect.any(Boolean),
       koPayload: expect.any(Boolean),
+      ollama: {
+        available: expect.any(Boolean),
+        baseUrl: expect.any(String),
+        models: expect.any(Array),
+      },
     });
   });
 
@@ -33,5 +38,47 @@ describe("GET /api/v1/health", () => {
     expect(res.headers.get("x-content-type-options")).toBe("nosniff");
     expect(res.headers.get("content-security-policy")).toContain("default-src 'self'");
     expect(res.headers.get("x-frame-options")).toBe("DENY");
+  });
+
+  describe("features.ollama (round-2 addendum §6)", () => {
+    test("unreachable Ollama base URL -> available:false, no throw, echoes the configured baseUrl", async () => {
+      const { app } = testApp({ ollamaBaseUrl: "http://127.0.0.1:1" });
+      const res = await app.handle(new Request("http://localhost/api/v1/health"));
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.features.ollama).toEqual({
+        available: false,
+        baseUrl: "http://127.0.0.1:1",
+        models: [],
+      });
+    });
+
+    test("a running fake Ollama /api/tags server -> available:true with its model list", async () => {
+      const server = Bun.serve({
+        port: 0,
+        fetch(req) {
+          const url = new URL(req.url);
+          if (url.pathname === "/api/tags") {
+            return new Response(JSON.stringify({ models: [{ name: "llama3.1" }] }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+          return new Response("not found", { status: 404 });
+        },
+      });
+      try {
+        const { app } = testApp({ ollamaBaseUrl: `http://127.0.0.1:${server.port}` });
+        const res = await app.handle(new Request("http://localhost/api/v1/health"));
+        const body = await res.json();
+        expect(body.features.ollama).toEqual({
+          available: true,
+          baseUrl: `http://127.0.0.1:${server.port}`,
+          models: ["llama3.1"],
+        });
+      } finally {
+        server.stop(true);
+      }
+    });
   });
 });

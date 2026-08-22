@@ -167,3 +167,22 @@ describe("toModelTestRequest", () => {
     expect(toModelTestRequest(config).acknowledgeExternalTransfer).toBe(false);
   });
 });
+
+describe("ollama provider (addendum §6) — local, no acknowledgement required", () => {
+  test("accepts providers: [{ name: 'ollama' }] with acknowledgeExternalTransfer omitted/false, like mock", () => {
+    const { acknowledgeExternalTransfer: _ack, ...withoutAck } = VALID_CONFIG;
+    const config = parseExperimentConfig({ ...withoutAck, providers: [{ name: "ollama" }] });
+    expect(config.providers).toEqual([{ name: "ollama", model: undefined }]);
+    expect(toModelTestRequest(config).acknowledgeExternalTransfer).toBe(false);
+  });
+
+  test("still requires acknowledgeExternalTransfer when mixed with a real external provider", () => {
+    expect(() =>
+      parseExperimentConfig({
+        ...VALID_CONFIG,
+        providers: [{ name: "ollama" }, { name: "anthropic" }],
+        acknowledgeExternalTransfer: false,
+      }),
+    ).toThrow(ExperimentConfigError);
+  });
+});

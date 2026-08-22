@@ -99,4 +99,21 @@ describe("toCsv", () => {
     const csv = toCsv(run);
     expect(csv.trim().split("\r\n")).toHaveLength(1);
   });
+
+  test("includes an ingestion column (round-2 addendum §6), populated when the result has one", () => {
+    const run = buildRun([buildResult({ ingestion: "text_extraction" })]);
+    const csv = toCsv(run);
+    const lines = csv.trim().split("\r\n");
+    expect(lines[0]).toContain("ingestion");
+    expect(lines[1]).toContain("text_extraction");
+  });
+
+  test("ingestion column is blank when the result predates the field", () => {
+    const run = buildRun([buildResult()]);
+    const csv = toCsv(run);
+    const lines = csv.trim().split("\r\n");
+    const headerCols = (lines[0] as string).split(",");
+    const rowCols = (lines[1] as string).split(",");
+    expect(rowCols[headerCols.indexOf("ingestion")]).toBe("");
+  });
 });

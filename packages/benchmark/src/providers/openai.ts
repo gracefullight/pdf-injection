@@ -84,6 +84,7 @@ export function createOpenAiAdapter(input: CreateOpenAiAdapterInput = {}): Provi
           outputTokens: res.usage?.output_tokens ?? null,
         },
         latencyMs: performance.now() - start,
+        ingestion: "provider_native",
         raw: res,
       };
     } catch (err) {

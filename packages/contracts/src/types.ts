@@ -16,8 +16,12 @@ export type PayloadLanguage = "en" | "ko";
 
 /** Round 2 cross-cutting unions — see .agents/results/api-contracts/pdf-injection-phase3-5-api.md §0.1 */
 export type BenchmarkCondition = "original" | InjectionMode;
-/** "mock" is a deterministic local fallback and is always available (no API key needed). */
-export type ProviderName = "anthropic" | "openai" | "mock";
+/**
+ * "mock" is a deterministic local fallback and is always available (no API
+ * key needed). "ollama" is a local provider (never leaves the machine) —
+ * see `HealthResponse.features.ollama` and API contract addendum §6.
+ */
+export type ProviderName = "anthropic" | "openai" | "mock" | "ollama";
 export type RunStatus = "queued" | "running" | "completed" | "failed" | "cancelled";
 /** "baseline" = known-original (non-injected) responses/answers used for false-positive calibration. */
 export type SubmissionLabel = "candidate" | "baseline";
@@ -258,6 +262,8 @@ export interface HealthResponse {
     ocrAvailable: boolean;
     canvasAvailable: boolean;
     koPayload: boolean;
+    /** Round-2 addendum §6 — local Ollama provider probe (`GET {baseUrl}/api/tags`, cached 10s, never throws). */
+    ollama: { available: boolean; baseUrl: string; models: string[] };
   };
 }
 

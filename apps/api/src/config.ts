@@ -1,3 +1,4 @@
+import { DEFAULT_OLLAMA_BASE_URL, DEFAULT_OLLAMA_MODEL } from "@pdf-injection/benchmark";
 import { LIMITS } from "@pdf-injection/contracts";
 
 /**
@@ -37,10 +38,14 @@ export interface AppConfig {
   modelTestConcurrency: number;
   /** PDFI_RESEARCH_RESULTS_DIR — when set, a completed model-test run's export is also copied here (opt-in; default unset). */
   researchResultsDir: string | undefined;
+  /** OLLAMA_BASE_URL — base URL of a local Ollama server (round-2 addendum §6). Never gated by allowExternalProviders (local, never leaves the machine). */
+  ollamaBaseUrl: string;
+  /** PDFI_OLLAMA_MODEL — default model id used when a model-tests/robustness request omits `model` for provider "ollama". */
+  ollamaModel: string;
 }
 
-function readNumber(name: string, fallback: number): number {
-  const raw = process.env[name];
+function readNumber(env: NodeJS.ProcessEnv, name: string, fallback: number): number {
+  const raw = env[name];
   if (raw === undefined || raw === "") return fallback;
   const parsed = Number(raw);
   if (!Number.isFinite(parsed)) {
@@ -50,8 +55,8 @@ function readNumber(name: string, fallback: number): number {
   return parsed;
 }
 
-function readBoolean(name: string, fallback: boolean): boolean {
-  const raw = process.env[name];
+function readBoolean(env: NodeJS.ProcessEnv, name: string, fallback: boolean): boolean {
+  const raw = env[name];
   if (raw === undefined || raw === "") return fallback;
   if (raw !== "true" && raw !== "false") {
     console.warn(
@@ -64,38 +69,50 @@ function readBoolean(name: string, fallback: boolean): boolean {
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
-    maxFileBytes: readNumber("PDFI_MAX_FILE_BYTES", LIMITS.maxFileBytes),
-    maxPages: readNumber("PDFI_MAX_PAGES", LIMITS.maxPages),
-    maxInstructionChars: readNumber("PDFI_MAX_INSTRUCTION_CHARS", LIMITS.maxInstructionChars),
-    retentionHours: readNumber("PDFI_RETENTION_HOURS", LIMITS.retentionHours),
+    maxFileBytes: readNumber(env, "PDFI_MAX_FILE_BYTES", LIMITS.maxFileBytes),
+    maxPages: readNumber(env, "PDFI_MAX_PAGES", LIMITS.maxPages),
+    maxInstructionChars: readNumber(env, "PDFI_MAX_INSTRUCTION_CHARS", LIMITS.maxInstructionChars),
+    retentionHours: readNumber(env, "PDFI_RETENTION_HOURS", LIMITS.retentionHours),
     storageDir:
       env.PDFI_STORAGE_DIR && env.PDFI_STORAGE_DIR !== ""
         ? env.PDFI_STORAGE_DIR
         : "./.pdf-injection-data",
-    qpdfEnabled: readBoolean("PDFI_QPDF_ENABLED", false),
-    maxPageDimensionPt: readNumber("PDFI_MAX_PAGE_DIMENSION_PT", LIMITS.maxPageDimensionPt),
+    qpdfEnabled: readBoolean(env, "PDFI_QPDF_ENABLED", false),
+    maxPageDimensionPt: readNumber(env, "PDFI_MAX_PAGE_DIMENSION_PT", LIMITS.maxPageDimensionPt),
     corsOrigin:
       env.PDFI_CORS_ORIGIN && env.PDFI_CORS_ORIGIN !== ""
         ? env.PDFI_CORS_ORIGIN
         : "http://localhost:5173",
-    sweepIntervalMs: readNumber("PDFI_SWEEP_INTERVAL_MS", 10 * 60 * 1000),
+    sweepIntervalMs: readNumber(env, "PDFI_SWEEP_INTERVAL_MS", 10 * 60 * 1000),
     dbPath:
       env.PDFI_DB_PATH && env.PDFI_DB_PATH !== ""
         ? env.PDFI_DB_PATH
         : "./.pdf-injection-data/pdf-injection.sqlite",
-    port: readNumber("PDFI_PORT", 3001),
-    researchMode: readBoolean("PDFI_RESEARCH_MODE", false),
-    maxVariants: readNumber("PDFI_MAX_VARIANTS", LIMITS.maxVariants),
-    maxStudentKeys: readNumber("PDFI_MAX_STUDENT_KEYS", LIMITS.maxStudentKeys),
-    maxSubmissionBytes: readNumber("PDFI_MAX_SUBMISSION_BYTES", LIMITS.maxSubmissionBytes),
-    maxSubmissionsPerJob: readNumber("PDFI_MAX_SUBMISSIONS_PER_JOB", LIMITS.maxSubmissionsPerJob),
-    allowExternalProviders: readBoolean("PDFI_ALLOW_EXTERNAL_PROVIDERS", false),
-    maxProcessingMs: readNumber("PDFI_MAX_PROCESSING_MS", LIMITS.maxProcessingMs),
-    modelTestMaxRepeats: readNumber("PDFI_MODEL_TEST_MAX_REPEATS", LIMITS.maxModelTestRepeats),
-    modelTestConcurrency: readNumber("PDFI_MODEL_TEST_CONCURRENCY", 2),
+    port: readNumber(env, "PDFI_PORT", 3001),
+    researchMode: readBoolean(env, "PDFI_RESEARCH_MODE", false),
+    maxVariants: readNumber(env, "PDFI_MAX_VARIANTS", LIMITS.maxVariants),
+    maxStudentKeys: readNumber(env, "PDFI_MAX_STUDENT_KEYS", LIMITS.maxStudentKeys),
+    maxSubmissionBytes: readNumber(env, "PDFI_MAX_SUBMISSION_BYTES", LIMITS.maxSubmissionBytes),
+    maxSubmissionsPerJob: readNumber(
+      env,
+      "PDFI_MAX_SUBMISSIONS_PER_JOB",
+      LIMITS.maxSubmissionsPerJob,
+    ),
+    allowExternalProviders: readBoolean(env, "PDFI_ALLOW_EXTERNAL_PROVIDERS", false),
+    maxProcessingMs: readNumber(env, "PDFI_MAX_PROCESSING_MS", LIMITS.maxProcessingMs),
+    modelTestMaxRepeats: readNumber(env, "PDFI_MODEL_TEST_MAX_REPEATS", LIMITS.maxModelTestRepeats),
+    modelTestConcurrency: readNumber(env, "PDFI_MODEL_TEST_CONCURRENCY", 2),
     researchResultsDir:
       env.PDFI_RESEARCH_RESULTS_DIR && env.PDFI_RESEARCH_RESULTS_DIR !== ""
         ? env.PDFI_RESEARCH_RESULTS_DIR
         : undefined,
+    ollamaBaseUrl:
+      env.OLLAMA_BASE_URL && env.OLLAMA_BASE_URL !== ""
+        ? env.OLLAMA_BASE_URL
+        : DEFAULT_OLLAMA_BASE_URL,
+    ollamaModel:
+      env.PDFI_OLLAMA_MODEL && env.PDFI_OLLAMA_MODEL !== ""
+        ? env.PDFI_OLLAMA_MODEL
+        : DEFAULT_OLLAMA_MODEL,
   };
 }

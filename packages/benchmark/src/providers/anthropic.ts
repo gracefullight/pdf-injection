@@ -103,6 +103,7 @@ export function createAnthropicAdapter(input: CreateAnthropicAdapterInput = {}):
           outputTokens: message.usage.output_tokens ?? null,
         },
         latencyMs: performance.now() - start,
+        ingestion: "provider_native",
         raw: message,
       };
     } catch (err) {

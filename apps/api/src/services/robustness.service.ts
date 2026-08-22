@@ -40,6 +40,7 @@ import {
 import type { StoredJobRow } from "../repositories/jobs.repository";
 import type { RunsRepository } from "../repositories/runs.repository";
 import { readJobFileBytes, readJobFileText } from "../storage";
+import { getOllamaStatus, ollamaProviderEnv } from "./ollama-status";
 
 export interface RobustnessServiceDeps {
   config: AppConfig;
@@ -66,10 +67,25 @@ function artifactSegments(runId: string, transform: PdfTransform): string[] {
   return ["robustness", runId, `${transform}.pdf`];
 }
 
-/** Same gating rules as §2 model-tests (contract §4: "anthropic/openai gated as in §2"). */
-function assertProvidersAllowed(config: AppConfig, body: RobustnessRequest): void {
+/**
+ * Same gating rules as §2 model-tests (contract §4: "anthropic/openai gated
+ * as in §2"), plus round-2 addendum §6: "ollama" is LOCAL — no
+ * `allowExternalProviders` gate, no acknowledgement required, only an
+ * availability check (cached 10s).
+ */
+async function assertProvidersAllowed(config: AppConfig, body: RobustnessRequest): Promise<void> {
   for (const provider of body.providers) {
     if (provider.name === "mock") continue;
+    if (provider.name === "ollama") {
+      const status = await getOllamaStatus(config);
+      if (!status.available) {
+        throw new ApiError(
+          "PROVIDER_NOT_CONFIGURED",
+          `Ollama is not reachable at ${config.ollamaBaseUrl}. Set OLLAMA_BASE_URL to point at a running Ollama server.`,
+        );
+      }
+      continue;
+    }
     if (!config.allowExternalProviders) {
       throw new ApiError("EXTERNAL_PROVIDERS_DISABLED");
     }
@@ -268,7 +284,7 @@ async function runPdfTransform(
 }
 
 async function runTextTransform(
-  _config: AppConfig,
+  config: AppConfig,
   transform: TextTransform,
   providerSpec: ModelTestProviderSpec | undefined,
   texts: string[],
@@ -280,7 +296,11 @@ async function runTextTransform(
   const provider =
     providerName === "mock"
       ? undefined
-      : createProvider({ name: providerName, model: providerSpec?.model, env: process.env });
+      : createProvider({
+          name: providerName,
+          model: providerSpec?.model,
+          env: ollamaProviderEnv(config),
+        });
 
   if (texts.length === 0) {
     return {
@@ -461,7 +481,7 @@ export async function createRobustnessRun(
   if (job.status !== "completed") {
     throw new ApiError("JOB_NOT_READY");
   }
-  assertProvidersAllowed(config, body);
+  await assertProvidersAllowed(config, body);
   if (!Number.isInteger(body.repeats) || body.repeats < 1) {
     throw new ApiError("VALIDATION_ERROR", "repeats must be a positive integer");
   }

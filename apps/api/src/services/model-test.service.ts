@@ -34,6 +34,7 @@ import type { StoredJobRow } from "../repositories/jobs.repository";
 import type { RunsRepository } from "../repositories/runs.repository";
 import { readJobFileText, sanitizeFilenameStem } from "../storage";
 import { getConditionPdf } from "./condition-pdfs";
+import { getOllamaStatus, ollamaProviderEnv } from "./ollama-status";
 
 export interface ModelTestServiceDeps {
   config: AppConfig;
@@ -72,15 +73,31 @@ async function loadManifest(config: AppConfig, jobId: string): Promise<PrivateMa
 }
 
 /**
- * Validates every requested provider against the gating rules (contract
- * §2): `anthropic`/`openai` need `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` AND
- * `acknowledgeExternalTransfer: true` AND a configured API key; `mock` is
- * always allowed. Throws the first violation found (order matches the
+ * Validates every requested provider against the gating rules (contract §2
+ * + round-2 addendum §6): `anthropic`/`openai` need
+ * `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` AND `acknowledgeExternalTransfer: true`
+ * AND a configured API key; `mock` is always allowed. `ollama` is LOCAL (never
+ * leaves the machine) — it skips both the `allowExternalProviders` gate and
+ * the `acknowledgeExternalTransfer` requirement entirely, but still needs an
+ * availability check (`GET {OLLAMA_BASE_URL}/api/tags`, cached 10s) so an
+ * unreachable Ollama server fails fast with 422 `PROVIDER_NOT_CONFIGURED`
+ * naming `OLLAMA_BASE_URL` instead of running the whole matrix into a
+ * `PROVIDER_ERROR`. Throws the first violation found (order matches the
  * contract's own ordering: disabled -> not acknowledged -> not configured).
  */
-function assertProvidersAllowed(config: AppConfig, body: ModelTestRequest): void {
+async function assertProvidersAllowed(config: AppConfig, body: ModelTestRequest): Promise<void> {
   for (const provider of body.providers) {
     if (provider.name === "mock") continue;
+    if (provider.name === "ollama") {
+      const status = await getOllamaStatus(config);
+      if (!status.available) {
+        throw new ApiError(
+          "PROVIDER_NOT_CONFIGURED",
+          `Ollama is not reachable at ${config.ollamaBaseUrl}. Set OLLAMA_BASE_URL to point at a running Ollama server.`,
+        );
+      }
+      continue;
+    }
     if (!config.allowExternalProviders) {
       throw new ApiError("EXTERNAL_PROVIDERS_DISABLED");
     }
@@ -144,7 +161,7 @@ async function runModelTestJob(
       onProgress: (progress) =>
         runsRepo.modelTests.updateProgress(runId, progress.done, progress.total),
       signal,
-      env: process.env,
+      env: ollamaProviderEnv(config),
     });
 
     if (signal.aborted) {
@@ -221,7 +238,7 @@ export async function createModelTestRun(
     throw new ApiError("JOB_NOT_READY");
   }
 
-  assertProvidersAllowed(config, body);
+  await assertProvidersAllowed(config, body);
 
   if (
     !Number.isInteger(body.repeats) ||

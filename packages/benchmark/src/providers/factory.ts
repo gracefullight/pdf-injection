@@ -1,6 +1,7 @@
 import type { ProviderName } from "@pdf-injection/contracts";
 import { createAnthropicAdapter, DEFAULT_ANTHROPIC_MODEL } from "./anthropic";
 import { createMockAdapter, DEFAULT_MOCK_MODEL, type MockContext } from "./mock";
+import { createOllamaAdapter, DEFAULT_OLLAMA_MODEL } from "./ollama";
 import { createOpenAiAdapter, DEFAULT_OPENAI_MODEL } from "./openai";
 import type { ProviderAdapter } from "./types";
 
@@ -19,6 +20,7 @@ export const DEFAULT_MODEL: Record<ProviderName, string> = {
   anthropic: DEFAULT_ANTHROPIC_MODEL,
   openai: DEFAULT_OPENAI_MODEL,
   mock: DEFAULT_MOCK_MODEL,
+  ollama: DEFAULT_OLLAMA_MODEL,
 };
 
 /**
@@ -43,6 +45,11 @@ export function createProvider(input: CreateProviderInput): ProviderAdapter {
       });
     case "mock":
       return createMockAdapter({ model: input.model, context: input.mockContext });
+    case "ollama":
+      return createOllamaAdapter({
+        baseUrl: env.OLLAMA_BASE_URL,
+        model: input.model ?? env.PDFI_OLLAMA_MODEL,
+      });
     default: {
       const exhaustive: never = input.name;
       throw new Error(`Unknown provider name: ${String(exhaustive)}`);

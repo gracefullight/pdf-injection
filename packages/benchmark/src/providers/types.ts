@@ -22,6 +22,14 @@ export interface ProviderAnswer {
   latencyMs: number;
   raw?: unknown;
   error?: string;
+  /**
+   * How the provider ingested the PDF (round-2 addendum §6): "provider_native"
+   * for anthropic/openai, "text_extraction" for ollama (server-side page
+   * text extraction — Ollama cannot ingest a PDF document directly), "mock"
+   * for the deterministic mock provider. Threaded into
+   * `ModelTestResult.ingestion` by `matrix.ts`.
+   */
+  ingestion?: "provider_native" | "text_extraction" | "mock";
 }
 
 export interface AskWithPdfInput {

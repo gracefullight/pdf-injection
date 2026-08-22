@@ -34,7 +34,7 @@ export const ALL_CONDITIONS: BenchmarkCondition[] = [
   "xmp_only",
 ];
 
-const PROVIDER_NAMES: ProviderName[] = ["anthropic", "openai", "mock"];
+const PROVIDER_NAMES: ProviderName[] = ["anthropic", "openai", "mock", "ollama"];
 
 /** Server-side ceiling per `LIMITS.maxModelTestRepeats` (`@pdf-injection/contracts`) — duplicated here as a literal so this package doesn't need a runtime dependency on the exact LIMITS value drifting; kept in sync manually. */
 export const MAX_REPEATS = 10;
@@ -126,10 +126,12 @@ export function parseExperimentConfig(value: unknown): ExperimentConfig {
   ) {
     throw new ExperimentConfigError("acknowledgeExternalTransfer must be a boolean when present");
   }
-  const requiresAcknowledgement = providers.some((p) => p.name !== "mock");
+  // "ollama" is local (never leaves the machine, addendum §6) and — like
+  // "mock" — never requires acknowledgeExternalTransfer.
+  const requiresAcknowledgement = providers.some((p) => p.name !== "mock" && p.name !== "ollama");
   if (requiresAcknowledgement && obj.acknowledgeExternalTransfer !== true) {
     throw new ExperimentConfigError(
-      'acknowledgeExternalTransfer must be true when any provider other than "mock" is used',
+      'acknowledgeExternalTransfer must be true when any provider other than "mock"/"ollama" is used',
     );
   }
 

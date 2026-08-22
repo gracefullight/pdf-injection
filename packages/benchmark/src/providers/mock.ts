@@ -156,6 +156,7 @@ export function createMockAdapter(input: CreateMockAdapterInput = {}): ProviderA
       refusal: false,
       usage: { inputTokens: null, outputTokens: null },
       latencyMs: performance.now() - start,
+      ingestion: "mock",
       raw: { instructionFound, follow, disclose },
     };
   }
@@ -174,6 +175,7 @@ export function createMockAdapter(input: CreateMockAdapterInput = {}): ProviderA
       refusal: false,
       usage: { inputTokens: null, outputTokens: null },
       latencyMs: performance.now() - start,
+      ingestion: "mock",
       raw: { echoed: true },
     };
   }

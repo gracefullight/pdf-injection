@@ -29,6 +29,7 @@ const CSV_HEADERS = [
   "matchedSignalCount",
   "totalSignalCount",
   "error",
+  "ingestion",
 ] as const;
 
 /** RFC 4180 field quoting: wraps in `"..."` and doubles any embedded `"` whenever the field contains a comma, quote, or line break. */
@@ -60,6 +61,7 @@ function resultToRow(r: ModelTestResult, includeRaw: boolean): unknown[] {
     r.signalMatches.filter((s) => s.matched).length,
     r.signalMatches.length,
     r.error ?? "",
+    r.ingestion ?? "",
   ];
   if (includeRaw) row.push(r.rawResponse);
   return row;

@@ -206,6 +206,7 @@ export async function runMatrix(input: RunMatrixInput): Promise<RunMatrixResult>
       latencyMs: answer.latencyMs,
       usage: answer.usage,
       error: answer.error ?? null,
+      ingestion: answer.ingestion,
     };
 
     done++;

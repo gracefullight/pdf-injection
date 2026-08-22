@@ -161,6 +161,14 @@ export interface ModelTestResult {
   latencyMs: number;
   usage: { inputTokens: number | null; outputTokens: number | null };
   error: string | null;
+  /**
+   * How the provider ingested the PDF (round-2 addendum §6): "provider_native"
+   * for anthropic/openai (native PDF document input), "text_extraction" for
+   * ollama (server-side page text extraction, since Ollama cannot ingest
+   * PDFs directly), "mock" for the deterministic mock provider. Optional /
+   * additive — absent on results produced before this field existed.
+   */
+  ingestion?: "provider_native" | "text_extraction" | "mock";
 }
 
 export interface ModelTestAggregate {

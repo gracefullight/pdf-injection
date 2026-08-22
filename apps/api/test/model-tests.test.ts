@@ -229,3 +229,97 @@ describe("POST /api/v1/jobs/:jobId/model-tests", () => {
     expect(body.error.code).toBe("VALIDATION_ERROR");
   });
 });
+
+describe("ollama provider (round-2 addendum §6) — local, no external-provider gate", () => {
+  test("unreachable Ollama -> 422 PROVIDER_NOT_CONFIGURED naming OLLAMA_BASE_URL, without EXTERNAL_PROVIDERS_DISABLED or acknowledgeExternalTransfer", async () => {
+    // allowExternalProviders stays false (default) — ollama must not be gated by it.
+    const { app } = testApp({ ollamaBaseUrl: "http://127.0.0.1:1" });
+    const { jobId, accessToken } = await createCompletedJob(app);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/jobs/${jobId}/model-tests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Job-Token": accessToken },
+        body: JSON.stringify({
+          providers: [{ name: "ollama" }],
+          conditions: ["original"],
+          repeats: 1,
+          acknowledgeExternalTransfer: false,
+        }),
+      }),
+    );
+    expect(res.status).toBe(422);
+    const body = await res.json();
+    expect(body.error.code).toBe("PROVIDER_NOT_CONFIGURED");
+    expect(body.error.message).toContain("OLLAMA_BASE_URL");
+  });
+
+  test("a running fake Ollama server -> completed run with ingestion 'text_extraction' and aggregates", async () => {
+    const server = Bun.serve({
+      port: 0,
+      fetch(req) {
+        const url = new URL(req.url);
+        if (url.pathname === "/api/tags") {
+          return new Response(JSON.stringify({ models: [{ name: "llama3.1" }] }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        if (url.pathname === "/api/chat") {
+          return new Response(
+            JSON.stringify({
+              message: { role: "assistant", content: "The summary cites Method A explicitly." },
+              done_reason: "stop",
+              prompt_eval_count: 123,
+              eval_count: 45,
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        return new Response("not found", { status: 404 });
+      },
+    });
+
+    try {
+      const { app } = testApp({ ollamaBaseUrl: `http://127.0.0.1:${server.port}` });
+      const { jobId, accessToken } = await createCompletedJob(app);
+
+      const createRes = await app.handle(
+        new Request(`http://localhost/api/v1/jobs/${jobId}/model-tests`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Job-Token": accessToken },
+          body: JSON.stringify({
+            providers: [{ name: "ollama" }],
+            conditions: ["original"],
+            repeats: 1,
+            acknowledgeExternalTransfer: false,
+          }),
+        }),
+      );
+      expect(createRes.status).toBe(202);
+      const created = (await createRes.json()) as { runId: string };
+
+      const run = await pollUntilDone(app, jobId, created.runId, accessToken);
+      expect(run.status).toBe("completed");
+      expect(run.errorCode).toBeNull();
+
+      const results = run.results as Array<{
+        provider: string;
+        ingestion?: string;
+        allSignalsMatched: boolean;
+        usage: { inputTokens: number | null; outputTokens: number | null };
+        error: string | null;
+      }>;
+      expect(results).toHaveLength(1);
+      expect(results[0]?.provider).toBe("ollama");
+      expect(results[0]?.error).toBeNull();
+      expect(results[0]?.ingestion).toBe("text_extraction");
+      expect(results[0]?.allSignalsMatched).toBe(true);
+      expect(results[0]?.usage).toEqual({ inputTokens: 123, outputTokens: 45 });
+
+      expect((run.aggregates as unknown[]).length).toBeGreaterThan(0);
+    } finally {
+      server.stop(true);
+    }
+  });
+});

@@ -107,6 +107,7 @@ export const ProviderNameSchema = Type.Union([
   Type.Literal("anthropic"),
   Type.Literal("openai"),
   Type.Literal("mock"),
+  Type.Literal("ollama"),
 ]);
 
 export const ModelTestProviderSpecSchema = Type.Object({

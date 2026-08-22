@@ -69,6 +69,9 @@ describe("runMatrix (mock provider only — no network)", () => {
       expect(r.pdfSha256.length).toBe(64);
       expect(r.outerPromptSha256).toBe(sha256Hex(OUTER_PROMPT));
       expect(r.responseSha256).toBe(sha256Hex(r.rawResponse));
+      // Round-2 addendum §6: every ModelTestResult carries its provider's
+      // ingestion mode; "mock" -> "mock".
+      expect(r.ingestion).toBe("mock");
     }
   });
 
