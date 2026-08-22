@@ -1,6 +1,6 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -64,12 +64,14 @@ interface CommaListInputProps {
  */
 function CommaListInput({ id, values, onValuesChange }: CommaListInputProps) {
   const [raw, setRaw] = useState(() => values.join(", "));
-  // Re-sync only when the list changed externally (e.g. draft restore, signal swap).
+  const rawRef = useRef(raw);
+  rawRef.current = raw;
+  // Re-sync only when the list changed externally (e.g. draft restore, signal swap);
+  // the ref keeps `raw` out of the dependency list so typing is never undone.
   useEffect(() => {
-    if (splitList(raw).join("\u0000") !== values.join("\u0000")) {
+    if (splitList(rawRef.current).join("\u0000") !== values.join("\u0000")) {
       setRaw(values.join(", "));
     }
-    // biome-ignore lint/correctness/useExhaustiveDependencies: raw is the local echo of values; resyncing on raw would undo typing
   }, [values]);
   return (
     <Input
