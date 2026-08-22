@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "context7": {
+      "serverUrl": "https://mcp.context7.com/mcp"
+    },
+    "serena": {
+      "command": "oma",
+      "args": [
+        "bridge",
+        "--context",
+        "antigravity"
+      ],
+      "env": {
+        "SERENA_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
