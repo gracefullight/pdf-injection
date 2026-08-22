@@ -1,0 +1,24 @@
+{
+  "name": "@pdf-injection/detector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@pdf-injection/contracts": "workspace:*",
+    "bun-types": "^1.4.0",
+    "typescript": "^5.9.3"
+  }
+}
