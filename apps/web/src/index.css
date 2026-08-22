@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens (semantic, hex-documented per .claude/rules/design.md).
+ * System font stack; no custom Google Fonts.
+ */
+@theme {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Deep Ocean Navy (#0f172a) — primary text / dark surfaces */
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+
+  /* Slate Ink (#1e293b) on Cloud White (#f8fafc) — primary action */
+  --color-primary: #1e293b;
+  --color-primary-foreground: #f8fafc;
+
+  /* Mist Gray (#f1f5f9) — secondary surfaces */
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  /* Slate Fog (#64748b) — muted text */
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  /* Sky Accent (#0369a1) — links, highlights */
+  --color-accent: #e0f2fe;
+  --color-accent-foreground: #0369a1;
+
+  /* Signal Red (#b91c1c) — destructive / warnings that block */
+  --color-destructive: #b91c1c;
+  --color-destructive-foreground: #fef2f2;
+
+  /* Amber Caution (#b45309) — non-blocking warnings */
+  --color-warning: #fffbeb;
+  --color-warning-foreground: #b45309;
+
+  /* Forest Confirm (#15803d) — pass status */
+  --color-success: #f0fdf4;
+  --color-success-foreground: #15803d;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0369a1;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: standard reduced-motion override pattern — must beat every component's own animation/transition specificity, regardless of source order. */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: standard reduced-motion override pattern — must beat every component's own animation/transition specificity, regardless of source order. */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: standard reduced-motion override pattern — must beat every component's own animation/transition specificity, regardless of source order. */
+    transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: standard reduced-motion override pattern — must beat every component's own animation/transition specificity, regardless of source order. */
+    scroll-behavior: auto !important;
+  }
+}
