@@ -1,4 +1,6 @@
 import { Database } from "bun:sqlite";
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 import type { InjectionMode, JobRecord, JobStatus } from "@pdf-injection/contracts";
 
 /**
@@ -159,5 +161,10 @@ export class JobsRepository {
 }
 
 export function createDatabase(path: string): Database {
+  // Fresh checkouts have no data directory yet; bun:sqlite does not create
+  // parent directories, so a bare `bun run dev` would fail with SQLITE_CANTOPEN.
+  if (path !== ":memory:") {
+    mkdirSync(dirname(path), { recursive: true });
+  }
   return new Database(path, { create: true });
 }
