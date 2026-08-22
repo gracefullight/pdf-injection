@@ -1,0 +1,31 @@
+{
+  "name": "@pdf-injection/robustness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@pdf-injection/contracts": "workspace:*",
+    "@pdf-injection/detector": "workspace:*",
+    "@pdf-injection/validation": "workspace:*",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "bun-types": "^1.4.0",
+    "typescript": "^5.9.3"
+  }
+}
