@@ -257,8 +257,8 @@ agents:
 # update` only rewrites the browser entries when `devtools_browsers` is present,
 # so an existing setup is never silently stripped. Set it to `[]` to remove them.
 #
-# mcp:
-#   devtools_browsers: [chrome]     # chrome | firefox | both | []
+mcp:
+  devtools_browsers: [firefox]     # chrome | firefox | both | []  (enabled for UX/DX review per user request)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 9. Documentation drift detection (oma-docs)
