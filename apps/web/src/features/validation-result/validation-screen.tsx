@@ -5,6 +5,7 @@ import type {
   ValidationWarning,
 } from "@pdf-injection/contracts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Download } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -447,13 +448,17 @@ export function ValidationScreen({
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
         <div className="flex flex-wrap gap-2">
+          {/* The injected PDF is what this whole screen exists to hand over, so it
+              is the single primary action here; the report and the destructive
+              controls stay visually subordinate. */}
           <Button
             type="button"
-            variant="outline"
+            size="lg"
             onClick={() => handleDownload("output")}
             disabled={downloading === "output" || job.errorCode === "RENDER_FAILED"}
             data-testid="download-output-button"
           >
+            <Download aria-hidden="true" />
             {downloading === "output" ? "Downloading…" : "Download output PDF"}
           </Button>
           <Button

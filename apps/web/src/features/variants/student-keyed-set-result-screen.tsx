@@ -1,6 +1,6 @@
 import type { StudentKeyedSetResponse } from "@pdf-injection/contracts";
 import { useQuery } from "@tanstack/react-query";
-import { ShieldAlert } from "lucide-react";
+import { Download, ShieldAlert } from "lucide-react";
 import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -275,13 +275,15 @@ export function StudentKeyedSetResultScreen({
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
         <div className="flex flex-wrap gap-2">
+          {/* The archive of generated PDFs is this screen's deliverable — primary. */}
           <Button
             type="button"
-            variant="outline"
+            size="lg"
             onClick={handleDownloadArchive}
             disabled={downloadingArchive}
             data-testid="student-keyed-archive-button"
           >
+            <Download aria-hidden="true" />
             {downloadingArchive ? "Downloading…" : "Download archive (.zip)"}
           </Button>
           <Button
