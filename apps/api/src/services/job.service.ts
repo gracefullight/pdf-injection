@@ -21,6 +21,10 @@ import {
   inspectSource,
   normalizePrompt,
   PdfEngineError,
+  readAcroFormFieldPayload,
+  readFreetextAnnotPayload,
+  readInfoDictPayload,
+  readStampedImagePresence,
   readUnicodeTagsPayload,
   resolveTargetPage,
 } from "@pdf-injection/pdf-engine";
@@ -84,6 +88,12 @@ const INJECTION_MODES: InjectionMode[] = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  // Round-3 research/diagnostic probe conditions (not production channels) —
+  // see packages/pdf-engine's inject-{image-only,freetext-annot,acroform-field,info-dict}.ts.
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 const POSITIONS: Position[] = ["top", "bottom", "custom"];
 const PAYLOAD_LANGUAGES: PayloadLanguage[] = ["en", "ko"];
@@ -352,6 +362,50 @@ export async function createJob(
           }
         }
 
+        // Round-3 probe-mode sanity gates — same purpose/pattern as the
+        // unicode_tags gate above (injectPdf() reporting success but the
+        // mode's own dedicated reader finding no payload would mean a
+        // silent, undetected injection failure). Each reader is a
+        // public-pdf-lib-API read-back, independent of extractText()/pdfjs.
+        if (injectionMode === "info_dict") {
+          const infoDictPayload = await readInfoDictPayload(result.bytes);
+          if (!infoDictPayload.subject) {
+            throw new InjectionFailedError(
+              "info_dict injection reported success but no Subject payload could be read back from the output PDF's /Info dictionary",
+            );
+          }
+        }
+        if (injectionMode === "freetext_annot") {
+          const freetextAnnotPayload = await readFreetextAnnotPayload(
+            result.bytes,
+            result.pageIndex,
+          );
+          if (!freetextAnnotPayload.contentsPresent) {
+            throw new InjectionFailedError(
+              "freetext_annot injection reported success but no FreeText annotation payload could be read back from the output PDF",
+            );
+          }
+        }
+        if (injectionMode === "acroform_field") {
+          const acroFormFieldPayload = await readAcroFormFieldPayload(result.bytes);
+          if (!acroFormFieldPayload.fieldPresent) {
+            throw new InjectionFailedError(
+              "acroform_field injection reported success but no AcroForm field payload could be read back from the output PDF",
+            );
+          }
+        }
+        if (injectionMode === "image_only") {
+          const stampedImagePresence = await readStampedImagePresence(
+            result.bytes,
+            result.pageIndex,
+          );
+          if (!stampedImagePresence.imagePresent) {
+            throw new InjectionFailedError(
+              "image_only injection reported success but no stamped image XObject could be read back from the output PDF",
+            );
+          }
+        }
+
         const injection: PrivateManifest["injection"] = {
           mode: injectionMode,
           pageIndex: result.pageIndex,
@@ -416,6 +470,78 @@ export async function createJob(
               ]
             : [];
 
+        // Round-3 probe modes: hiddenTextExtracted is expected/correct to be
+        // false for all four via this project's pdfjs-based extractText()
+        // (mirrors the unicode_tags/xmp_only precedent above) —
+        // computeOverall() already treats this as PASS_WITH_WARNINGS, never
+        // FAIL. Surface *why*, per mode, rather than leaving it unexplained:
+        // the payload IS present (verified by the mode-specific gate above),
+        // just invisible to this project's extraction pipeline specifically.
+        const probeModeWarnings: ValidationWarning[] = (() => {
+          switch (injectionMode) {
+            case "image_only":
+              return [
+                {
+                  code: "IMAGE_ONLY_NOT_TEXT_EXTRACTABLE",
+                  message:
+                    "The instruction is present as a rasterized PNG image (verified via a " +
+                    "public-pdf-lib-API image XObject read-back) with no text object of any " +
+                    "kind on the page — by construction, no text extractor (including this " +
+                    "project's PDF.js-based extractText()) can ever find it. This condition " +
+                    "measures whether a provider's ingestion pipeline has a vision path, not " +
+                    "text extractability.",
+                  pageIndex: result.pageIndex,
+                },
+              ];
+            case "freetext_annot":
+              return [
+                {
+                  code: "FREETEXT_ANNOT_NOT_EXTRACTABLE",
+                  message:
+                    "The FreeText annotation payload is present in the output PDF (verified " +
+                    "via a public-pdf-lib-API read-back of its /AP /N appearance stream and " +
+                    "/Contents) but is invisible to this project's PDF.js-based " +
+                    "extractText(), which only walks a page's own content stream, not its " +
+                    "annotations' appearance streams. A poppler-family extractor (e.g. " +
+                    "pdftotext) is expected to surface it via the same content-stream " +
+                    "operator walk it uses for ordinary page text.",
+                  pageIndex: result.pageIndex,
+                },
+              ];
+            case "acroform_field":
+              return [
+                {
+                  code: "ACROFORM_FIELD_NOT_EXTRACTABLE",
+                  message:
+                    "The AcroForm text field payload is present in the output PDF (verified " +
+                    "via a public-pdf-lib-API PDFForm read-back of the field's /V and its " +
+                    "appearance stream) but is invisible to this project's PDF.js-based " +
+                    "extractText(), which only walks a page's own content stream, not a " +
+                    "widget annotation's appearance stream. A poppler-family extractor (e.g. " +
+                    "pdftotext) is expected to surface it via the same content-stream " +
+                    "operator walk it uses for ordinary page text.",
+                  pageIndex: result.pageIndex,
+                },
+              ];
+            case "info_dict":
+              return [
+                {
+                  code: "INFO_DICT_NOT_EXTRACTABLE",
+                  message:
+                    "The instruction is present in the output PDF's classic /Info dictionary " +
+                    "(Subject/Keywords, verified via a public-pdf-lib-API read-back) but is " +
+                    "invisible to this project's PDF.js-based extractText(), which never " +
+                    "inspects document metadata. An extractor that reads /Info metadata " +
+                    "(e.g. poppler's pdfinfo, pypdf's reader.metadata) is expected to " +
+                    "surface it.",
+                  pageIndex: result.pageIndex,
+                },
+              ];
+            default:
+              return [];
+          }
+        })();
+
         const outputPath = jobFilePath(config, jobId, "output.pdf");
         const qpdfResult = await qpdfCheck({ filePath: outputPath, enabled: config.qpdfEnabled });
 
@@ -441,7 +567,7 @@ export async function createJob(
           textExtraction,
           qpdf: qpdfResult,
           metadata,
-          warnings: [...result.warnings, ...unicodeTagsWarnings],
+          warnings: [...result.warnings, ...unicodeTagsWarnings, ...probeModeWarnings],
           lint: { errors: [], warnings: lint.warnings, acknowledged: acknowledgedWarnings },
           mode: injectionMode,
         });

@@ -22,6 +22,11 @@ const INJECTABLE_CONDITIONS: InjectionMode[] = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  // Round-3 research/diagnostic probe conditions (not production channels).
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 
 function isInjectionMode(condition: BenchmarkCondition): condition is InjectionMode {

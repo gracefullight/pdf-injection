@@ -20,6 +20,7 @@ import type {
   PrivateManifest,
   SmokeTestGate,
 } from "@pdf-injection/contracts";
+import { PdfEngineError } from "@pdf-injection/pdf-engine";
 import { sha256Hex } from "@pdf-injection/validation";
 import type { AppConfig } from "../config";
 import { ApiError } from "../errors";
@@ -202,7 +203,12 @@ async function runModelTestJob(
       }
     }
   } catch (err) {
-    const errorCode = err instanceof ApiError ? err.code : "PROVIDER_ERROR";
+    // PdfEngineError (e.g. CANVAS_UNAVAILABLE from an image_only condition
+    // PDF regenerated via getConditionPdf()) already carries a specific,
+    // typed ApiErrorCode — preserve it instead of collapsing every
+    // non-ApiError failure into the generic PROVIDER_ERROR bucket.
+    const errorCode =
+      err instanceof ApiError || err instanceof PdfEngineError ? err.code : "PROVIDER_ERROR";
     runsRepo.modelTests.updateStatus(runId, "failed", errorCode);
     const failedRun: ModelTestRun = {
       runId,

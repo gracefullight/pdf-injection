@@ -33,6 +33,11 @@ export const ALL_CONDITIONS: BenchmarkCondition[] = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  // Round-3 research/diagnostic probe conditions (not production channels).
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 
 const PROVIDER_NAMES: ProviderName[] = ["anthropic", "openai", "mock", "ollama"];

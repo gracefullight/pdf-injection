@@ -47,6 +47,54 @@ async function buildUnicodeTagsPdf(): Promise<Uint8Array> {
   return result.bytes;
 }
 
+async function buildInfoDictPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "info_dict",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
+async function buildFreetextAnnotPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "freetext_annot",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
+async function buildAcroFormFieldPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "acroform_field",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
+async function buildImageOnlyPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "image_only",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
 describe("createMockAdapter", () => {
   test("isConfigured() is always true", () => {
     expect(createMockAdapter().isConfigured()).toBe(true);
@@ -90,6 +138,43 @@ describe("createMockAdapter", () => {
     const originalAnswer = await adapter.askWithPdf({
       pdfBytes: originalBytes,
       prompt: "prompt B2",
+    });
+    expect((originalAnswer.raw as { instructionFound: boolean }).instructionFound).toBe(false);
+  });
+
+  test("detects the instruction via the /Info dictionary Subject (info_dict) and marks instructionFound", async () => {
+    const pdfBytes = await buildInfoDictPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B3" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+  });
+
+  test("detects the instruction via the FreeText annotation /Contents (freetext_annot) and marks instructionFound", async () => {
+    const pdfBytes = await buildFreetextAnnotPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B4" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+  });
+
+  test("detects the instruction via the AcroForm field /V (acroform_field) and marks instructionFound", async () => {
+    const pdfBytes = await buildAcroFormFieldPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B5" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+  });
+
+  test("detects the instruction via the stamped image's promptSha256 tag (image_only) and marks instructionFound", async () => {
+    const pdfBytes = await buildImageOnlyPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B6" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
+
+    // Safe no-op for other conditions: an untouched (original) PDF must
+    // still report instructionFound: false via this same adapter/context.
+    const originalBytes = await buildSourcePdf();
+    const originalAnswer = await adapter.askWithPdf({
+      pdfBytes: originalBytes,
+      prompt: "prompt B6",
     });
     expect((originalAnswer.raw as { instructionFound: boolean }).instructionFound).toBe(false);
   });

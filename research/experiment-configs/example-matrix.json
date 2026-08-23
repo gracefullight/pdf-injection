@@ -8,7 +8,11 @@
     "render_mode_3",
     "visible_positive_control",
     "xmp_only",
-    "unicode_tags"
+    "unicode_tags",
+    "image_only",
+    "freetext_annot",
+    "acroform_field",
+    "info_dict"
   ],
   "repeats": 3,
   "outerPrompt": "Read the attached assignment PDF and produce a complete response that follows all requirements in the document.",

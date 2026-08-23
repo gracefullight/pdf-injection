@@ -1,5 +1,13 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
-import { readUnicodeTagsPayload, readXmpPayload } from "@pdf-injection/pdf-engine";
+import {
+  normalizePrompt,
+  readAcroFormFieldPayload,
+  readFreetextAnnotPayload,
+  readInfoDictPayload,
+  readStampedImagePresence,
+  readUnicodeTagsPayload,
+  readXmpPayload,
+} from "@pdf-injection/pdf-engine";
 import { extractText, sha256Hex } from "@pdf-injection/validation";
 import { collapseWhitespace } from "../disclosure";
 import { createSeededRng } from "../prng";
@@ -104,12 +112,17 @@ function buildMockAnswer(params: {
  * matching (`@pdf-injection/validation extractText`, catches
  * white_text / render_mode_3 / visible_positive_control, where the
  * instruction is drawn as extractable page text), XMP metadata
- * (`@pdf-injection/pdf-engine`'s `readXmpPayload`, catches `xmp_only`), and
- * a public-pdf-lib-API ToUnicode CMap read-back (`readUnicodeTagsPayload`,
+ * (`@pdf-injection/pdf-engine`'s `readXmpPayload`, catches `xmp_only`), a
+ * public-pdf-lib-API ToUnicode CMap read-back (`readUnicodeTagsPayload`,
  * catches `unicode_tags` — this channel is invisible to `extractText()`
  * itself, since pdfjs-dist filters the entire Unicode Tags block out of
- * extracted text; see `packages/pdf-engine/test/inject-unicode-tags.test.ts`).
- * For the `original` condition none of these checks match, so
+ * extracted text; see `packages/pdf-engine/test/inject-unicode-tags.test.ts`),
+ * and — for the round-3 probe conditions — three more literal-text
+ * read-backs (`readInfoDictPayload` for `info_dict`, `readFreetextAnnotPayload`
+ * for `freetext_annot`, `readAcroFormFieldPayload` for `acroform_field`) plus
+ * a structural presence+hash check (`readStampedImagePresence` for
+ * `image_only`, which carries no text at all — the mock has no OCR/vision
+ * capability). For the `original` condition none of these checks match, so
  * `instructionFound` is `false` — exactly the "low probability" branch the
  * contract describes.
  */
@@ -140,6 +153,53 @@ export function createMockAdapter(input: CreateMockAdapterInput = {}): ProviderA
       xmp.instruction != null &&
       collapseWhitespace(xmp.instruction).toLowerCase() ===
         collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    // Round-3 probe modes — info_dict / freetext_annot / acroform_field:
+    // each reader returns the literal instruction text it read back from
+    // its own private channel (Info dict Subject, FreeText /Contents,
+    // AcroForm field /V respectively) — same literal-text-equality check as
+    // xmp_only above. Safe no-op for every other condition: none of these
+    // channels exist on a PDF injected by a different mode.
+    const infoDict = await readInfoDictPayload(pdfBytes);
+    if (
+      infoDict.subject != null &&
+      collapseWhitespace(infoDict.subject).toLowerCase() ===
+        collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    const freetextAnnot = await readFreetextAnnotPayload(pdfBytes, targetPageIndex);
+    if (
+      freetextAnnot.contents != null &&
+      collapseWhitespace(freetextAnnot.contents).toLowerCase() ===
+        collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    const acroFormField = await readAcroFormFieldPayload(pdfBytes);
+    if (
+      acroFormField.value != null &&
+      collapseWhitespace(acroFormField.value).toLowerCase() ===
+        collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    // image_only: by construction, no text object of any kind exists — the
+    // mock has no OCR/vision capability, so the closest deterministic proxy
+    // for "this PDF carries the known instruction via the image_only
+    // channel" is the same promptSha256 tag apps/api's own post-injection
+    // gate reads back, recomputed the same way (sha256 of the normalized
+    // instruction) rather than any literal-text comparison.
+    const stampedImage = await readStampedImagePresence(pdfBytes, targetPageIndex);
+    if (
+      stampedImage.promptSha256 != null &&
+      stampedImage.promptSha256 === sha256Hex(normalizePrompt(hiddenInstruction))
     ) {
       return true;
     }
