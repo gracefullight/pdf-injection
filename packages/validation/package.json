@@ -10,6 +10,14 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./hash": {
+      "types": "./src/hash.ts",
+      "default": "./src/hash.ts"
+    },
+    "./report": {
+      "types": "./src/report.ts",
+      "default": "./src/report.ts"
     }
   },
   "scripts": {

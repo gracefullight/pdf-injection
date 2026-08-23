@@ -1,5 +1,5 @@
 import { LIMITS, type SourceInspection, type SourceRiskFlags } from "@pdf-injection/contracts";
-import { sha256Hex } from "@pdf-injection/validation";
+import { sha256Hex } from "@pdf-injection/validation/hash";
 import { PDFArray, PDFDict, PDFDocument, PDFName, type PDFObject } from "pdf-lib";
 import { InvalidPdfError, PdfEncryptedError, PdfSignedError, TooManyPagesError } from "./errors";
 import { snapshotPageGeometry } from "./page-geometry";

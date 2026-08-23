@@ -13,7 +13,9 @@ const DEFAULT_FONT_DIR = path.join(import.meta.dir, "..", "fonts");
  * The two non-"en" `PayloadLanguage` values, each requiring its own bundled
  * CJK font (see `FONT_FILENAMES` below for why they can't share one).
  */
-export type CjkPayloadLanguage = "ko" | "zh";
+import type { CjkPayloadLanguage } from "./payload-language";
+
+export type { CjkPayloadLanguage } from "./payload-language";
 
 // Cycle-4 QA fix (ko): a genuine static Regular instance (not the raw Google
 // Fonts variable font used through cycle 3), served by Google's font CDN
