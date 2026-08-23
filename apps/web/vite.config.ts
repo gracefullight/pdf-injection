@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 // PDF Injection web (apps/web). Dev-server-only config — this project never runs
 // `vite build` per CLAUDE.md's "never build until the user explicitly asks" rule.
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH ?? "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
