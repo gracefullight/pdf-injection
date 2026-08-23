@@ -1,7 +1,16 @@
 import type { InjectionMode } from "@pdf-injection/contracts";
+import { Info } from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   ANATOMY_MAP,
@@ -83,13 +92,28 @@ interface VerdictCellProps {
   label: string;
   /** Short, factual explanation of what this cell measures — shown in a focusable tooltip. */
   explanation: string;
+  /**
+   * How the number in the badge was produced. Shown in the "(i)" dialog, which
+   * exists because a badge like "Reached · 5/5" is meaningless without the
+   * denominator's definition — and because the tooltip above never opens on a
+   * touch device.
+   */
+  measurement: ReactNode;
   variant: BadgeProps["variant"];
   badgeText: string;
   detail: string;
   testId: string;
 }
 
-function VerdictCell({ label, explanation, variant, badgeText, detail, testId }: VerdictCellProps) {
+function VerdictCell({
+  label,
+  explanation,
+  measurement,
+  variant,
+  badgeText,
+  detail,
+  testId,
+}: VerdictCellProps) {
   return (
     <div
       className="min-w-[130px] flex-1 rounded-md border border-border bg-secondary/50 p-2"
@@ -113,11 +137,46 @@ function VerdictCell({ label, explanation, variant, badgeText, detail, testId }:
         <Badge variant={variant} className="font-mono text-[11px]">
           {badgeText}
         </Badge>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="rounded-full text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+              aria-label={`How "${label}" was measured`}
+              data-testid={`${testId}-info-button`}
+            >
+              <Info className="size-3.5" aria-hidden="true" />
+            </button>
+          </DialogTrigger>
+          <DialogContent data-testid={`${testId}-info-dialog`}>
+            <DialogHeader>
+              <DialogTitle>{label}</DialogTitle>
+              <DialogDescription>{explanation}</DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">{measurement}</div>
+          </DialogContent>
+        </Dialog>
       </div>
       <p className="mt-1 truncate font-mono text-[11px] text-muted-foreground" title={detail}>
         {detail}
       </p>
     </div>
+  );
+}
+
+/**
+ * The run every "Measured" verdict on this card comes from. Kept next to the
+ * cells that cite it so the numbers can never be read as a general claim.
+ * Source: research/results/2026-08-23-round3-probe-modes/README.md.
+ */
+function RunFacts() {
+  return (
+    <ul className="list-disc pl-4">
+      <li>Provider: a single model, gpt-5.6-luna, via the OpenAI Responses API</li>
+      <li>The PDF was uploaded to the provider directly (provider-native ingestion)</li>
+      <li>5 repeats per injection mode, run on 2026-08-23</li>
+      <li>One provider, one run — not a general claim about "LLMs"</li>
+    </ul>
   );
 }
 
@@ -227,6 +286,21 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
               <VerdictCell
                 label="Reaches model"
                 explanation="Whether the payload appeared in the model's response in the 2026-08-23 gpt-5.6-luna benchmark. Evidence of ingestion, not proof the model obeyed."
+                measurement={
+                  <>
+                    <p>
+                      The badge reads <em>hits / attempts</em>: how many of the repeated runs came
+                      back with the hidden instruction's expected signal in the answer.{" "}
+                      <span className="font-mono">5/5</span> means every attempt reached the model;{" "}
+                      <span className="font-mono">0/5</span> means none did.
+                    </p>
+                    <p>
+                      A hit is evidence the text was <em>ingested</em> — it does not prove the model
+                      obeyed the instruction, and a miss does not prove the channel is safe.
+                    </p>
+                    <RunFacts />
+                  </>
+                }
                 variant={REACH_BADGE_VARIANT[anatomy.reach.verdict]}
                 badgeText={`${REACH_LABEL[anatomy.reach.verdict]} · ${anatomy.reach.delta}`}
                 detail={anatomy.reach.verdict}
@@ -235,6 +309,16 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
               <VerdictCell
                 label="Extractors"
                 explanation="Whether common PDF text extractors (pdftotext, PyMuPDF, pypdf, PDF.js) surface the payload from the file."
+                measurement={
+                  <>
+                    <p>
+                      Each generated PDF was re-read with pdftotext (poppler), PyMuPDF, pypdf and
+                      PDF.js. The verdict says which of those families surfaced the payload — a
+                      proxy for how easily anyone inspecting the file would find it.
+                    </p>
+                    <RunFacts />
+                  </>
+                }
                 variant={EXTRACTOR_BADGE_VARIANT[anatomy.extractors.level]}
                 badgeText={EXTRACTOR_LABEL[anatomy.extractors.level]}
                 detail={anatomy.extractors.summary}
@@ -243,6 +327,17 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
               <VerdictCell
                 label="Hidden-text scanner"
                 explanation="Whether an open-source hidden-text detector (wppoland/hidden-text-detector) flags this technique. 'flagged' means a covert canary here is discoverable by anyone running such a scan."
+                measurement={
+                  <>
+                    <p>
+                      The generated PDFs were scanned with the open-source
+                      wppoland/hidden-text-detector. A flag means someone running that scan would
+                      find this payload; CLEAN means that particular scanner missed it — not that
+                      the technique is undetectable.
+                    </p>
+                    <RunFacts />
+                  </>
+                }
                 variant={DETECTOR_BADGE_VARIANT[anatomy.detector.verdict]}
                 badgeText={DETECTOR_LABEL[anatomy.detector.verdict]}
                 detail={anatomy.detector.summary}
