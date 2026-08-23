@@ -66,7 +66,7 @@ export function RobustnessRunsList({
               <TableCell>
                 <button
                   type="button"
-                  className="text-primary underline-offset-2 hover:underline"
+                  className="cursor-pointer text-primary underline-offset-2 hover:underline"
                   onClick={() => onSelect(run.runId)}
                   data-testid={`robustness-run-select-${run.runId}`}
                 >

@@ -143,7 +143,7 @@ export function RobustnessResults({
                     {result.samples.length > 0 ? (
                       <button
                         type="button"
-                        className="text-primary underline-offset-2 hover:underline"
+                        className="cursor-pointer text-primary underline-offset-2 hover:underline"
                         onClick={() => toggleText(index)}
                         data-testid={`robustness-text-samples-toggle-${result.transform}`}
                       >

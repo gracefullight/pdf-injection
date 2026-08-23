@@ -38,7 +38,7 @@ export const TabsTrigger = React.forwardRef<
     className={cn(
       // `min-h-11` (44px, WCAG 2.5.8 target size) below `md`; the tighter `py-1.5` (~32px) is
       // fine once a mouse is the primary pointer (r11 review M-20).
-      "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm md:min-h-0",
+      "inline-flex min-h-11 cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm md:min-h-0",
       className,
     )}
     {...props}

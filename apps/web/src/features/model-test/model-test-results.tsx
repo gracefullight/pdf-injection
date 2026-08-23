@@ -174,7 +174,7 @@ export function ModelTestResults({ run, onExport, exporting }: ModelTestResultsP
             >
               <button
                 type="button"
-                className="flex w-full items-center justify-between gap-2 text-left"
+                className="flex w-full cursor-pointer items-center justify-between gap-2 text-left"
                 onClick={() => toggle(index)}
                 data-testid={`model-test-result-toggle-${index}`}
                 aria-expanded={expanded.has(index)}

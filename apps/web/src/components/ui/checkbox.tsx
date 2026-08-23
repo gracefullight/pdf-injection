@@ -20,7 +20,7 @@ export const Checkbox = React.forwardRef<
       // `peer` (unchanged) is for `Label`'s `peer-disabled:` styling (a *sibling* relationship);
       // `group` is new, for the inner glyph span below (a *child* of Root — `peer-*` only
       // matches siblings, so `data-[state=checked]` on Root needs `group`/`group-*` to reach it).
-      "peer group flex size-6 shrink-0 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "peer group flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     {...props}
