@@ -49,6 +49,34 @@ Every path that would send data to a third-party model provider, or analyze anyt
 student work, is gated and off unless explicitly enabled. See
 [`docs/limitations.md`](docs/limitations.md) for what remains experimental or unimplemented.
 
+## On-device mode (no server)
+
+Authoring an injected PDF needs no backend: the injection engine is pure `pdf-lib` and validation
+(render, pixel diff, text extraction) already runs in the browser through PDF.js. When the API is
+unreachable — for example the static GitHub Pages deployment — the web app runs the whole
+pipeline **on-device** instead of failing at "Generate": inspect → inject → re-parse → geometry
+check → text extraction → validation report + private manifest, all in the tab, with the source
+PDF never leaving the machine.
+
+It is the *same* engine code, not a reimplementation: `injectPdfInBrowser()`
+(`packages/pdf-engine/src/inject-browser.ts`) is the shared `injectPdfWith()` dispatcher with a
+browser capability set, and the report/manifest come from the same `buildReport()`/`buildManifest()`
+the server calls. `packages/pdf-engine/test/inject-browser.test.ts` asserts both platforms produce
+identical injection decisions for every supported mode, and
+`test/browser-entry-purity.test.ts` keeps Node built-ins out of the browser entry's module graph.
+
+| | On-device | Needs a server |
+|---|---|---|
+| Injection modes | `white_text`, `render_mode_3`, `visible_positive_control`, `xmp_only`, `freetext_annot`, `acroform_field`, `info_dict` | `image_only` (native canvas), `unicode_tags` (bundled CJK font) |
+| Payload language | `en` | `ko`, `zh` (on-disk font subset) |
+| Validation | round-trip, geometry, PDF.js text extraction, render + pixel diff, XMP read-back | qpdf structural check |
+| Research tabs | — | Model Test, Submissions, Robustness |
+
+Mode is chosen automatically (local when `GET /health` fails) and can be forced either way with
+`?local=1` / `?local=0`. Locally generated jobs live in tab memory only and are never written to
+storage — the private manifest contains the hidden instruction in plain text — so download the
+output PDF, manifest and report before reloading.
+
 ## Quick start
 
 Requires [Bun](https://bun.sh) `>= 1.3.14`.
@@ -199,6 +227,9 @@ comment-per-site would just be noise.
 |---|---|---|
 | `VITE_API_BASE_URL` | `/api` | Base URL the web client uses for API calls (proxied by Vite in dev) |
 | `VITE_API_PROXY_TARGET` | `http://localhost:3001` | Target the Vite dev server proxies `/api` requests to (matches `PDFI_PORT`) |
+
+If no API is reachable at `VITE_API_BASE_URL`, the app falls back to
+[on-device mode](#on-device-mode-no-server) rather than reporting a request error.
 
 The web app's Eden Treaty client (`apps/web/src/lib/api.ts`) requires an absolute origin: when
 `VITE_API_BASE_URL` is left at its default relative `/api`, it is resolved to

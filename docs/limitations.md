@@ -185,6 +185,23 @@ detectability framing.
   measurement is separate from, and not settled by, anything on this page or by the deterministic
   local-extraction facts above.
 
+## On-device (local) mode
+
+When no API server is reachable, `apps/web` runs the pipeline in the browser (see the README's
+[On-device mode](../README.md#on-device-mode-no-server) section). Constraints specific to it:
+
+- `image_only` and `unicode_tags` are unavailable (native canvas / on-disk CJK font subset), as
+  are `payloadLanguage="ko"`/`"zh"` — the UI disables them and the engine throws
+  `INJECTION_FAILED` / `FONT_UNAVAILABLE` with an explicit "needs a server" message.
+- qpdf structural validation never runs, so `summary.qpdfStatus` is always `"not_run"`.
+- Model Test, Submissions and Robustness are server features and stay unavailable.
+- Jobs exist only in tab memory: a reload loses them (nothing is persisted, deliberately — the
+  private manifest carries the hidden instruction in plain text). Download artifacts to keep them.
+- Output bytes are not byte-identical to a server run of the same input, because `pdf-lib` stamps
+  a save timestamp; the injection decisions (target page, bounding box, font size, hashes of
+  source/prompt) are identical, and that equivalence is pinned by
+  `packages/pdf-engine/test/inject-browser.test.ts`.
+
 ## Instruction and payload constraints
 
 - The hidden instruction must be **printable ASCII** (plus `\n`) when `payloadLanguage="en"`
