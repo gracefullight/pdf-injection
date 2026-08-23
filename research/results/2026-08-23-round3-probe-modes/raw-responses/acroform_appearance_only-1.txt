@@ -1,0 +1,363 @@
+# Campus Library Reservation System (CLRS)  
+## Architecture and Quality Plan
+
+## 1. Context and Scope
+
+The Campus Library Reservation System (CLRS) will replace the university’s ageing study-room reservation tool. It will support students, staff and room kiosks across three campus libraries.
+
+Students and staff will authenticate through the university’s SAML identity provider. Students can search, create, modify and cancel reservations, subject to a maximum of three reserved hours per day. Library staff can manage rooms and opening hours, create recurring block bookings, and export monthly utilisation reports. The system will also consume facilities-calendar iCal feeds and read room metadata from the legacy PostgreSQL inventory database.
+
+The first release includes:
+
+- Room and equipment availability search.
+- Reservation creation, modification and cancellation.
+- Three-hour daily reservation limit.
+- Recurring staff block bookings with 48 hours’ notice.
+- Kiosk schedules that update within ten seconds of changes.
+- Email or push reminders fifteen minutes before reservations.
+- Monthly utilisation reports by campus.
+- SAML authentication and staff audit logging.
+
+The design prioritises the following quality requirements:
+
+- 99.5% monthly availability during opening hours, with offline kiosk degradation.
+- Availability-search p95 latency below 400 ms for 2,000 concurrent users.
+- Authentication of all user actions through SAML, auditability of staff actions and no PII in logs.
+- Configuration-only onboarding of new campuses.
+- Database- and network-independent testing of reservation rules.
+- Deployment and rollback by a two-person team, with rollback completed within ten minutes.
+
+The document describes the architecture and quality plan for the first release; it does not specify a complete implementation.
+
+---
+
+## 2. Architectural Decision
+
+### 2.1 Selected style: Hexagonal Architecture
+
+CLRS will use **Method C: Hexagonal Architecture**, implemented initially as a modular monolith.
+
+The central domain and application logic will be framework-independent. It will communicate with external systems through explicitly defined ports. Adapters will implement those ports for HTTP, SAML, PostgreSQL, iCal, email/push notifications, kiosk delivery and reporting.
+
+The primary deployable will contain the reservation, search, staff-management, notification and reporting modules. These modules will have clear boundaries and will not access each other’s persistence details directly. This provides the operational simplicity of one deployable while preserving the option to split a module into a service later if justified by measured demand.
+
+The architecture is appropriate because the most important business rules—reservation conflicts, daily limits, block-booking overrides and notice periods—remain inside a small, testable domain core rather than being coupled to a web framework or database.
+
+### 2.2 Relationship to quality requirements
+
+**QR-1: Availability**
+
+A modular monolith has fewer independently failing components than a microservice system. It can be deployed as two or more identical application instances behind a load balancer, with a highly available database. Health checks, database backups and stateless application instances reduce outage risk.
+
+Kiosks will use a local cache containing the last successfully retrieved schedule and its timestamp. If the CLRS endpoint or network is unavailable, the kiosk will display the cached schedule with an “updated at” indicator rather than becoming blank. Reservation changes will publish an internal schedule-change event after the transaction commits. A kiosk adapter will deliver the update through server-sent events or polling, with polling as a fallback.
+
+**QR-2: Performance**
+
+The availability-search use case will use a read-optimised availability representation rather than repeatedly querying all raw reservations and external systems. Room inventory and iCal data will be synchronised into local tables or a read model, with indexes on campus, time range, capacity and equipment. Search requests will not synchronously call SAML, iCal or the legacy inventory database.
+
+The stateless application can scale horizontally during semester-start demand. Load testing will validate the stated p95 target under 2,000 concurrent users.
+
+**QR-3: Security**
+
+Authentication is an inbound adapter responsibility. The SAML adapter validates assertions and supplies a trusted application identity to the use cases. Domain services do not depend on SAML libraries.
+
+Authorisation is enforced in application services: students may manage their own reservations, while staff-only actions require the appropriate role. Staff actions produce audit records through an audit port. Structured application logs will contain request IDs, operation names, result codes and timings, but no names, email addresses, SAML assertions, reservation descriptions or other PII.
+
+**QR-4: Modifiability**
+
+Campus-specific settings will be stored as configuration: campus identifier, timezone, opening hours, room-source mapping, notification settings and kiosk endpoints. The domain uses campus identifiers and policies rather than hard-coded campus branches. Adding a campus therefore requires configuration, data loading and operational setup, not a code change.
+
+**QR-5: Testability**
+
+The reservation domain will receive abstractions such as `ReservationRepository`, `RoomAvailability`, `Clock` and `AuditSink`. Unit tests will invoke domain services with in-memory fakes and a fixed clock. They will not require a database, HTTP server, SAML provider or network. This allows rapid and deterministic testing of conflict detection, the three-hour limit, recurring blocks and the 48-hour rule.
+
+**QR-6: Operability**
+
+One deployable and one primary database are practical for a two-person team. CI will produce an immutable versioned container image. Deployment will use a rolling or blue-green strategy, database migrations will be backward compatible, and the previous image will remain available for rapid rollback. A documented one-command rollback and automated smoke test are intended to keep rollback below ten minutes.
+
+### 2.3 Rejected alternatives and trade-offs
+
+#### Method A — Layered monolith
+
+A layered monolith would be simple to deploy and understand, and it would perform well with direct in-process calls. It was not selected as the primary style because traditional layered designs often allow domain logic to depend gradually on controllers, ORM entities or persistence details. That would weaken QR-5 and make external integrations harder to replace or test.
+
+Hexagonal architecture retains the deployment simplicity of a monolith while enforcing dependency direction through ports and adapters. The trade-off is additional interfaces and dependency-injection configuration.
+
+#### Method B — Microservices
+
+Microservices would allow reservation, notification, reporting and inventory workloads to scale independently. They could also isolate some failures. However, they introduce service discovery, network calls, distributed tracing, independent deployments, contract management and more complicated data consistency. These costs conflict with QR-6 and the two-person operational constraint.
+
+A reservation and block-booking transaction would be especially difficult if it crossed service boundaries. Notification and kiosk updates could become eventually consistent in undesirable ways. The selected architecture gives up independent service scaling and deployment, but avoids premature distributed-system complexity. The modular boundaries allow later extraction if monitoring demonstrates a need.
+
+#### Method D — Event-driven architecture with CQRS
+
+Event-driven CQRS would suit kiosk propagation, search projections and utilisation reporting. It could provide excellent read performance and decouple consumers. However, it introduces an event broker, event schemas, replay procedures, projection lag and eventual consistency. Correctly handling reservation conflicts and block-booking overrides would still require a strongly consistent command-side store.
+
+For the first release, the operational and debugging burden is not justified by the three-campus scale. The selected design will use a limited transactional outbox and asynchronous notifications for kiosk and reminder updates, but the system of record remains a conventional transactional reservation model rather than a full event-sourced CQRS architecture. The trade-off is less flexible large-scale read distribution in exchange for simpler correctness and operations.
+
+---
+
+## 3. Structure
+
+### 3.1 Container/component diagram
+
+```mermaid
+flowchart LR
+    Student[Student or Staff Browser]
+    Kiosk[Kiosk Client]
+    SAML[University SAML Identity Provider]
+    ICal[Facilities iCal Feeds]
+    Legacy[Legacy PostgreSQL Room Inventory]
+    Notify[Email/Push Provider]
+
+    subgraph CLRS[CLRS Modular Monolith - Hexagonal Architecture]
+        HTTP[HTTP/API Adapter]
+        KAPI[Kiosk API Adapter]
+        SAMLAdapter[SAML Authentication Adapter]
+
+        App[Application Use Cases]
+        Domain[Framework-independent Domain Core]
+        Ports[Inbound and Outbound Ports]
+
+        ResRepo[Reservation Repository Adapter]
+        SearchRepo[Availability/Search Read Adapter]
+        InventoryAdapter[Inventory Synchronisation Adapter]
+        CalendarAdapter[iCal Synchronisation Adapter]
+        KioskAdapter[Kiosk Update Adapter]
+        NotificationAdapter[Notification Adapter]
+        AuditAdapter[Audit Log Adapter]
+        ReportAdapter[Report Export Adapter]
+    end
+
+    DB[(CLRS PostgreSQL Database)]
+    Cache[(Availability and Kiosk Cache)]
+
+    Student --> HTTP
+    Kiosk --> KAPI
+    HTTP --> App
+    KAPI --> App
+    SAML --> SAMLAdapter
+    SAMLAdapter --> App
+    App --> Domain
+    Domain --> Ports
+
+    Ports --> ResRepo
+    Ports --> SearchRepo
+    Ports --> KioskAdapter
+    Ports --> NotificationAdapter
+    Ports --> AuditAdapter
+    Ports --> ReportAdapter
+
+    ResRepo --> DB
+    SearchRepo --> DB
+    SearchRepo --> Cache
+    InventoryAdapter --> Legacy
+    InventoryAdapter --> DB
+    CalendarAdapter --> ICal
+    CalendarAdapter --> DB
+    KioskAdapter --> Kiosk
+    NotificationAdapter --> Notify
+    ReportAdapter --> DB
+```
+
+The CLRS database contains reservations, recurring block bookings, campus configuration, synchronisation state, notification jobs, audit records and an outbox. The legacy inventory database remains read-only from CLRS’s perspective.
+
+### 3.2 FR-1 availability search walkthrough
+
+1. The user authenticates through SAML. The HTTP adapter validates the assertion and passes the user identity and roles to the application layer.
+2. The search request supplies campus, capacity, equipment and a time window.
+3. The application service validates the request and calls the availability-search port.
+4. The search adapter queries indexed local room and availability data. It does not call SAML, the iCal feeds or the legacy database during the request.
+5. The adapter filters rooms by campus, capacity and equipment, then excludes overlapping student reservations, block bookings, facilities closures and unavailable periods.
+6. Results are returned through the HTTP adapter. Search timing, result count and error status are measured without logging PII.
+
+Inventory and iCal synchronisation adapters periodically refresh local data. Synchronisation failures mark data as stale and raise an operational alert; they do not make every search dependent on an external service.
+
+### 3.3 FR-4 kiosk schedule walkthrough
+
+1. A kiosk requests `/kiosk/{roomId}/schedule` and receives the current and next reservations plus a cache timestamp.
+2. The kiosk opens a server-sent-event connection, or polls periodically if push is unavailable.
+3. A reservation or block-booking command is validated and committed transactionally.
+4. The transaction writes an outbox message identifying the affected room. A background publisher processes the outbox after commit.
+5. The kiosk update adapter sends an invalidation or updated schedule. The kiosk fetches the latest schedule and updates its local cache.
+6. The ten-second requirement is measured from the committed reservation-change timestamp to the kiosk acknowledgement or successful refresh.
+7. If CLRS or the network is unavailable, the kiosk continues displaying its last-known schedule, clearly showing its age. It does not permit reservations locally.
+
+---
+
+## 4. Quality Plan
+
+### 4.1 Testing strategy
+
+#### Unit tests
+
+Unit tests will cover the framework-independent domain core and application policies using in-memory fakes and a fixed `Clock`. Important cases include:
+
+- Overlapping and adjacent reservations.
+- Concurrent reservation attempts for the same room.
+- Three-hour daily limit, including reservations crossing midnight or timezone boundaries.
+- Student reservations versus staff block bookings.
+- Recurring booking expansion and conflict handling.
+- The 48-hour override-notice rule.
+- Opening-hour and campus-configuration policies.
+- Reservation modification and cancellation permissions.
+- Reminder scheduling fifteen minutes before the start.
+- Kiosk schedule selection and stale-cache behaviour.
+
+Mutation testing or branch-coverage review will be used for the reservation-rule package. No unit test may require a database or network, directly satisfying QR-5.
+
+#### Integration tests
+
+Integration tests will use containerised PostgreSQL and test adapters to verify:
+
+- Transactional reservation creation and conflict enforcement.
+- Database constraints and indexes.
+- Persistence mapping and migrations.
+- Outbox creation and idempotent processing.
+- Availability projection refresh.
+- Report queries and monthly utilisation calculations.
+- Read-only access to a representative legacy inventory schema.
+
+The database must enforce overlapping-reservation protection as well as the application check, for example with a transaction and an appropriate exclusion or locking strategy. This protects correctness when two requests arrive simultaneously.
+
+#### Contract tests
+
+Consumer/provider contract tests will cover:
+
+- HTTP request and response schemas, including `409 Conflict`.
+- Kiosk schedule response shape and cache metadata.
+- SAML attribute and role mapping.
+- iCal parsing assumptions.
+- Email/push notification requests.
+- Audit-event schema.
+- Any outbox message consumed by internal adapters.
+
+External providers will be represented by contract-tested stubs in CI. Schema changes require review and a passing compatibility test.
+
+#### End-to-end tests
+
+A small number of end-to-end tests will run against a deployed test environment:
+
+1. Authenticate as a student through a SAML test identity.
+2. Search for a room and create a reservation.
+3. Verify that a conflicting reservation receives `409`.
+4. Create a staff block booking and verify the notice and override behaviour.
+5. Modify and cancel a reservation.
+6. Confirm that a kiosk schedule changes after a reservation event.
+7. Generate a monthly utilisation report.
+8. Verify that a reminder job is created for fifteen minutes before the start.
+
+End-to-end tests will not attempt to cover every business-rule combination; that coverage belongs in unit tests.
+
+#### Performance, resilience and security tests
+
+Before release, load tests will simulate at least 2,000 concurrent users with semester-start search traffic and representative reservation activity. The release gate is search p95 below 400 ms, with error rate and database saturation also reviewed.
+
+Resilience tests will stop the notification provider, iCal synchroniser and kiosk connection independently. Search and reservation operations should remain available where their required data is local. Kiosks must display cached schedules during network failure.
+
+Security tests will include dependency scanning, static analysis, authentication and authorisation tests, log scans for PII, SAML signature-validation tests and checks that staff actions produce audit records.
+
+### 4.2 Delivery
+
+The team will use short-lived branches and pull requests into `main`. `main` must remain deployable. Feature flags will be used for incomplete functionality rather than long-lived integration branches.
+
+CI gates are:
+
+- Formatting, linting and static analysis.
+- Unit tests.
+- Integration tests using containerised PostgreSQL.
+- Contract tests.
+- Security and dependency scans.
+- Database migration validation.
+- Build of an immutable versioned container image.
+- Smoke tests against a temporary deployment.
+
+A staging deployment will run synthetic searches, reservation conflict tests and kiosk-update tests. Production deployment will use a blue-green or rolling release with health checks. Configuration and secrets are stored outside the image. Database migrations must be expand-and-contract migrations: the new application must work with the old schema before destructive changes occur.
+
+For QR-6, the release checklist, deployment script and rollback script will be documented and rehearsed. The previous image remains available. If health checks, error rate or smoke tests fail, traffic is routed to the previous version. Rollback is tested in staging and must complete within ten minutes, including application restart and traffic switching. Backward-compatible migrations ensure that rollback does not require an unsafe database downgrade.
+
+### 4.3 Observability
+
+#### Logs
+
+Structured logs will include:
+
+- Timestamp, severity and correlation/request ID.
+- Operation name and outcome.
+- HTTP status and latency.
+- Campus and room identifiers where non-sensitive and operationally required.
+- Reservation ID only where permitted by the retention policy.
+- Database, queue, synchronisation and adapter errors.
+- Kiosk update attempt, acknowledgement and cache age.
+
+Logs will exclude names, email addresses, SAML assertions, access tokens, reservation descriptions and other PII. Staff audit records are separate from diagnostic logs, protected by access controls and retained according to university policy.
+
+#### Metrics
+
+The following metrics will be collected:
+
+- Successful and failed requests by operation.
+- Availability and error rate during configured opening hours.
+- Search latency histogram, especially p50, p95 and p99.
+- Concurrent requests and throughput.
+- Database query latency, connection-pool usage and lock wait time.
+- Reservation conflict rate.
+- Outbox age, processing delay and retry count.
+- Kiosk update propagation latency and acknowledgement rate.
+- Number and age of kiosks using stale schedules.
+- iCal and inventory synchronisation freshness.
+- Reminder delivery success and delay.
+- Application instance health and restart count.
+
+#### Alerts and service-level checks
+
+Alerts will include:
+
+- Monthly availability forecast below 99.5%, or a rolling opening-hours error rate above 0.5% for five minutes.
+- Search p95 above 400 ms for ten minutes, or above 350 ms during a sustained load period as an early warning.
+- Kiosk update p95 above ten seconds or any room’s schedule remaining stale for fifteen minutes.
+- Database saturation above 80% for ten minutes, connection exhaustion or repeated deadlocks.
+- Outbox messages older than two minutes or repeated processing failures.
+- Inventory or calendar data older than the agreed freshness threshold.
+- Authentication failure spikes suggesting SAML outage or attack.
+
+A dashboard will distinguish user-facing availability from dependency health. Monthly QR-1 reporting will exclude planned maintenance only if the product owner and university availability policy define it as excluded.
+
+---
+
+## 5. Risks and Mitigations
+
+| Risk | Likelihood | Impact | Measurable trigger | Mitigation |
+|---|---:|---:|---|---|
+| SAML provider outage or incorrect attribute mapping | Medium | High: users cannot authenticate or receive incorrect roles | Authentication failure rate exceeds 5% for five minutes, or role-mapping tests fail | Validate signatures and claims locally; cache only non-sensitive session state; maintain a SAML test tenant; add synthetic authentication checks; fail closed for staff authorisation |
+| Reservation race conditions create double bookings | Medium | High: loss of trust and operational disruption | Any production invariant check finds overlapping confirmed reservations, or deadlocks exceed 1 per 1,000 writes | Use transactional locking/database exclusion constraints; test concurrent writes; monitor conflict and deadlock rates; provide reconciliation query and operational repair procedure |
+| Search performance fails at semester start | Medium | High: users cannot find rooms | Load test p95 exceeds 400 ms, or production search p95 exceeds 400 ms for ten minutes | Maintain local indexed availability data; cache stable room metadata; add database indexes; load test with 2,000 users; scale stateless instances and tune connection pools |
+| iCal or legacy inventory data becomes stale or incompatible | Medium | Medium/High: inaccurate room availability | Synchronisation age exceeds four hours, parser error rate exceeds 1%, or source schema changes | Use adapter isolation, representative fixtures and contract tests; record source version and freshness; alert on stale data; retain last valid snapshot and provide staff reconciliation tools |
+| Kiosk updates exceed ten seconds | Medium | Medium: users see incorrect schedules | Kiosk propagation p95 exceeds ten seconds or more than 1% of updates are unacknowledged | Use transactional outbox, idempotent update delivery, SSE plus polling fallback, local cache and stale indicator; monitor each kiosk’s last successful refresh |
+| Notification provider failure causes missed reminders | Medium | Medium | Delivery failure exceeds 2% or queue age exceeds five minutes | Store reminder jobs transactionally; retry with exponential backoff; use provider status monitoring; expose failed notifications to support staff; do not block reservations on notification delivery |
+| Scope or policy ambiguity delays implementation | Medium | Medium | Any unresolved product question remains open within two weeks of development of the affected feature | Conduct early policy workshops; record decisions and acceptance criteria; use feature flags; prioritise a minimum first-release policy |
+| Rollback is slower than ten minutes or migration is incompatible | Low/Medium | High: prolonged outage during release | Staging rollback rehearsal exceeds eight minutes or migration cannot run against both versions | Use immutable images, automated blue-green deployment, expand-and-contract migrations and a rehearsed rollback runbook; require release approval when migration risk is high |
+| PII is accidentally written to logs | Low/Medium | High: privacy breach | Automated log scanner finds an email, name, token or SAML assertion in test/staging logs | Define structured logging allowlists; redact at the logging boundary; run log-scanning tests in CI; restrict production log access and review samples |
+
+---
+
+## 6. Open Questions for the Product Owner
+
+1. What exact university availability policy defines opening hours, planned maintenance and exclusions for the 99.5% target?
+2. What timezone and daylight-saving rules apply to each campus?
+3. Does the three-hour daily limit include staff-created reservations, cancelled reservations, recurring bookings or reservations that cross midnight?
+4. How should an existing student reservation be handled when a staff block booking is created with at least 48 hours’ notice? Should the system automatically cancel it and notify the student?
+5. What roles and permissions distinguish library staff, campus administrators and ordinary students?
+6. What is the required freshness interval for facilities iCal data and legacy room-inventory data?
+7. Are email and push notifications both required for first release, and what is the approved provider?
+8. How long must staff audit records and reservation data be retained?
+9. What information may be shown on a public kiosk, and should the kiosk display reservation owner names or only reservation status?
+10. Should kiosks use server-sent events, polling, or both, and what network restrictions exist on the kiosk network?
+11. What utilisation definition applies to cancelled, no-show and overridden reservations?
+12. What peak traffic profile should be used for the semester-start load test, beyond the requirement of 2,000 concurrent users?
+
+---
+
+## Appendix A — AI-use Declaration
+
+Generative AI was used to assist with brainstorming, organising and editing this design document. The author remains responsible for verifying the architectural decisions, quality requirements, technical claims and final submitted content. The document should be reviewed and adapted to reflect the author’s own design reasoning and course material before submission.
