@@ -1,14 +1,12 @@
-// pdfjs-dist legacy build runs under Bun (confirmed via a spike prior to
-// building this module: getDocument({useWorkerFetch:false, isEvalSupported:
-// false, disableFontFace:true}) loads and getTextContent() extracts text
-// correctly; only a non-fatal "standardFontDataUrl" warning is logged).
+// pdfjs-dist legacy build runs under Bun with worker fetching and dynamic
+// evaluation disabled for deterministic server-side extraction.
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 
-// Note: pdfjs-dist logs a benign "Ensure that the standardFontDataUrl API
-// parameter is provided" warning for pages using standard (non-embedded)
-// fonts. Text extraction is unaffected (confirmed by the tests in this
-// package); we intentionally don't wire up standardFontDataUrl to avoid
-// depending on pdfjs-dist's internal font-file layout across versions.
+const STANDARD_FONT_DATA_URL = (() => {
+  const pdfjsPkgUrl = import.meta.resolve("pdfjs-dist/package.json");
+  const packageDir = new URL(pdfjsPkgUrl).pathname.replace(/\/package\.json$/, "");
+  return `${packageDir}/standard_fonts/`;
+})();
 
 export interface ExtractTextInput {
   bytes: Uint8Array;
@@ -47,6 +45,7 @@ async function loadPdf(bytes: Uint8Array) {
     useWorkerFetch: false,
     isEvalSupported: false,
     disableFontFace: true,
+    standardFontDataUrl: STANDARD_FONT_DATA_URL,
   });
   return loadingTask.promise;
 }
