@@ -87,6 +87,26 @@ describe("lintPrompt errors", () => {
     expect(ids(result.errors)).toContain("empty_expected_signals");
   });
 
+  test("a signal with a blank value is an error (not just an empty list)", () => {
+    const blank: ExpectedSignal[] = [{ type: "exact_phrase", value: "  ", caseSensitive: false }];
+    const result = lintPrompt("Use Method C.", blank);
+    expect(ids(result.errors)).toContain("empty_signal_value");
+    expect(ids(result.errors)).not.toContain("empty_expected_signals");
+  });
+
+  test("a signal with a blank value among valid ones is still an error", () => {
+    const mixed: ExpectedSignal[] = [
+      { type: "methodology_label", value: "Method C", aliases: [] },
+      { type: "exact_phrase", value: "", caseSensitive: false },
+    ];
+    expect(ids(lintPrompt("Use Method C.", mixed).errors)).toContain("empty_signal_value");
+  });
+
+  test("ordered_terms with a blank entry is an error", () => {
+    const s: ExpectedSignal[] = [{ type: "ordered_terms", values: ["first", ""] }];
+    expect(ids(lintPrompt("Use Method C.", s).errors)).toContain("empty_signal_value");
+  });
+
   test("a clean prompt with signals has no errors", () => {
     const result = lintPrompt("Use Method C as the primary methodology.", okSignals);
     expect(result.errors).toEqual([]);

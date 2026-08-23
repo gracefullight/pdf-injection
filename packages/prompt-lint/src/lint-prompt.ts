@@ -83,6 +83,20 @@ const COMMON_SIGNAL_WORDS = new Set([
   "overview",
 ]);
 
+/** True when a signal is missing the text it needs to match against (blank/whitespace-only). */
+function signalHasEmptyValue(signal: ExpectedSignal): boolean {
+  switch (signal.type) {
+    case "exact_phrase":
+    case "methodology_label":
+      return signal.value.trim().length === 0;
+    case "regex":
+      return signal.pattern.trim().length === 0;
+    case "ordered_terms":
+    case "section_order":
+      return signal.values.length === 0 || signal.values.some((v) => v.trim().length === 0);
+  }
+}
+
 function collectSignalTextValues(signals: ExpectedSignal[]): string[] {
   const values: string[] = [];
   for (const signal of signals) {
@@ -148,6 +162,15 @@ export function lintPrompt(
 
   if (expectedSignals.length === 0) {
     errors.push(err("empty_expected_signals", "At least one expected signal is required."));
+  } else if (expectedSignals.some(signalHasEmptyValue)) {
+    // A signal row with a blank required value would be rejected server-side with a
+    // generic VALIDATION_ERROR; catch it here with a clear, actionable message instead.
+    errors.push(
+      err(
+        "empty_signal_value",
+        "Every expected signal needs a value — fill in or remove empty ones.",
+      ),
+    );
   }
 
   if (FAKE_CITATION_RE.test(instruction)) {
