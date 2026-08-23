@@ -1,6 +1,7 @@
 import type { BenchmarkCondition, ModelTestRequest, ProviderName } from "@pdf-injection/contracts";
 import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import {
   providerAvailability,
 } from "@/features/model-test/model-test-helpers";
 import type { Features } from "@/lib/features";
+import { isResearchProbeMode } from "@/lib/injection-modes";
 
 export interface ModelTestRunFormProps {
   features: Features;
@@ -47,6 +49,10 @@ const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only",
   unicode_tags: "Unicode tags (research)",
+  image_only: "Image only (research probe, visible)",
+  freetext_annot: "FreeText annotation (research probe)",
+  acroform_field: "AcroForm field (research probe)",
+  info_dict: "Info dictionary (research probe)",
 };
 
 export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTestRunFormProps) {
@@ -206,6 +212,11 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
               <Label htmlFor={`model-test-condition-${condition}`} className="font-normal">
                 {CONDITION_LABELS[condition]}
               </Label>
+              {condition !== "original" && isResearchProbeMode(condition) && (
+                <Badge variant="warning" data-testid={`model-test-condition-${condition}-badge`}>
+                  Research/diagnostic
+                </Badge>
+              )}
             </div>
           ))}
         </div>

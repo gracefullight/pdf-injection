@@ -18,6 +18,10 @@ export const ALL_BENCHMARK_CONDITIONS: BenchmarkCondition[] = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 
 export const MIN_REPEATS = 1;

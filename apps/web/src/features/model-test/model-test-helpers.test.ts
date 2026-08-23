@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { ModelTestAggregate, SmokeTestGate } from "@pdf-injection/contracts";
 import {
+  ALL_BENCHMARK_CONDITIONS,
   deriveGateCardView,
   formatDeltaPp,
   formatLatency,
@@ -14,6 +15,23 @@ import {
 
 const OLLAMA_UNAVAILABLE = { available: false, baseUrl: "http://localhost:11434" };
 const OLLAMA_AVAILABLE = { available: true, baseUrl: "http://localhost:11434" };
+
+describe("ALL_BENCHMARK_CONDITIONS", () => {
+  it("includes original plus all nine injection modes, including the four round-3 probes", () => {
+    expect(ALL_BENCHMARK_CONDITIONS).toEqual([
+      "original",
+      "white_text",
+      "render_mode_3",
+      "visible_positive_control",
+      "xmp_only",
+      "unicode_tags",
+      "image_only",
+      "freetext_annot",
+      "acroform_field",
+      "info_dict",
+    ]);
+  });
+});
 
 describe("shouldPollRun", () => {
   it("polls while queued or running", () => {

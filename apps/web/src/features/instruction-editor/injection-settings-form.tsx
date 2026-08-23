@@ -1,5 +1,6 @@
 import type { InjectionMode, PayloadLanguage, Position } from "@pdf-injection/contracts";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,6 +14,8 @@ import {
   hasNonAsciiCharacters,
   type InjectionSettings,
 } from "@/features/instruction-editor/instruction-types";
+import { PdfStructureMap } from "@/features/instruction-editor/pdf-structure-map";
+import { isResearchProbeMode } from "@/lib/injection-modes";
 
 export interface InjectionSettingsFormProps {
   settings: InjectionSettings;
@@ -22,9 +25,11 @@ export interface InjectionSettingsFormProps {
   instruction: string;
   /** From `useFeatures()`; when false, "ko" cannot actually be embedded server-side (no font available). */
   koPayloadAvailable: boolean;
+  /** From `useFeatures()`; when false, `image_only` cannot rasterize (no `@napi-rs/canvas` on this server). */
+  canvasAvailable: boolean;
 }
 
-const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
+export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   white_text:
     "White-on-white text: likely readable by text extraction, but visible if the background isn't white.",
   render_mode_3:
@@ -34,6 +39,14 @@ const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   xmp_only: "Research control: payload only in XMP metadata; not a production mode.",
   unicode_tags:
     "Zero-width Unicode Tag characters (U+E00xx) carried by an invisible text object; many pipelines strip tag characters — research channel, not a production default.",
+  image_only:
+    "Round-3 diagnostic probe, visible by design: the instruction is rasterized to an image and stamped in the page margin. No text object exists at all — nothing text-based can extract it. Tests whether a provider's ingestion has a vision path.",
+  freetext_annot:
+    "Round-3 diagnostic probe: invisible (PDF Tr 3) text inside a FreeText annotation's appearance stream. Not seen by this app's PDF.js-based extractor, but is extracted by poppler pdftotext.",
+  acroform_field:
+    "Round-3 diagnostic probe: the same invisible-text technique inside an AcroForm text-field widget's appearance. Not seen by this app's PDF.js-based extractor, but is extracted by poppler pdftotext.",
+  info_dict:
+    "Round-3 diagnostic probe: payload placed in the PDF /Info dictionary's Subject and Keywords fields, not in any page's text. Surfaced only by metadata reads (e.g. pdfinfo); the document's original Title is preserved.",
 };
 
 export function InjectionSettingsForm({
@@ -42,6 +55,7 @@ export function InjectionSettingsForm({
   pageCount,
   instruction,
   koPayloadAvailable,
+  canvasAvailable,
 }: InjectionSettingsFormProps) {
   function update(partial: Partial<InjectionSettings>) {
     onChange({ ...settings, ...partial });
@@ -62,8 +76,19 @@ export function InjectionSettingsForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
+            {/*
+              Ordering reflects the 2026-08-23 round-3 benchmark against gpt-5.6-luna:
+              the three invisible channels that reached the model 5/5 are grouped first
+              (white_text, render_mode_3, acroform_field), then the visible control, then
+              the channels that did not reach the model in that run. This is a
+              single-provider empirical ordering, not a universal ranking — see
+              research/results/2026-08-23-round3-probe-modes/.
+            */}
             <SelectItem value="white_text">White text (default)</SelectItem>
             <SelectItem value="render_mode_3">Render mode 3 (non-rendering)</SelectItem>
+            <SelectItem value="acroform_field" data-testid="injection-mode-option-acroform-field">
+              AcroForm field
+            </SelectItem>
             <SelectItem value="visible_positive_control">Visible positive control</SelectItem>
             <SelectItem value="xmp_only" data-testid="injection-mode-option-xmp-only">
               XMP metadata only (research control)
@@ -75,11 +100,37 @@ export function InjectionSettingsForm({
             >
               Unicode tags (research) {koPayloadAvailable ? "" : "(unavailable on this server)"}
             </SelectItem>
+            <SelectItem
+              value="image_only"
+              disabled={!canvasAvailable}
+              data-testid="injection-mode-option-image-only"
+            >
+              Image only (visible) {canvasAvailable ? "" : "(unavailable on this server)"}
+            </SelectItem>
+            <SelectItem value="freetext_annot" data-testid="injection-mode-option-freetext-annot">
+              FreeText annotation
+            </SelectItem>
+            <SelectItem value="info_dict" data-testid="injection-mode-option-info-dict">
+              Info dictionary
+            </SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground" data-testid="injection-mode-description">
-          {MODE_DESCRIPTIONS[settings.mode]}
-        </p>
+        <PdfStructureMap mode={settings.mode} />
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-xs text-muted-foreground" data-testid="injection-mode-description">
+            {MODE_DESCRIPTIONS[settings.mode]}
+          </p>
+          {isResearchProbeMode(settings.mode) && (
+            <Badge variant="warning" data-testid="injection-mode-research-probe-badge">
+              Research/diagnostic probe — not a production channel
+            </Badge>
+          )}
+          {settings.mode === "image_only" && (
+            <Badge variant="secondary" data-testid="injection-mode-visible-badge">
+              Visible by design
+            </Badge>
+          )}
+        </div>
         {settings.mode === "xmp_only" && (
           <Alert variant="warning" data-testid="injection-mode-xmp-only-caveat">
             <AlertDescription>
@@ -95,6 +146,51 @@ export function InjectionSettingsForm({
               under real providers is unproven; this mode exists to measure it, not to guarantee it.
               {!koPayloadAvailable &&
                 " Unicode tags is currently unavailable on this server (same font dependency as Korean payload)."}
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.mode === "image_only" && (
+          <Alert variant="warning" data-testid="injection-mode-image-only-caveat">
+            <AlertDescription>
+              Round-3 research probe, visible by design: the instruction is rasterized to a PNG and
+              stamped as a grey mark in the page margin — a human reader will see it, the same as
+              Visible positive control. This is not a hiding technique; it exists to test whether a
+              provider's ingestion has a vision path. No text object is written at all, so this
+              app's Extracted Text tab will always be empty for this mode — that's expected, not a
+              bug.
+              {!canvasAvailable &&
+                " Image only is currently unavailable on this server (the native canvas dependency is missing)."}
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.mode === "freetext_annot" && (
+          <Alert variant="warning" data-testid="injection-mode-freetext-annot-caveat">
+            <AlertDescription>
+              Round-3 research probe: invisible (PDF Tr 3) text inside a FreeText annotation's
+              appearance stream — not a production channel. This app's PDF.js-based Extracted Text
+              tab will not show the payload (that's expected, not a bug); poppler's pdftotext does
+              extract it, which is what this mode measures.
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.mode === "acroform_field" && (
+          <Alert variant="warning" data-testid="injection-mode-acroform-field-caveat">
+            <AlertDescription>
+              Round-3 research probe: the same invisible-text technique as FreeText annotation,
+              inside an AcroForm text-field widget's appearance — not a production channel. This
+              app's PDF.js-based Extracted Text tab will not show the payload (that's expected, not
+              a bug); poppler's pdftotext does extract it, which is what this mode measures.
+            </AlertDescription>
+          </Alert>
+        )}
+        {settings.mode === "info_dict" && (
+          <Alert variant="warning" data-testid="injection-mode-info-dict-caveat">
+            <AlertDescription>
+              Round-3 research probe: the payload lives only in the PDF /Info dictionary's Subject
+              and Keywords fields — not a production channel. It is never part of any page's text,
+              so no text extractor (including this app's Extracted Text tab) will show it; it is
+              surfaced only by metadata reads such as pdfinfo. The document's original Title is
+              preserved.
             </AlertDescription>
           </Alert>
         )}

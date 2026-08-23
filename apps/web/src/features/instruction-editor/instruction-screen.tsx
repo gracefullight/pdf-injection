@@ -222,6 +222,7 @@ export function InstructionScreen({
             pageCount={pageCount}
             instruction={instruction}
             koPayloadAvailable={features.koPayload}
+            canvasAvailable={features.canvasAvailable}
           />
         </div>
       </div>

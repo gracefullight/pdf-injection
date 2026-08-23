@@ -47,6 +47,10 @@ const MODE_LABELS: Record<InjectionSettings["mode"], string> = {
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only (research control)",
   unicode_tags: "Unicode tags (research)",
+  image_only: "Image only (visible)",
+  freetext_annot: "FreeText annotation",
+  acroform_field: "AcroForm field",
+  info_dict: "Info dictionary",
 };
 const POSITION_LABELS: Record<string, string> = {
   top: "Top margin",
