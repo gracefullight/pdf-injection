@@ -39,7 +39,9 @@ export function RawEditor({ instruction, onChange }: RawEditorProps) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <Label htmlFor="raw-instruction">Hidden instruction</Label>
+        <Label htmlFor="raw-instruction" required>
+          Hidden instruction
+        </Label>
         <span
           className={
             instruction.length > LIMITS.maxInstructionChars
@@ -58,6 +60,7 @@ export function RawEditor({ instruction, onChange }: RawEditorProps) {
         value={instruction}
         onChange={(event) => onChange(event.target.value)}
         placeholder="Write the hidden instruction the model should follow…"
+        aria-required="true"
       />
       <div className="flex flex-wrap items-center gap-2">
         <Button

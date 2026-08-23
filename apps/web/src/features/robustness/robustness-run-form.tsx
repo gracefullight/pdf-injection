@@ -229,28 +229,44 @@ export function RobustnessRunForm({
               </div>
 
               {sourceKind === "custom" ? (
-                <Textarea
-                  rows={4}
-                  placeholder="One sample per line"
-                  value={customTexts}
-                  onChange={(event) => setCustomTexts(event.target.value)}
-                  data-testid="robustness-custom-texts-textarea"
-                />
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="robustness-custom-texts" required>
+                    Custom text
+                  </Label>
+                  <Textarea
+                    id="robustness-custom-texts"
+                    rows={4}
+                    placeholder="One sample per line"
+                    value={customTexts}
+                    onChange={(event) => setCustomTexts(event.target.value)}
+                    data-testid="robustness-custom-texts-textarea"
+                    aria-required="true"
+                  />
+                </div>
               ) : (
-                <Select value={selectedRunId} onValueChange={setSelectedRunId}>
-                  <SelectTrigger data-testid="robustness-text-source-run-select">
-                    <SelectValue placeholder="Select a model-test run" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {modelTestRuns
-                      .filter((run) => run.status === "completed")
-                      .map((run) => (
-                        <SelectItem key={run.runId} value={run.runId}>
-                          {run.runId.slice(0, 8)} ({formatDateTime(run.createdAt)})
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="robustness-text-source-run-select" required>
+                    Model-test run
+                  </Label>
+                  <Select value={selectedRunId} onValueChange={setSelectedRunId}>
+                    <SelectTrigger
+                      id="robustness-text-source-run-select"
+                      aria-required="true"
+                      data-testid="robustness-text-source-run-select"
+                    >
+                      <SelectValue placeholder="Select a model-test run" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {modelTestRuns
+                        .filter((run) => run.status === "completed")
+                        .map((run) => (
+                          <SelectItem key={run.runId} value={run.runId}>
+                            {run.runId.slice(0, 8)} ({formatDateTime(run.createdAt)})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
             </fieldset>
           </>

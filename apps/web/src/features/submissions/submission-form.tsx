@@ -128,7 +128,9 @@ export function SubmissionForm({ jobId, accessToken, onCreated }: SubmissionForm
 
       {inputKind === "text" ? (
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="submission-text">Submission text</Label>
+          <Label htmlFor="submission-text" required>
+            Submission text
+          </Label>
           <Textarea
             id="submission-text"
             rows={8}
@@ -136,11 +138,14 @@ export function SubmissionForm({ jobId, accessToken, onCreated }: SubmissionForm
             onChange={(event) => setText(event.target.value)}
             placeholder="Paste synthetic/de-identified submission text…"
             data-testid="submission-text-input"
+            aria-required="true"
           />
         </div>
       ) : (
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="submission-file">File (.txt, .md, .pdf, .png, .jpg)</Label>
+          <Label htmlFor="submission-file" required>
+            File (.txt, .md, .pdf, .png, .jpg)
+          </Label>
           <input
             id="submission-file"
             type="file"
@@ -148,6 +153,7 @@ export function SubmissionForm({ jobId, accessToken, onCreated }: SubmissionForm
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
             className="text-sm"
             data-testid="submission-file-input"
+            required
           />
           {file && <p className="text-xs text-muted-foreground">{file.name}</p>}
         </div>
