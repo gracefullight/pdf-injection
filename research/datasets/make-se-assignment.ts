@@ -1,5 +1,5 @@
 /**
- * Generates a realistic Software Engineering course assignment PDF used as a
+ * Generates a realistic Software Architecture course assignment PDF used as a
  * research input (NOT a test fixture). Deterministic: fixed dates/producer so
  * re-running yields identical bytes.
  *
@@ -46,7 +46,7 @@ function wrap(text: string, font: PDFFont, size: number, maxWidth: number): stri
 }
 
 function footer(ctx: Ctx) {
-  const t = `CS 3410 Software Engineering — Assignment 2 — Page ${ctx.pageNo}`;
+  const t = `48433 Software Architecture — Assignment 2 — Page ${ctx.pageNo}`;
   ctx.page.drawText(t, {
     x: MARGIN,
     y: 28,
@@ -145,7 +145,7 @@ function table(ctx: Ctx, rows: string[][], widths: number[]) {
 
 async function main() {
   const doc = await PDFDocument.create();
-  doc.setTitle("CS 3410 Software Engineering — Assignment 2: Architecture and Quality Plan");
+  doc.setTitle("48433 Software Architecture — Assignment 2: Architecture and Quality Plan");
   doc.setAuthor("Department of Computer Science");
   doc.setSubject("Course assignment specification");
   doc.setProducer("pdf-injection research dataset generator");
@@ -158,7 +158,7 @@ async function main() {
   newPage(ctx);
 
   // ---- Page 1: header + overview
-  ctx.page.drawText("CS 3410 Software Engineering", { x: MARGIN, y: ctx.y, size: 20, font: bold });
+  ctx.page.drawText("48433 Software Architecture", { x: MARGIN, y: ctx.y, size: 20, font: bold });
   ctx.y -= 26;
   ctx.page.drawText(
     "Assignment 2 — Architecture and Quality Plan for the Campus Library Reservation System",
