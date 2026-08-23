@@ -12,6 +12,18 @@ import type {
 } from "@pdf-injection/contracts";
 import { eden, unwrapEdenAs } from "@/lib/eden-client";
 import {
+  buildLocalDistribution,
+  deleteLocalSet,
+  isLocalSetId,
+  localDistributionCsv,
+  localMappingCsv,
+  localSetArchive,
+  localStudentKeyedSetResponse,
+  localVariantSetResponse,
+} from "@/lib/local-job/local-set-store";
+import { runLocalStudentKeyedSet, runLocalVariantSet } from "@/lib/local-job/run-local-set";
+import { isLocalModeEnabled } from "@/lib/local-mode";
+import {
   API_PREFIX,
   authHeaders,
   type DownloadedFile,
@@ -78,6 +90,7 @@ export interface CreateVariantSetInput extends InjectionFields {
 }
 
 export async function createVariantSet(input: CreateVariantSetInput): Promise<VariantSetResponse> {
+  if (isLocalModeEnabled()) return runLocalVariantSet(input);
   const formData = toFormData({
     file: input.file,
     variants: JSON.stringify(input.variants),
@@ -90,6 +103,7 @@ export async function createVariantSet(input: CreateVariantSetInput): Promise<Va
 }
 
 export async function getVariantSet(id: string, accessToken: string): Promise<VariantSetResponse> {
+  if (isLocalSetId(id)) return localVariantSetResponse(id);
   const result = await eden.api.v1["variant-sets"]({ id }).get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -105,6 +119,7 @@ export interface CreateDistributionInput {
 export async function postDistribution(
   input: CreateDistributionInput,
 ): Promise<DistributionResponse> {
+  if (isLocalSetId(input.setId)) return buildLocalDistribution(input.setId, input.body);
   const result = await eden.api.v1["variant-sets"]({ id: input.setId }).distribution.post(
     input.body as never,
     {
@@ -123,6 +138,7 @@ export async function downloadDistributionCsv(
   accessToken: string,
   stem: string,
 ): Promise<DownloadedFile> {
+  if (isLocalSetId(setId)) return localDistributionCsv(setId, stem);
   return downloadFile(getDistributionCsvUrl(setId), accessToken, `${stem}.distribution.csv`);
 }
 
@@ -131,6 +147,7 @@ export async function downloadVariantSetArchive(
   accessToken: string,
   stem: string,
 ): Promise<DownloadedFile> {
+  if (isLocalSetId(setId)) return localSetArchive(setId, stem);
   return downloadFile(
     `${API_PREFIX}/variant-sets/${setId}/archive`,
     accessToken,
@@ -139,6 +156,10 @@ export async function downloadVariantSetArchive(
 }
 
 export async function deleteVariantSet(setId: string, accessToken: string): Promise<void> {
+  if (isLocalSetId(setId)) {
+    deleteLocalSet(setId);
+    return;
+  }
   const result = await eden.api.v1["variant-sets"]({ id: setId }).delete(undefined, {
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -162,6 +183,7 @@ export interface CreateStudentKeyedSetInput extends InjectionFields {
 export async function createStudentKeyedSet(
   input: CreateStudentKeyedSetInput,
 ): Promise<StudentKeyedSetResponse> {
+  if (isLocalModeEnabled()) return runLocalStudentKeyedSet(input);
   const formData = toFormData({
     file: input.file,
     instructionTemplate: input.instructionTemplate,
@@ -180,6 +202,7 @@ export async function getStudentKeyedSet(
   id: string,
   accessToken: string,
 ): Promise<StudentKeyedSetResponse> {
+  if (isLocalSetId(id)) return localStudentKeyedSetResponse(id);
   const result = await eden.api.v1["student-keyed-sets"]({ id }).get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -196,6 +219,7 @@ export async function downloadMappingCsv(
   accessToken: string,
   stem: string,
 ): Promise<DownloadedFile> {
+  if (isLocalSetId(setId)) return localMappingCsv(setId, stem);
   return downloadFile(getMappingCsvUrl(setId), accessToken, `${stem}.mapping.csv`);
 }
 
@@ -204,6 +228,7 @@ export async function downloadStudentKeyedSetArchive(
   accessToken: string,
   stem: string,
 ): Promise<DownloadedFile> {
+  if (isLocalSetId(setId)) return localSetArchive(setId, stem);
   return downloadFile(
     `${API_PREFIX}/student-keyed-sets/${setId}/archive`,
     accessToken,
@@ -212,6 +237,10 @@ export async function downloadStudentKeyedSetArchive(
 }
 
 export async function deleteStudentKeyedSet(setId: string, accessToken: string): Promise<void> {
+  if (isLocalSetId(setId)) {
+    deleteLocalSet(setId);
+    return;
+  }
   const result = await eden.api.v1["student-keyed-sets"]({ id: setId }).delete(undefined, {
     headers: authHeaders(accessToken) as Record<string, string>,
   });
