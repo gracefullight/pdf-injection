@@ -2,6 +2,7 @@ import type { InjectionMode } from "@pdf-injection/contracts";
 import { Fragment, type ReactNode } from "react";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   ANATOMY_MAP,
   ANATOMY_PROVENANCE,
@@ -81,19 +82,34 @@ function renderEmphasis(text: string): ReactNode[] {
 
 interface VerdictCellProps {
   label: string;
+  /** Short, factual explanation of what this cell measures — shown in a focusable tooltip. */
+  explanation: string;
   variant: BadgeProps["variant"];
   badgeText: string;
   detail: string;
   testId: string;
 }
 
-function VerdictCell({ label, variant, badgeText, detail, testId }: VerdictCellProps) {
+function VerdictCell({ label, explanation, variant, badgeText, detail, testId }: VerdictCellProps) {
   return (
     <div
       className="min-w-[130px] flex-1 rounded-md border border-border bg-secondary/50 p-2"
       data-testid={testId}
     >
-      <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            className="rounded-sm font-mono text-[10px] uppercase tracking-wide text-muted-foreground underline decoration-dotted underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            data-testid={`${testId}-label`}
+          >
+            {label}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="max-w-64">{explanation}</p>
+        </TooltipContent>
+      </Tooltip>
       <div className="mt-1 flex items-center gap-1.5">
         <Badge variant={variant} className="font-mono text-[11px]">
           {badgeText}
@@ -207,29 +223,34 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
           </code>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 pt-0">
-          <div className="flex flex-wrap gap-2">
-            <VerdictCell
-              label="Reaches model"
-              variant={REACH_BADGE_VARIANT[anatomy.reach.verdict]}
-              badgeText={`${REACH_LABEL[anatomy.reach.verdict]} · ${anatomy.reach.delta}`}
-              detail={anatomy.reach.verdict}
-              testId="pdf-structure-map-reach"
-            />
-            <VerdictCell
-              label="Extractors"
-              variant={EXTRACTOR_BADGE_VARIANT[anatomy.extractors.level]}
-              badgeText={EXTRACTOR_LABEL[anatomy.extractors.level]}
-              detail={anatomy.extractors.summary}
-              testId="pdf-structure-map-extractors"
-            />
-            <VerdictCell
-              label="Scanner"
-              variant={DETECTOR_BADGE_VARIANT[anatomy.detector.verdict]}
-              badgeText={DETECTOR_LABEL[anatomy.detector.verdict]}
-              detail={anatomy.detector.summary}
-              testId="pdf-structure-map-detector"
-            />
-          </div>
+          <TooltipProvider>
+            <div className="flex flex-wrap gap-2">
+              <VerdictCell
+                label="Reaches model"
+                explanation="Whether the payload appeared in the model's response in the 2026-08-23 gpt-5.6-luna benchmark. Evidence of ingestion, not proof the model obeyed."
+                variant={REACH_BADGE_VARIANT[anatomy.reach.verdict]}
+                badgeText={`${REACH_LABEL[anatomy.reach.verdict]} · ${anatomy.reach.delta}`}
+                detail={anatomy.reach.verdict}
+                testId="pdf-structure-map-reach"
+              />
+              <VerdictCell
+                label="Extractors"
+                explanation="Whether common PDF text extractors (pdftotext, PyMuPDF, pypdf, PDF.js) surface the payload from the file."
+                variant={EXTRACTOR_BADGE_VARIANT[anatomy.extractors.level]}
+                badgeText={EXTRACTOR_LABEL[anatomy.extractors.level]}
+                detail={anatomy.extractors.summary}
+                testId="pdf-structure-map-extractors"
+              />
+              <VerdictCell
+                label="Hidden-text scanner"
+                explanation="Whether an open-source hidden-text detector (wppoland/hidden-text-detector) flags this technique. 'flagged' means a covert canary here is discoverable by anyone running such a scan."
+                variant={DETECTOR_BADGE_VARIANT[anatomy.detector.verdict]}
+                badgeText={DETECTOR_LABEL[anatomy.detector.verdict]}
+                detail={anatomy.detector.summary}
+                testId="pdf-structure-map-detector"
+              />
+            </div>
+          </TooltipProvider>
           <p className="text-sm text-muted-foreground">{renderEmphasis(anatomy.body)}</p>
           <p
             data-testid="pdf-structure-map-provenance"

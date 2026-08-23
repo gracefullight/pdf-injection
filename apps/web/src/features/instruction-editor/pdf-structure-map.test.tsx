@@ -72,4 +72,22 @@ describe("PdfStructureMap", () => {
       expect(html).toContain("reached · 5/5");
     }
   });
+
+  it("labels the detector cell 'Hidden-text scanner' instead of the ambiguous 'Scanner'", () => {
+    const html = renderToStaticMarkup(<PdfStructureMap mode="white_text" />);
+    expect(html).toContain("Hidden-text scanner");
+    expect(html).not.toContain(">Scanner<");
+  });
+
+  it("gives each of the three verdict cells a focusable, keyboard-reachable tooltip trigger", () => {
+    const html = renderToStaticMarkup(<PdfStructureMap mode="white_text" />);
+    expect(html).toContain('data-testid="pdf-structure-map-reach-label"');
+    expect(html).toContain('data-testid="pdf-structure-map-extractors-label"');
+    expect(html).toContain('data-testid="pdf-structure-map-detector-label"');
+    // Radix's TooltipTrigger asChild composes onto the underlying element — a real <button>,
+    // not a bare <span>, so the tooltip is reachable via Tab as well as hover.
+    expect(
+      html.match(/<button[^>]*data-testid="pdf-structure-map-(reach|extractors|detector)-label"/g),
+    ).toHaveLength(3);
+  });
 });
