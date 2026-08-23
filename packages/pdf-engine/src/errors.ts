@@ -91,3 +91,18 @@ export class FontUnavailableError extends PdfEngineError {
     this.name = "FontUnavailableError";
   }
 }
+
+/**
+ * The `@napi-rs/canvas` native module could not be resolved/loaded at
+ * runtime — the `image_only` injector (round-3 probe condition) cannot
+ * rasterize the instruction to a PNG without it. Thrown rather than
+ * silently producing a text-free no-op PDF. Maps to ApiErrorCode
+ * CANVAS_UNAVAILABLE, the same code `HealthResponse.features.canvasAvailable`
+ * / `packages/robustness`'s `capabilities()` already report against.
+ */
+export class CanvasUnavailableError extends PdfEngineError {
+  constructor(message: string) {
+    super("CANVAS_UNAVAILABLE", message);
+    this.name = "CanvasUnavailableError";
+  }
+}

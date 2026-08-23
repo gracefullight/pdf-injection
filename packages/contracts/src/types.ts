@@ -6,7 +6,17 @@ export type InjectionMode =
   | "render_mode_3"
   | "visible_positive_control"
   | "xmp_only"
-  | "unicode_tags";
+  | "unicode_tags"
+  /**
+   * Round-3 probe conditions (research/diagnostic — see `.agents/results/`
+   * probe-core session): answer "does the provider ingestion use a vision
+   * path?" (image_only) and "which text-extractor family?" (the other
+   * three). Not production channels.
+   */
+  | "image_only"
+  | "freetext_annot"
+  | "acroform_field"
+  | "info_dict";
 
 /**
  * Payload language for the hidden instruction. `"en"` is printable-ASCII only

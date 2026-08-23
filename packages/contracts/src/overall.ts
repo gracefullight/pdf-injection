@@ -9,6 +9,13 @@ import type { InjectionMode, OverallStatus, QpdfStatus } from "./types";
  *   threshold(xmp_only) = 1e-7 (page content untouched — round 2 §0.1)
  *   threshold(unicode_tags) = 1e-7 (nothing painted — invisible mode 3, same
  *     geometry contract as render_mode_3 — round 2 §7 addendum)
+ *   threshold(image_only) = Infinity (deliberately visible, like
+ *     visible_positive_control — round-3 probe: is there a vision path?)
+ *   threshold(freetext_annot) = 1e-7 (annotation appearance is a genuinely
+ *     empty Form XObject — nothing painted)
+ *   threshold(acroform_field) = 1e-7 (widget appearance is a genuinely
+ *     empty operator stream — nothing painted)
+ *   threshold(info_dict) = 1e-7 (page content untouched, like xmp_only)
  */
 export function diffThreshold(mode: InjectionMode): number {
   switch (mode) {
@@ -21,6 +28,14 @@ export function diffThreshold(mode: InjectionMode): number {
     case "xmp_only":
       return 1e-7;
     case "unicode_tags":
+      return 1e-7;
+    case "image_only":
+      return Number.POSITIVE_INFINITY;
+    case "freetext_annot":
+      return 1e-7;
+    case "acroform_field":
+      return 1e-7;
+    case "info_dict":
       return 1e-7;
   }
 }
@@ -58,6 +73,14 @@ export interface OverallStatusParts {
  * model provider's ingestion pipeline is the uncertain outcome this channel
  * exists to measure, so hard-failing on it would make the mode unusable for
  * its own research purpose (round 2 §7 addendum / plan architecture_decisions #3).
+ *
+ * Note: image_only / freetext_annot / acroform_field / info_dict (round-3
+ * probe conditions) are treated exactly like render_mode_3 /
+ * unicode_tags too — hiddenTextExtracted RECORDED, never part of FAIL. This
+ * holds even for image_only, whose text-only pdfjs extraction is expected
+ * to be false unconditionally (no text object exists) — that expected
+ * false is exactly the signal these diagnostic modes exist to record, not
+ * a defect to gate on.
  */
 export function computeOverall(parts: OverallStatusParts, mode: InjectionMode): OverallStatus {
   const threshold = diffThreshold(mode);
@@ -78,7 +101,13 @@ export function computeOverall(parts: OverallStatusParts, mode: InjectionMode): 
   const hasWarnings =
     parts.hasServerWarnings ||
     parts.qpdfStatus === "warning" ||
-    ((mode === "render_mode_3" || mode === "unicode_tags") && !parts.hiddenTextExtracted);
+    ((mode === "render_mode_3" ||
+      mode === "unicode_tags" ||
+      mode === "image_only" ||
+      mode === "freetext_annot" ||
+      mode === "acroform_field" ||
+      mode === "info_dict") &&
+      !parts.hiddenTextExtracted);
 
   if (hasWarnings) return "PASS_WITH_WARNINGS";
 

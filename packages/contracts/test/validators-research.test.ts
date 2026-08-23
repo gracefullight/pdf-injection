@@ -105,6 +105,23 @@ describe("isModelTestRequest", () => {
     ).toBe(true);
   });
 
+  // Round-3 probe conditions (see packages/pdf-engine's image_only /
+  // freetext_annot / acroform_field / info_dict injectors). Same caveat as
+  // the unicode_tags note above: this only asserts the wire schema accepts
+  // them for `conditions`, not that POST /api/v1/jobs accepts them as an
+  // `injectionMode` (apps/api's own hardcoded gate, out of this package's
+  // scope).
+  test("accepts conditions including the round-3 probe modes", () => {
+    expect(
+      isModelTestRequest({
+        providers: [{ name: "mock" }],
+        conditions: ["image_only", "freetext_annot", "acroform_field", "info_dict"],
+        repeats: 1,
+        acknowledgeExternalTransfer: false,
+      }),
+    ).toBe(true);
+  });
+
   test("accepts a valid request with explicit conditions", () => {
     expect(
       isModelTestRequest({

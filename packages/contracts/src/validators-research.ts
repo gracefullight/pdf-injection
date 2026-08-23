@@ -125,6 +125,10 @@ export const BenchmarkConditionSchema = Type.Union([
   Type.Literal("visible_positive_control"),
   Type.Literal("xmp_only"),
   Type.Literal("unicode_tags"),
+  Type.Literal("image_only"),
+  Type.Literal("freetext_annot"),
+  Type.Literal("acroform_field"),
+  Type.Literal("info_dict"),
 ]);
 
 export const ModelTestRequestSchema = Type.Object({

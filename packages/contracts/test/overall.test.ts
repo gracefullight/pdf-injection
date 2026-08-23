@@ -135,6 +135,39 @@ describe("computeOverall", () => {
     expect(result).toBe("FAIL");
   });
 
+  test("image_only threshold is Infinity (deliberately visible, like visible_positive_control)", () => {
+    expect(diffThreshold("image_only")).toBe(Infinity);
+  });
+
+  test("freetext_annot threshold is 1e-7", () => {
+    expect(diffThreshold("freetext_annot")).toBe(1e-7);
+  });
+
+  test("acroform_field threshold is 1e-7", () => {
+    expect(diffThreshold("acroform_field")).toBe(1e-7);
+  });
+
+  test("info_dict threshold is 1e-7", () => {
+    expect(diffThreshold("info_dict")).toBe(1e-7);
+  });
+
+  test("image_only never fails on pixel ratio (threshold Infinity)", () => {
+    const result = computeOverall(baseParts({ changedPixelRatio: 0.5 }), "image_only");
+    expect(result).toBe("PASS"); // hiddenTextExtracted defaults to true in baseParts, so no warnings either
+  });
+
+  for (const mode of ["image_only", "freetext_annot", "acroform_field", "info_dict"] as const) {
+    test(`PASS_WITH_WARNINGS (not FAIL) when mode is ${mode} and hiddenTextExtracted is false`, () => {
+      const result = computeOverall(baseParts({ hiddenTextExtracted: false }), mode);
+      expect(result).toBe("PASS_WITH_WARNINGS");
+    });
+
+    test(`PASS when mode is ${mode} and hiddenTextExtracted is true (all else passing)`, () => {
+      const result = computeOverall(baseParts({ hiddenTextExtracted: true }), mode);
+      expect(result).toBe("PASS");
+    });
+  }
+
   test("PASS_WITH_WARNINGS when server validation has warnings", () => {
     const result = computeOverall(baseParts({ hasServerWarnings: true }), "white_text");
     expect(result).toBe("PASS_WITH_WARNINGS");

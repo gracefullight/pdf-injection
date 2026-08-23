@@ -13,6 +13,10 @@ import {
   OutputParseFailedError,
   PromptEncodingFailedError,
 } from "./errors";
+import { injectAcroFormField } from "./inject-acroform-field";
+import { injectFreetextAnnot } from "./inject-freetext-annot";
+import { injectImageOnly } from "./inject-image-only";
+import { injectInfoDict } from "./inject-info-dict";
 import { injectRenderMode3 } from "./inject-render-mode-3";
 import { injectUnicodeTags } from "./inject-unicode-tags";
 import { injectVisibleControl } from "./inject-visible-control";
@@ -111,6 +115,29 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
   let boundingBox: [number, number, number, number];
   let fontSize: number;
 
+  // Korean (non-ASCII) payload on a drawn-text mode requires the CJK font;
+  // ASCII text under payloadLanguage="ko" can still use Helvetica. See
+  // korean-font.ts's doc comment on embedKoreanFont for the cycle-2/3/4 QA
+  // investigation and the HarfBuzz-pre-subsetting fix (correct rendering
+  // AND extraction, for every mode including visible_positive_control).
+  // Shared by every mode that draws text with a pdf-lib font — white_text /
+  // render_mode_3 / visible_positive_control (page content) and
+  // freetext_annot / acroform_field (their own annotation/widget appearance
+  // streams, drawn under invisible render mode 3 — see those injectors'
+  // module docs for why they need a real font at all).
+  let font: PDFFont | undefined;
+  if (
+    payloadLanguage === "ko" &&
+    hasNonAscii &&
+    (input.mode === "white_text" ||
+      input.mode === "render_mode_3" ||
+      input.mode === "visible_positive_control" ||
+      input.mode === "freetext_annot" ||
+      input.mode === "acroform_field")
+  ) {
+    font = await embedKoreanFont(doc, normalizedInstruction);
+  }
+
   if (input.mode === "xmp_only") {
     // No page content stream is touched — no font needed regardless of language.
     ({ boundingBox, fontSize } = await injectXmpOnly({
@@ -118,6 +145,64 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
       instruction: normalizedInstruction,
       promptSha256,
     }));
+  } else if (input.mode === "info_dict") {
+    // No page content stream is touched — no font needed regardless of language.
+    ({ boundingBox, fontSize } = await injectInfoDict({
+      doc,
+      instruction: normalizedInstruction,
+      promptSha256,
+    }));
+  } else if (input.mode === "freetext_annot") {
+    // Appearance draws the instruction for real under invisible render mode
+    // 3 (see injectFreetextAnnot's module doc for why) — needs a font.
+    ({ boundingBox, fontSize } = await injectFreetextAnnot({
+      doc,
+      pageIndex,
+      instruction: normalizedInstruction,
+      promptSha256,
+      position: input.position,
+      x: input.x,
+      y: input.y,
+      fontSize: input.fontSize,
+      maxWidth: input.maxWidth,
+      font,
+    }));
+  } else if (input.mode === "acroform_field") {
+    // Appearance draws the instruction for real under invisible render mode
+    // 3 (see injectAcroFormField's module doc for why) — needs a font.
+    ({ boundingBox, fontSize } = await injectAcroFormField({
+      doc,
+      pageIndex,
+      instruction: normalizedInstruction,
+      promptSha256,
+      position: input.position,
+      x: input.x,
+      y: input.y,
+      fontSize: input.fontSize,
+      maxWidth: input.maxWidth,
+      font,
+    }));
+  } else if (input.mode === "image_only") {
+    // Rasterizes via @napi-rs/canvas (never pdf-lib text APIs) + a post-save,
+    // public-pdf-lib-API image-XObject-dict tag — the injector performs its
+    // OWN internal save/reload cycle and returns the reloaded PDFDocument
+    // instance; swap the dispatcher's local `doc` to it BEFORE the
+    // dispatcher's own final save/reload/geometry-check step below (which
+    // then runs unchanged) — same contract as unicode_tags below.
+    const result = await injectImageOnly({
+      doc,
+      pageIndex,
+      instruction: normalizedInstruction,
+      promptSha256,
+      position: input.position,
+      x: input.x,
+      y: input.y,
+      fontSize: input.fontSize,
+      maxWidth: input.maxWidth,
+    });
+    doc = result.doc;
+    boundingBox = result.boundingBox;
+    fontSize = result.fontSize;
   } else if (input.mode === "unicode_tags") {
     // Draws via embedKoreanFont() (ASCII-complete, never shared with any
     // visible text) + a post-save, public-pdf-lib-API /ToUnicode CMap
@@ -139,16 +224,8 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
     boundingBox = result.boundingBox;
     fontSize = result.fontSize;
   } else {
-    // Korean (non-ASCII) payload on a drawn-text mode requires the CJK font;
-    // ASCII text under payloadLanguage="ko" can still use Helvetica. See
-    // korean-font.ts's doc comment on embedKoreanFont for the cycle-2/3/4 QA
-    // investigation and the HarfBuzz-pre-subsetting fix (correct rendering
-    // AND extraction, for every mode including visible_positive_control).
-    let font: PDFFont | undefined;
-    if (payloadLanguage === "ko" && hasNonAscii) {
-      font = await embedKoreanFont(doc, normalizedInstruction);
-    }
-
+    // white_text / render_mode_3 / visible_positive_control — `font` was
+    // already resolved above (shared with freetext_annot/acroform_field).
     const injectorInput = {
       doc,
       pageIndex,

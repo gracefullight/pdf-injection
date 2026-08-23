@@ -121,3 +121,40 @@ export function layoutTextBlock(params: LayoutTextBlockParams): TextBlockLayout 
 
   return { linePositions, boundingBox: [minX, minY, maxX, maxY] };
 }
+
+export interface ResolveBoxPositionParams {
+  pageHeight: number;
+  /** Kept for API symmetry with layoutTextBlock/callers; not used by the
+   * position math below (only `height` affects the "top" branch). */
+  width: number;
+  height: number;
+  position: Position;
+  x?: number;
+  y?: number;
+}
+
+/**
+ * Resolves the bottom-left corner (x, y) of a FIXED-size box (an
+ * annotation/widget `/Rect`, or a rasterized image's placement) according
+ * to `position`, reusing the same margin constants as `layoutTextBlock`.
+ * Unlike `layoutTextBlock`, the box's height is already known up front (not
+ * derived from wrapped text lines) — this is the simpler, position-only
+ * resolver shared by the round-3 probe injectors (freetext_annot /
+ * acroform_field / image_only).
+ */
+export function resolveBoxPosition(params: ResolveBoxPositionParams): { x: number; y: number } {
+  const { pageHeight, height, position } = params;
+
+  if (position === "custom") {
+    if (params.x === undefined || params.y === undefined) {
+      throw new ValidationError("x and y are required when position is 'custom'");
+    }
+    return { x: params.x, y: params.y };
+  }
+
+  if (position === "top") {
+    return { x: DEFAULT_MARGIN_X, y: pageHeight - DEFAULT_MARGIN_Y - height };
+  }
+
+  return { x: DEFAULT_MARGIN_X, y: DEFAULT_MARGIN_Y };
+}
