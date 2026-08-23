@@ -75,27 +75,8 @@ export async function deleteJobDir(config: AppConfig, jobId: string): Promise<vo
  * segment). API contract: `[^A-Za-z0-9._-]` -> `_`, max 100 chars, no
  * extension.
  */
-export function sanitizeFilenameStem(filename: string): string {
-  const withoutExt = filename.replace(/\.[^./\\]+$/, "");
-  const sanitized = withoutExt.replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 100);
-  return sanitized.length > 0 ? sanitized : "document";
-}
-
-/**
- * Sanitizes an arbitrary user-supplied identifier segment (e.g. a variant
- * `label` or student id) for safe embedding inside a generated filename or
- * zip archive entry path (round-2 §1 variant-set / student-keyed-set
- * archives). Same charset policy as `sanitizeFilenameStem` but tighter
- * (max 64 chars, matching the QA-mandated fix) and strips any leading dots
- * so the result can never itself look like a hidden-file / relative-path
- * segment even before a caller concatenates it into a larger path string.
- * CWE-22 (Zip Slip) defense-in-depth — pairs with lib/zip.ts's
- * `buildZip()`, which independently rejects any path separator.
- */
-export function sanitizeArchiveSegment(value: string): string {
-  const sanitized = value
-    .replace(/[^A-Za-z0-9._-]/g, "_")
-    .replace(/^\.+/, "_")
-    .slice(0, 64);
-  return sanitized.length > 0 ? sanitized : "item";
-}
+// `sanitizeFilenameStem` / `sanitizeArchiveSegment` moved to
+// `@pdf-injection/contracts` (src/sets.ts) so apps/web's on-device set flows
+// produce byte-identical archive entry names. Re-exported here so this
+// module stays the single import site for the rest of apps/api.
+export { sanitizeArchiveSegment, sanitizeFilenameStem } from "@pdf-injection/contracts";

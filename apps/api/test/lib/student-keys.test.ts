@@ -5,7 +5,7 @@ import {
   generateUniqueStudentKeys,
   STUDENT_KEY_CHARSET,
   substituteKey,
-} from "../../src/lib/student-keys";
+} from "@pdf-injection/contracts";
 
 describe("generateStudentKey", () => {
   test("produces a key of the requested length from the unambiguous charset", () => {

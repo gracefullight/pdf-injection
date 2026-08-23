@@ -6,17 +6,20 @@ import type {
   StudentKeyedSetResponse,
   StudentKeySummary,
 } from "@pdf-injection/contracts";
-import { isExpectedSignalArray, parseStudentIds } from "@pdf-injection/contracts";
-import { sha256Hex } from "@pdf-injection/validation";
-import type { AppConfig } from "../config";
-import { ApiError } from "../errors";
 import {
   DEFAULT_KEY_LENGTH,
   generateUniqueStudentKeys,
+  isExpectedSignalArray,
   MAX_KEY_LENGTH,
   MIN_KEY_LENGTH,
+  mappingToCsv,
+  parseStudentIds,
   substituteKey,
-} from "../lib/student-keys";
+  substituteSignalKeys,
+} from "@pdf-injection/contracts";
+import { sha256Hex } from "@pdf-injection/validation";
+import type { AppConfig } from "../config";
+import { ApiError } from "../errors";
 import { buildZip, type ZipEntry } from "../lib/zip";
 import { generateAccessToken, hashAccessToken } from "../middleware/access-token";
 import type { JobsRepository } from "../repositories/jobs.repository";
@@ -95,14 +98,6 @@ function parseExpectedSignalsTemplate(json: string): ExpectedSignal[] {
 }
 
 /** Substitutes {{KEY}} inside every `exact_phrase.value` (the only signal shape the contract allows a per-student template in). */
-function substituteSignals(signals: ExpectedSignal[], key: string): ExpectedSignal[] {
-  return signals.map((signal) =>
-    signal.type === "exact_phrase"
-      ? { ...signal, value: substituteKey(signal.value, key) }
-      : signal,
-  );
-}
-
 function toStudentKeySummary(
   entry: MetaStudentEntry,
   accessToken: string | null,
@@ -163,7 +158,7 @@ export async function createStudentKeyedSet(
     const studentId = studentIds[i]!;
     const key = keys[i]!;
     const instruction = substituteKey(fields.instructionTemplate, key);
-    const expectedSignals = substituteSignals(signalsTemplate, key);
+    const expectedSignals = substituteSignalKeys(signalsTemplate, key);
 
     const jobFields: CreateJobFields = {
       file: fields.file,

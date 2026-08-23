@@ -1,7 +1,12 @@
 import { mkdir, rm } from "node:fs/promises";
 import { dirname } from "node:path";
 import type { JobStatus, VariantJobSummary, VariantSetResponse } from "@pdf-injection/contracts";
-import { parseVariantSpecs, type VariantSpec } from "@pdf-injection/contracts";
+import {
+  buildDistributionAssignments,
+  distributionToCsv as distributionRowsToCsv,
+  parseVariantSpecs,
+  type VariantSpec,
+} from "@pdf-injection/contracts";
 import { sha256Hex } from "@pdf-injection/validation";
 import type { AppConfig } from "../config";
 import { ApiError } from "../errors";
@@ -220,7 +225,7 @@ export interface DistributionResult {
   counts: Record<string, number>;
 }
 
-async function hashModN(input: string, n: number): Promise<number> {
+function hashModN(input: string, n: number): number {
   const hex = sha256Hex(input);
   // Use the first 13 hex chars (52 bits) as an unbiased-enough BigInt source
   // for `mod n` with n bounded by maxVariants (<=8) / maxStudentKeys (<=500).
@@ -245,29 +250,18 @@ export async function buildDistribution(
       "Variant set has no successfully created variants to distribute across",
     );
   }
-  const labels = [...members].sort((a, b) => a.labelOrStudentId.localeCompare(b.labelOrStudentId));
-  const sortedStudentIds = [...studentIds].sort((a, b) => a.localeCompare(b));
-
   const resolvedSeed = strategy === "seeded_hash" ? (seed ?? setId) : null;
 
-  const assignments: DistributionResult["assignments"] = [];
-  const counts: Record<string, number> = {};
-  for (const label of labels) counts[label.labelOrStudentId] = 0;
+  // Shared with apps/web's on-device set flow so both produce identical
+  // assignments for the same inputs — see @pdf-injection/contracts src/sets.ts.
+  const distribution: DistributionResult = buildDistributionAssignments({
+    members: members.map((m) => ({ label: m.labelOrStudentId, jobId: m.jobId })),
+    studentIds,
+    strategy,
+    seed: resolvedSeed,
+    hashModN,
+  });
 
-  for (let i = 0; i < sortedStudentIds.length; i++) {
-    const studentId = sortedStudentIds[i]!;
-    let idx: number;
-    if (strategy === "round_robin") {
-      idx = i % labels.length;
-    } else {
-      idx = await hashModN(`${resolvedSeed}:${studentId}`, labels.length);
-    }
-    const member = labels[idx]!;
-    assignments.push({ studentId, label: member.labelOrStudentId, jobId: member.jobId });
-    counts[member.labelOrStudentId] = (counts[member.labelOrStudentId] ?? 0) + 1;
-  }
-
-  const distribution: DistributionResult = { strategy, seed: resolvedSeed, assignments, counts };
   const filePath = distributionFilePath(deps.config, setId);
   await mkdir(dirname(filePath), { recursive: true });
   await Bun.write(filePath, JSON.stringify(distribution, null, 2));
@@ -292,11 +286,7 @@ export async function getDistribution(
 }
 
 export function distributionToCsv(distribution: DistributionResult): string {
-  const lines = ["studentId,label,jobId"];
-  for (const a of distribution.assignments) {
-    lines.push(`${csvField(a.studentId)},${csvField(a.label)},${csvField(a.jobId)}`);
-  }
-  return `${lines.join("\n")}\n`;
+  return distributionRowsToCsv(distribution);
 }
 
 function csvField(value: string): string {
