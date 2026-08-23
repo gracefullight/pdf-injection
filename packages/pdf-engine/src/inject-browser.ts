@@ -1,41 +1,70 @@
 import type { InjectPdfInput, InjectPdfResult } from "@pdf-injection/contracts";
+import { type CjkFontSources, createCjkFontEmbedder } from "./browser-cjk-font";
 import { FontUnavailableError } from "./errors";
 import { type InjectPlatform, injectPdfWith } from "./inject-core";
+import { injectImageOnlyInBrowser } from "./inject-image-only-browser";
+import { injectUnicodeTags } from "./inject-unicode-tags";
 
 /**
  * The browser platform for the injection dispatcher — used by `apps/web`'s
  * local (server-free) mode, where the whole pipeline runs on-device.
  *
- * Deliberately omits the three Node-only capabilities (see `InjectPlatform`):
+ * Every one of the nine modes and all three payload languages work here; the
+ * platform differs from the Node one only in *where the two heavy assets come
+ * from*, because a browser has no disk:
  *
- * | capability | why it is server-only |
- * |---|---|
- * | CJK font embedding (`payloadLanguage` `"ko"`/`"zh"`) | the font subset is read from `PDFI_FONT_DIR` on disk and pre-subset with a WASM HarfBuzz build |
- * | `image_only` | rasterizes through `@napi-rs/canvas`, a native module |
- * | `unicode_tags` | draws with that same disk-loaded font subset |
+ * | capability | server | browser |
+ * |---|---|---|
+ * | rasterizing `image_only` | `@napi-rs/canvas` | the browser's own canvas |
+ * | CJK font (`ko`/`zh`, and `unicode_tags`) | font + HarfBuzz wasm read from disk | the same two assets fetched, supplied by the host app via `CjkFontSources` |
  *
- * Everything else — `white_text`, `render_mode_3`, `visible_positive_control`,
- * `xmp_only`, `info_dict`, `freetext_annot`, `acroform_field` — is pure
- * `pdf-lib` and runs identically here and on the server, through the *same*
- * `injectPdfWith` orchestration (no duplicated logic that could drift).
+ * The subsetting itself is byte-for-byte identical to the server's
+ * (`test/hb-subset.test.ts`), so CJK text renders and extracts the same.
+ *
+ * Without `CjkFontSources`, CJK payloads and `unicode_tags` fail with a
+ * `FontUnavailableError` explaining that the host app has not wired the font
+ * assets up — the other seven modes still work with no configuration at all.
  */
-const BROWSER_PLATFORM: InjectPlatform = {
-  embedCjkFont: async (language) => {
-    throw new FontUnavailableError(
-      `payloadLanguage="${language}" needs the bundled CJK font subset, which is only available ` +
-        'on the server. Use payloadLanguage="en", or generate against a running API server.',
-    );
-  },
-  // injectImageOnly / injectUnicodeTags intentionally absent — the dispatcher
-  // throws a descriptive InjectionFailedError for those modes.
+export interface BrowserPlatformOptions {
+  /** How to fetch the CJK font and the HarfBuzz wasm. Omit to disable CJK payloads. */
+  cjkFontSources?: CjkFontSources;
+}
+
+const NO_CJK_FONT_SOURCES: InjectPlatform["embedCjkFont"] = async (language) => {
+  throw new FontUnavailableError(
+    `payloadLanguage="${language}" needs the CJK font assets, which this app has not made ` +
+      'available to the in-browser engine. Use payloadLanguage="en", or generate against an API server.',
+  );
 };
 
-/** Injection modes that work fully client-side, in dispatcher/UI order. */
+/** Builds the browser platform. Cheap; the font/wasm downloads are lazy and cached inside. */
+export function createBrowserPlatform(options: BrowserPlatformOptions = {}): InjectPlatform {
+  const embedCjkFont = options.cjkFontSources
+    ? createCjkFontEmbedder(options.cjkFontSources)
+    : NO_CJK_FONT_SOURCES;
+
+  return {
+    embedCjkFont,
+    injectImageOnly: injectImageOnlyInBrowser,
+    // unicode_tags draws with the same ASCII-complete CJK subset the server
+    // uses (`embedKoreanFont`); the glyphs are invisible (render mode 3), only
+    // the ToUnicode CMap matters — see inject-unicode-tags.ts.
+    injectUnicodeTags: (input) =>
+      injectUnicodeTags({
+        ...input,
+        embedFont: (doc, text) => embedCjkFont("ko", doc, text),
+      }),
+  };
+}
+
+/** Every injection mode is available in the browser (given `cjkFontSources` for the CJK ones). */
 export const BROWSER_SUPPORTED_MODES = [
   "white_text",
   "render_mode_3",
   "visible_positive_control",
   "xmp_only",
+  "unicode_tags",
+  "image_only",
   "freetext_annot",
   "acroform_field",
   "info_dict",
@@ -47,10 +76,16 @@ export function isBrowserSupportedMode(mode: InjectPdfInput["mode"]): boolean {
 }
 
 /**
- * Runs the injection pipeline entirely in the browser. Same input/output
- * contract as the server's `injectPdf`; throws `FontUnavailableError` for CJK
- * payloads and `InjectionFailedError` for `image_only`/`unicode_tags`.
+ * Runs the injection pipeline entirely in the browser.
+ *
+ * Pass a platform built once with `createBrowserPlatform()` when generating
+ * repeatedly: it caches the HarfBuzz instance and the downloaded font bytes,
+ * so only the first CJK job pays for them. Omitting it builds a throwaway
+ * platform (fine for a one-off, and for the seven modes that need no font).
  */
-export async function injectPdfInBrowser(input: InjectPdfInput): Promise<InjectPdfResult> {
-  return injectPdfWith(BROWSER_PLATFORM, input);
+export async function injectPdfInBrowser(
+  input: InjectPdfInput,
+  platform: InjectPlatform = createBrowserPlatform(),
+): Promise<InjectPdfResult> {
+  return injectPdfWith(platform, input);
 }

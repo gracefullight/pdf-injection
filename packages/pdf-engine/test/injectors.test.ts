@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { extractText } from "@pdf-injection/validation";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { injectRenderMode3 } from "../src/inject-render-mode-3";
-import { injectUnicodeTags } from "../src/inject-unicode-tags";
+import { injectUnicodeTags } from "../src/inject-unicode-tags-node";
 import { injectVisibleControl } from "../src/inject-visible-control";
 import { injectWhiteText } from "../src/inject-white-text";
 import { decodeAllStreamsAsText } from "./pdf-bytes-helpers";

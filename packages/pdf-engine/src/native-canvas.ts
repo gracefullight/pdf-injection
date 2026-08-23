@@ -17,6 +17,8 @@
 // whatever version bun's lockfile happens to pick, without this package
 // declaring a top-level `@napi-rs/canvas` dependency at all.
 import { createRequire } from "node:module";
+import type { CanvasFactory } from "./canvas-surface";
+import { CanvasUnavailableError } from "./errors";
 
 export interface NapiTextMetrics {
   readonly width: number;
@@ -108,3 +110,23 @@ export function resolveStandardFontDataUrl(): string {
 export function __resetNapiCanvasCacheForTests(): void {
   cached = null;
 }
+
+/**
+ * `CanvasFactory` backed by `@napi-rs/canvas` — the Node/Bun platform's
+ * rasterizer for `image_only`. Kept here (rather than in
+ * `inject-image-only.ts`) so the injector itself stays runtime-agnostic and
+ * the browser entry never reaches this module — see `canvas-surface.ts`.
+ */
+export const napiCanvasFactory: CanvasFactory = async (width, height) => {
+  const { module: canvasModule, reason } = await resolveNapiCanvas();
+  if (!canvasModule) {
+    throw new CanvasUnavailableError(
+      `image_only injection requires @napi-rs/canvas: ${reason ?? "unavailable"}`,
+    );
+  }
+  const canvas = canvasModule.createCanvas(width, height);
+  return {
+    context: canvas.getContext("2d"),
+    encodePng: async () => new Uint8Array(canvas.toBuffer("image/png")),
+  };
+};

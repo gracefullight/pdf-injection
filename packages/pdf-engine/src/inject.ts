@@ -1,7 +1,7 @@
 import type { InjectPdfInput, InjectPdfResult } from "@pdf-injection/contracts";
 import { type InjectPlatform, injectPdfWith } from "./inject-core";
-import { injectImageOnly } from "./inject-image-only";
-import { injectUnicodeTags } from "./inject-unicode-tags";
+import { injectImageOnly } from "./inject-image-only-node";
+import { injectUnicodeTags } from "./inject-unicode-tags-node";
 import { embedCjkFont } from "./korean-font";
 
 /**

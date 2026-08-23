@@ -1,8 +1,8 @@
 import type { Position } from "@pdf-injection/contracts";
 import { PDFDict, PDFDocument, PDFHexString, PDFName, PDFStream } from "pdf-lib";
-import { CanvasUnavailableError, InjectionFailedError, PdfEngineError } from "./errors";
+import type { CanvasContext2DLike, CanvasFactory } from "./canvas-surface";
+import { InjectionFailedError, PdfEngineError } from "./errors";
 import type { InjectTextResult } from "./inject-white-text";
-import { type NapiCanvasContext2D, resolveNapiCanvas } from "./native-canvas";
 import { DEFAULT_MARGIN_X, resolveBoxPosition } from "./text-layout";
 
 /** Default rasterized font size (pt) — small and unobtrusive, still legible to OCR/vision. */
@@ -45,7 +45,7 @@ export interface InjectImageOnlyResult extends InjectTextResult {
  * interchangeable, hence the separate implementation here rather than
  * reusing `wrapTextToLines` directly).
  */
-function wrapTextForCanvas(text: string, ctx: NapiCanvasContext2D, maxWidthPx: number): string[] {
+function wrapTextForCanvas(text: string, ctx: CanvasContext2DLike, maxWidthPx: number): string[] {
   const paragraphs = text.split("\n");
   const lines: string[] = [];
 
@@ -109,14 +109,10 @@ function wrapTextForCanvas(text: string, ctx: NapiCanvasContext2D, maxWidthPx: n
  * `PDFDict`/`PDFName` APIs — no new stream needs registering, unlike
  * unicode_tags' ToUnicode CMap rewrite.
  */
-export async function injectImageOnly(input: InjectImageOnlyInput): Promise<InjectImageOnlyResult> {
-  const { module: canvasModule, reason } = await resolveNapiCanvas();
-  if (!canvasModule) {
-    throw new CanvasUnavailableError(
-      `image_only injection requires @napi-rs/canvas: ${reason ?? "unavailable"}`,
-    );
-  }
-
+export async function injectImageOnlyWith(
+  createCanvas: CanvasFactory,
+  input: InjectImageOnlyInput,
+): Promise<InjectImageOnlyResult> {
   try {
     const { doc, pageIndex, instruction, promptSha256 } = input;
     const page = doc.getPage(pageIndex);
@@ -124,7 +120,7 @@ export async function injectImageOnly(input: InjectImageOnlyInput): Promise<Inje
     const lineHeight = fontSize * LINE_HEIGHT_RATIO;
     const boxWidth = input.maxWidth ?? page.getWidth() - 2 * DEFAULT_MARGIN_X;
 
-    const scratchCtx = canvasModule.createCanvas(1, 1).getContext("2d");
+    const scratchCtx = (await createCanvas(1, 1)).context;
     scratchCtx.font = `${fontSize * RASTER_SCALE}px sans-serif`;
     const lines = wrapTextForCanvas(instruction, scratchCtx, boxWidth * RASTER_SCALE);
     const boxHeight = Math.max(lines.length, 1) * lineHeight;
@@ -140,8 +136,8 @@ export async function injectImageOnly(input: InjectImageOnlyInput): Promise<Inje
 
     const pxWidth = Math.max(1, Math.ceil(boxWidth * RASTER_SCALE));
     const pxHeight = Math.max(1, Math.ceil(boxHeight * RASTER_SCALE));
-    const canvas = canvasModule.createCanvas(pxWidth, pxHeight);
-    const ctx = canvas.getContext("2d");
+    const canvas = await createCanvas(pxWidth, pxHeight);
+    const ctx = canvas.context;
     ctx.font = `${fontSize * RASTER_SCALE}px sans-serif`;
     ctx.fillStyle = FILL_STYLE;
     ctx.textBaseline = "top";
@@ -149,7 +145,7 @@ export async function injectImageOnly(input: InjectImageOnlyInput): Promise<Inje
       ctx.fillText(line, 0, i * lineHeight * RASTER_SCALE);
     });
 
-    const pngBytes = canvas.toBuffer("image/png");
+    const pngBytes = await canvas.encodePng();
     const image = await doc.embedPng(pngBytes);
     page.drawImage(image, { x, y, width: boxWidth, height: boxHeight });
 

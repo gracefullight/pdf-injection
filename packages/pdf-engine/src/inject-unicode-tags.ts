@@ -18,12 +18,22 @@ import {
 import { type BfCharEntry, decodeCMapTargetChars, parseBfCharEntries } from "./cmap-bfchar";
 import { InjectionFailedError, PdfEngineError } from "./errors";
 import type { InjectTextResult } from "./inject-white-text";
-import { embedKoreanFont } from "./korean-font";
 import { DEFAULT_MARGIN_X, layoutTextBlock, wrapTextToLines } from "./text-layout";
 import { UNICODE_TAG_BASE } from "./unicode-tags";
 
+/**
+ * Embeds the font this mode draws with. Injected rather than imported so the
+ * injector stays runtime-agnostic: the server loads the bundled subset from
+ * disk (`korean-font.ts`), the browser fetches it (`browser-cjk-font.ts`).
+ * Any CID-keyed, ASCII-complete font works — the glyphs are never visible
+ * (render mode 3); only its `/ToUnicode` CMap matters.
+ */
+export type UnicodeTagsFontEmbedder = (doc: PDFDocument, text: string) => Promise<PDFFont>;
+
 export interface InjectUnicodeTagsInput {
   doc: PDFDocument;
+  /** Defaults to the Node bundled-font embedder via `inject-unicode-tags-node.ts`. */
+  embedFont: UnicodeTagsFontEmbedder;
   pageIndex: number;
   instruction: string;
   position: Position;
@@ -174,7 +184,7 @@ export async function injectUnicodeTags(
 ): Promise<InjectUnicodeTagsResult> {
   try {
     const page = input.doc.getPage(input.pageIndex);
-    const font: PDFFont = await embedKoreanFont(input.doc, input.instruction);
+    const font: PDFFont = await input.embedFont(input.doc, input.instruction);
     const fontSize = input.fontSize ?? 1;
     const lineHeight = fontSize * 1.2;
     const maxWidth = input.maxWidth ?? page.getWidth() - 2 * DEFAULT_MARGIN_X;

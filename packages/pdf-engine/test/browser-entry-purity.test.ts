@@ -83,13 +83,25 @@ describe("browser entry purity", () => {
   });
 
   test("the Node-only modules are excluded by name", () => {
+    // The *injectors* for image_only and unicode_tags are in the graph — they
+    // are runtime-agnostic. What must stay out are the modules that reach the
+    // filesystem/native addon to feed them: the on-disk font loader, the napi
+    // canvas resolver, their Node bindings, and the Bun-hashing helper.
     const names = [...graph.keys()].map((path) => path.split("/").pop());
     expect(names).not.toContain("korean-font.ts");
     expect(names).not.toContain("native-canvas.ts");
-    expect(names).not.toContain("inject-image-only.ts");
-    expect(names).not.toContain("inject-unicode-tags.ts");
+    expect(names).not.toContain("inject-image-only-node.ts");
+    expect(names).not.toContain("inject-unicode-tags-node.ts");
     expect(names).not.toContain("pdf-standard-security.ts");
     expect(names).not.toContain("inject.ts");
+  });
+
+  test("the browser graph does carry the runtime-agnostic injectors", () => {
+    const names = [...graph.keys()].map((path) => path.split("/").pop());
+    expect(names).toContain("inject-image-only.ts");
+    expect(names).toContain("inject-unicode-tags.ts");
+    expect(names).toContain("hb-subset.ts");
+    expect(names).toContain("browser-cjk-font.ts");
   });
 
   test("the package root barrel, by contrast, does pull in Node-only modules", () => {
