@@ -7,7 +7,6 @@ import {
   ANATOMY_MAP,
   ANATOMY_PROVENANCE,
   ANATOMY_REGION_LABELS,
-  ANATOMY_SOURCE_NOTE,
   type AnatomyRegion,
   type AnatomySiteId,
   type DetectorVerdict,
@@ -256,7 +255,7 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
             data-testid="pdf-structure-map-provenance"
             className="font-mono text-[10.5px] text-muted-foreground"
           >
-            {ANATOMY_PROVENANCE} — {ANATOMY_SOURCE_NOTE}
+            {ANATOMY_PROVENANCE}
           </p>
         </CardContent>
       </Card>

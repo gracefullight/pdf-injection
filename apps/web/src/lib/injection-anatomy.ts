@@ -195,13 +195,8 @@ export const INJECTION_ANATOMY: Record<InjectionMode, ModeAnatomy> = {
   },
 };
 
-/** Attach to every rendered measured verdict — these results are one provider, one run. */
+/** Compact provenance label attached to every rendered measured verdict (one provider, one run). */
 export const ANATOMY_PROVENANCE = "Measured · gpt-5.6-luna · 2026-08-23";
-
-export const ANATOMY_SOURCE_NOTE =
-  "One provider, one model, one source document, 5 repeats per channel. A canary match is " +
-  "evidence the payload was ingested and surfaced, not proof the model “obeyed”. Other " +
-  "providers may map differently. Full data: research/results/2026-08-23-round3-probe-modes/.";
 
 /**
  * Structural sites touched by at least one mode that reached the model in this run — a site can
