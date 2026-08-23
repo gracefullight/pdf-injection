@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# Reject commits whose Co-authored-by trailer carries an email that is not on
+# the allowlist.
+#
+# Why this exists: agents compose commit messages as literal text, so a wrong
+# co-author address is a plain typo the model can produce from memory even when
+# the correct value is in its context. A wrong address is not inert -- GitHub
+# resolves it against verified account emails and credits a real, unrelated
+# person as a contributor. That attribution survives history rewrites, because
+# refs/pull/* keeps the original commits reachable forever. Documentation
+# cannot prevent this; only a deterministic gate can.
+#
+# Allowlist: .githooks/co-authors.allow (one "Name <email>" per line, plus the
+# scm.co_author entry from .agents/oma-config.yaml when present).
+
+set -eu
+
+msg_file="$1"
+repo_root=$(git rev-parse --show-toplevel)
+allow_file="$repo_root/.githooks/co-authors.allow"
+oma_config="$repo_root/.agents/oma-config.yaml"
+
+# Collect allowed emails, lowercased, one per line.
+allowed=$(
+	{
+		if [ -f "$allow_file" ]; then
+			sed -e 's/#.*$//' "$allow_file" |
+				grep -oE '<[^>]+>' |
+				tr -d '<>'
+		fi
+
+		# scm.co_author.email from oma-config.yaml: the `email:` key inside the
+		# co_author block. Read the two lines following `co_author:` so an
+		# unrelated `email:` elsewhere in the file is not picked up.
+		if [ -f "$oma_config" ]; then
+			grep -A 3 '^[[:space:]]*co_author:' "$oma_config" |
+				grep -E '^[[:space:]]*email:' |
+				sed -e 's/.*email:[[:space:]]*//' -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'\$//"
+		fi
+	} | tr '[:upper:]' '[:lower:]' | sed '/^[[:space:]]*$/d' | sort -u
+)
+
+# Every Co-authored-by email in the message, lowercased.
+found=$(
+	grep -iE '^[[:space:]]*co-authored-by:' "$msg_file" 2>/dev/null |
+		grep -oE '<[^>]+>' |
+		tr -d '<>' |
+		tr '[:upper:]' '[:lower:]' |
+		sed '/^[[:space:]]*$/d' |
+		sort -u || true
+)
+
+[ -n "$found" ] || exit 0
+
+bad=""
+for email in $found; do
+	if ! printf '%s\n' "$allowed" | grep -qxF "$email"; then
+		bad="$bad $email"
+	fi
+done
+
+[ -n "$bad" ] || exit 0
+
+exec >&2
+echo
+echo "commit-msg: Co-authored-by 이메일이 허용 목록에 없습니다."
+echo
+for email in $bad; do
+	echo "  거부: $email"
+done
+echo
+echo "허용된 이메일:"
+if [ -n "$allowed" ]; then
+	printf '  %s\n' $allowed
+else
+	echo "  (없음 -- .githooks/co-authors.allow 를 확인하세요)"
+fi
+echo
+echo "GitHub 은 co-author 이메일을 실제 계정의 verified email 과 대조해 그 계정을"
+echo "기여자로 집계합니다. 주소가 틀리면 무관한 사람이 컨트리뷰터로 잡히고,"
+echo "refs/pull/* 때문에 히스토리를 다시 써도 지워지지 않습니다."
+echo
+echo "실제 공동 작업자라면 .githooks/co-authors.allow 에 추가하세요."
+echo
+exit 1
