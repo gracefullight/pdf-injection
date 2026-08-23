@@ -281,7 +281,11 @@ export async function createJob(
     }
   })();
 
-  const lint = lintPrompt(fields.instruction, expectedSignals, {
+  // Browser FormData normalizes textarea line endings to CRLF. Canonicalize
+  // before linting so the transport's `\r` bytes are not mistaken for
+  // unsupported control characters; injection and hashing use this same form.
+  const normalizedInstruction = normalizePrompt(fields.instruction);
+  const lint = lintPrompt(normalizedInstruction, expectedSignals, {
     maxLength: config.maxInstructionChars,
     payloadLanguage,
   });
@@ -295,7 +299,6 @@ export async function createJob(
   const now = new Date();
   const expiresAt = new Date(now.getTime() + config.retentionHours * 60 * 60 * 1000);
   const stem = sanitizeFilenameStem(fields.file.name);
-  const normalizedInstruction = normalizePrompt(fields.instruction);
   const promptSha256 = sha256Hex(normalizedInstruction);
 
   // Job row + source.pdf are always persisted from this point on, whether
@@ -324,7 +327,7 @@ export async function createJob(
       try {
         const result = await injectPdf({
           source: bytes,
-          instruction: fields.instruction,
+          instruction: normalizedInstruction,
           mode: injectionMode,
           targetPage: targetPageInput,
           position,
