@@ -58,17 +58,29 @@ pipeline **on-device** instead of failing at "Generate": inspect → inject → 
 check → text extraction → validation report + private manifest, all in the tab, with the source
 PDF never leaving the machine.
 
+**All nine injection modes and all three payload languages work locally.** The two capabilities
+that used to be server-only are provided by the browser itself:
+
+- `image_only` rasterizes through the browser's own canvas (`OffscreenCanvas`, falling back to a
+  detached `<canvas>`) instead of `@napi-rs/canvas`.
+- `payloadLanguage` `"ko"`/`"zh"` — and `unicode_tags`, which draws with the same font — fetch the
+  bundled Noto Sans KR/SC font and the HarfBuzz subsetter (`hb-subset.wasm`) on first use, then run
+  the identical two-stage subset (HarfBuzz → pdf-lib) the server does. The font assets are emitted
+  as separate files and downloaded only when such a payload is actually generated, never at page
+  load.
+
 It is the *same* engine code, not a reimplementation: `injectPdfInBrowser()`
 (`packages/pdf-engine/src/inject-browser.ts`) is the shared `injectPdfWith()` dispatcher with a
 browser capability set, and the report/manifest come from the same `buildReport()`/`buildManifest()`
-the server calls. `packages/pdf-engine/test/inject-browser.test.ts` asserts both platforms produce
-identical injection decisions for every supported mode, and
-`test/browser-entry-purity.test.ts` keeps Node built-ins out of the browser entry's module graph.
+the server calls. Three tests pin the equivalence: `test/inject-browser.test.ts` (identical
+injection decisions per mode and payload language), `test/hb-subset.test.ts` (the browser
+subsetter is byte-for-byte equal to `subset-font`), and `test/browser-entry-purity.test.ts` (no
+Node built-in reaches the browser entry's module graph).
 
 | | On-device | Needs a server |
 |---|---|---|
-| Injection modes | `white_text`, `render_mode_3`, `visible_positive_control`, `xmp_only`, `freetext_annot`, `acroform_field`, `info_dict` | `image_only` (native canvas), `unicode_tags` (bundled CJK font) |
-| Payload language | `en` | `ko`, `zh` (on-disk font subset) |
+| Injection modes | all nine | — |
+| Payload language | `en`, `ko`, `zh` | — |
 | Validation | round-trip, geometry, PDF.js text extraction, render + pixel diff, XMP read-back | qpdf structural check |
 | Research tabs | — | Model Test, Submissions, Robustness |
 
@@ -423,7 +435,7 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 | [`pixelmatch`](https://github.com/mapbox/pixelmatch) | ISC | Client-side pixel-diff comparison |
 | [`qpdf`](https://qpdf.sourceforge.io/) | Apache-2.0 | Optional external structural-validation binary (`PDFI_QPDF_ENABLED`) — not a package dependency, invoked via `Bun.spawn` when installed |
 | [`@pdf-lib/fontkit`](https://github.com/Hopding/fontkit) | MIT | Font registration/embedding support `pdf-lib` needs for `payloadLanguage="ko"`/`"zh"` (`packages/pdf-engine`) |
-| [`subset-font`](https://github.com/papandreou/subset-font) | BSD-3-Clause | Pre-subsets the CJK font with HarfBuzz before `pdf-lib` embeds it (`payloadLanguage="ko"`/`"zh"`, `packages/pdf-engine`) |
+| [`subset-font`](https://github.com/papandreou/subset-font) | BSD-3-Clause | Pre-subsets the CJK font with HarfBuzz before `pdf-lib` embeds it (`payloadLanguage="ko"`/`"zh"`, `packages/pdf-engine`). Its `hb_subset_*` call sequence is also the basis of `packages/pdf-engine/src/hb-subset.ts`, the browser-side driver used by on-device mode (that package reads the wasm with `node:fs`, which a browser cannot do) |
 | [`harfbuzzjs`](https://github.com/harfbuzz/harfbuzzjs) | MIT | WASM HarfBuzz shaping/subsetting engine `subset-font` wraps (transitive dependency) |
 | [`fflate`](https://github.com/101arrowz/fflate) | MIT | ZIP archive building for variant-set / student-keyed-set downloads (`apps/api`) |
 | [`@anthropic-ai/sdk`](https://github.com/anthropics/anthropic-sdk-typescript) | MIT | Anthropic provider adapter (`packages/benchmark`) — only invoked when `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and `ANTHROPIC_API_KEY` is set |

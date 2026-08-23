@@ -20,10 +20,10 @@ export function LocalModeBanner({ becauseApiUnreachable }: LocalModeBannerProps)
         {becauseApiUnreachable
           ? "No API server is reachable, so injection and validation run entirely in this tab. "
           : "Injection and validation are running entirely in this tab. "}
-        Model Test, Submissions and Robustness need a server and are unavailable, as are the Image
-        only and Unicode tags modes and Korean/Chinese payloads (they need a native canvas or the
-        bundled CJK font). Generated jobs are kept in memory only — download the PDF, private
-        manifest and validation report before reloading.
+        Every injection mode and payload language works — Korean/Chinese payloads download the
+        bundled CJK font on first use. Model Test, Submissions and Robustness need a server and are
+        unavailable, and the qpdf structural check does not run. Generated jobs are kept in memory
+        only — download the PDF, private manifest and validation report before reloading.
       </AlertDescription>
     </Alert>
   );

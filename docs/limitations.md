@@ -188,13 +188,18 @@ detectability framing.
 ## On-device (local) mode
 
 When no API server is reachable, `apps/web` runs the pipeline in the browser (see the README's
-[On-device mode](../README.md#on-device-mode-no-server) section). Constraints specific to it:
+[On-device mode](../README.md#on-device-mode-no-server) section). All nine injection modes and all
+three payload languages are available there — `image_only` rasterizes through the browser's canvas,
+and CJK payloads fetch the bundled font plus `hb-subset.wasm` and run the same HarfBuzz→pdf-lib
+subset as the server. Constraints specific to local mode:
 
-- `image_only` and `unicode_tags` are unavailable (native canvas / on-disk CJK font subset), as
-  are `payloadLanguage="ko"`/`"zh"` — the UI disables them and the engine throws
-  `INJECTION_FAILED` / `FONT_UNAVAILABLE` with an explicit "needs a server" message.
 - qpdf structural validation never runs, so `summary.qpdfStatus` is always `"not_run"`.
 - Model Test, Submissions and Robustness are server features and stay unavailable.
+- The first Korean/Chinese (or `unicode_tags`) job downloads a 6–10 MB font and a ~620 KB wasm
+  module; they are cached for the tab's lifetime, so later jobs are fast.
+- `image_only` rasterizes with the *browser's* `sans-serif`, not the server's, so the stamped image
+  is not pixel-identical across the two (the structure — image XObject tagged with the prompt hash
+  — is).
 - Jobs exist only in tab memory: a reload loses them (nothing is persisted, deliberately — the
   private manifest carries the hidden instruction in plain text). Download artifacts to keep them.
 - Output bytes are not byte-identical to a server run of the same input, because `pdf-lib` stamps

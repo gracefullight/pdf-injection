@@ -7,6 +7,7 @@ import type {
 import {
   buildManifest,
   compareGeometry,
+  createBrowserPlatform,
   injectPdfInBrowser,
   inspectSource,
   isBrowserSupportedMode,
@@ -16,6 +17,7 @@ import {
 } from "@pdf-injection/pdf-engine/browser";
 import { buildReport } from "@pdf-injection/validation/report";
 import type { CreateJobInput } from "@/lib/api";
+import { cjkFontSources } from "@/lib/local-job/cjk-font-assets";
 import { extractTextInBrowser } from "@/lib/local-job/local-text-extract";
 import { pdfJsVersion } from "@/lib/pdfjs";
 
@@ -31,14 +33,27 @@ import { pdfJsVersion } from "@/lib/pdfjs";
  * substitution is text extraction, which goes through the app's browser pdf.js
  * worker instead of the Node-only legacy build (see `local-text-extract.ts`).
  *
- * What a local job cannot do, by construction (all server-only):
- *   - `image_only` / `unicode_tags` modes, and `payloadLanguage` `"ko"`/`"zh"`
- *     — they need a native canvas or the on-disk CJK font subset
+ * All nine injection modes and all three payload languages work here: the
+ * browser rasterizes `image_only` with its own canvas, and the CJK fonts and
+ * HarfBuzz subsetter are fetched on demand (`cjk-font-assets.ts`) rather than
+ * read from disk.
+ *
+ * What a local job still cannot do (genuinely server-side):
  *   - qpdf structural validation (external binary) → `qpdfStatus: "not_run"`
  *   - Model Test / Submissions / Robustness (provider calls, storage)
  */
 
 export const LOCAL_JOB_ID_PREFIX = "local-";
+
+/**
+ * Built once and reused: the platform caches the HarfBuzz instance and the
+ * downloaded font bytes, so only the first CJK/unicode_tags job pays for them.
+ */
+let platform: ReturnType<typeof createBrowserPlatform> | null = null;
+function browserPlatform() {
+  platform ??= createBrowserPlatform({ cjkFontSources });
+  return platform;
+}
 
 /** Mirrors `apps/api`'s `toolVersions()` — pdf-lib ships no runtime version export. */
 const PDF_LIB_VERSION = "1.17.1";
@@ -153,14 +168,7 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
 
   if (!isBrowserSupportedMode(input.injectionMode)) {
     throw new LocalModeUnsupportedError(
-      `Injection mode "${input.injectionMode}" needs the server (native canvas or the bundled ` +
-        "CJK font). Pick another mode, or connect an API server.",
-    );
-  }
-  if (payloadLanguage !== "en") {
-    throw new LocalModeUnsupportedError(
-      `Payload language "${payloadLanguage}" needs the server's bundled CJK font subset. Use ` +
-        "English, or connect an API server.",
+      `Injection mode "${input.injectionMode}" cannot be generated in this browser.`,
     );
   }
 
@@ -175,18 +183,21 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
 
   const normalizedInstruction = normalizePrompt(input.instruction);
 
-  const result = await injectPdfInBrowser({
-    source: sourceBytes,
-    instruction: input.instruction,
-    mode: input.injectionMode,
-    targetPage: input.targetPage ?? "last",
-    position: input.position ?? "bottom",
-    x: input.x,
-    y: input.y,
-    fontSize: input.fontSize,
-    maxWidth: input.maxWidth,
-    payloadLanguage,
-  });
+  const result = await injectPdfInBrowser(
+    {
+      source: sourceBytes,
+      instruction: input.instruction,
+      mode: input.injectionMode,
+      targetPage: input.targetPage ?? "last",
+      position: input.position ?? "bottom",
+      x: input.x,
+      y: input.y,
+      fontSize: input.fontSize,
+      maxWidth: input.maxWidth,
+      payloadLanguage,
+    },
+    browserPlatform(),
+  );
 
   const outputBytes = result.bytes;
   const textExtraction = await extractTextInBrowser({

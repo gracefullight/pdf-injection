@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getHealth } from "@/lib/api";
+import { useLocalMode } from "@/lib/local-mode";
 
 /** `health.features.ollama` — API contract addendum §6 (Ollama local provider). */
 export type OllamaFeature = HealthResponse["features"]["ollama"];
@@ -37,6 +38,24 @@ export const FALLBACK_FEATURES: Features = {
   ollama: FALLBACK_OLLAMA_FEATURE,
 };
 
+/**
+ * Capabilities of the in-browser engine (local mode). Everything the *engine*
+ * needs is available on-device — it rasterizes `image_only` with the browser's
+ * own canvas and fetches the CJK font + HarfBuzz subsetter on demand — while
+ * the genuinely server-side features (provider calls, submission analysis,
+ * qpdf) stay off.
+ */
+export const LOCAL_MODE_FEATURES: Features = {
+  externalProviders: false,
+  researchMode: false,
+  ocrAvailable: false,
+  canvasAvailable: true,
+  koPayload: true,
+  zhPayload: true,
+  qpdfAvailable: false,
+  ollama: FALLBACK_OLLAMA_FEATURE,
+};
+
 /** Pure — testable without mocking TanStack Query. */
 export function deriveFeatures(health: HealthResponse | undefined): Features {
   if (!health) return FALLBACK_FEATURES;
@@ -56,6 +75,7 @@ export function deriveFeatures(health: HealthResponse | undefined): Features {
 }
 
 export function useFeatures(): { features: Features; isLoading: boolean; isError: boolean } {
+  const localMode = useLocalMode();
   const query = useQuery({
     queryKey: ["health"],
     queryFn: getHealth,
@@ -63,7 +83,9 @@ export function useFeatures(): { features: Features; isLoading: boolean; isError
     retry: 1,
   });
   return {
-    features: deriveFeatures(query.data),
+    // In local mode there is no server to report capabilities, and the health
+    // fallback (everything off) would wrongly disable modes the browser can do.
+    features: localMode.enabled ? LOCAL_MODE_FEATURES : deriveFeatures(query.data),
     isLoading: query.isLoading,
     isError: query.isError,
   };
