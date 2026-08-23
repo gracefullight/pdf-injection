@@ -175,10 +175,7 @@ export function InstructionScreen({
           <Separator />
 
           <div>
-            <h3 className="text-lg font-semibold text-foreground">
-              Expected signals{" "}
-              <span className="text-sm font-normal text-muted-foreground">(optional)</span>
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground">Expected signals</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Signals a matching submission should contain (used later to score compliance, never to
               render an "AI detected" verdict).

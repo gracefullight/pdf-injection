@@ -3,13 +3,12 @@ import type { InjectionMode } from "@pdf-injection/contracts";
 import { isResearchProbeMode, RESEARCH_PROBE_MODES } from "@/lib/injection-modes";
 
 describe("RESEARCH_PROBE_MODES / isResearchProbeMode", () => {
-  it("contains exactly the four round-3 probe conditions, in the order the backend introduced them", () => {
-    expect(RESEARCH_PROBE_MODES).toEqual([
-      "image_only",
-      "freetext_annot",
-      "acroform_field",
-      "info_dict",
-    ]);
+  it("contains the probe conditions that did not reach the model, excluding acroform_field", () => {
+    // acroform_field came from the same probe round but reached the model 5/5
+    // (injection-anatomy.ts), so badging it "Experimental" understated the
+    // result — it is deliberately not in this list.
+    expect(RESEARCH_PROBE_MODES).toEqual(["image_only", "freetext_annot", "info_dict"]);
+    expect(isResearchProbeMode("acroform_field")).toBe(false);
   });
 
   it("isResearchProbeMode agrees with membership in RESEARCH_PROBE_MODES for every InjectionMode", () => {

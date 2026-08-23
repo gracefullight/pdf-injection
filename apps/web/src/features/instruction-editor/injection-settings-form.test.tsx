@@ -89,13 +89,11 @@ describe("InjectionSettingsForm — experimental mode guidance", () => {
 });
 
 describe("isResearchProbeMode", () => {
-  it("is true for exactly the four round-3 probe conditions", () => {
-    expect(RESEARCH_PROBE_MODES).toEqual([
-      "image_only",
-      "freetext_annot",
-      "acroform_field",
-      "info_dict",
-    ]);
+  it("is true for exactly the probe conditions that did not reach the model", () => {
+    // acroform_field is excluded on purpose: it reached the model 5/5, so it is
+    // a proven channel rather than an experimental probe (injection-modes.ts).
+    expect(RESEARCH_PROBE_MODES).toEqual(["image_only", "freetext_annot", "info_dict"]);
+    expect(isResearchProbeMode("acroform_field")).toBe(false);
     for (const mode of RESEARCH_PROBE_MODES) {
       expect(isResearchProbeMode(mode)).toBe(true);
     }

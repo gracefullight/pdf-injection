@@ -3,6 +3,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RequiredMark } from "@/components/ui/required-mark";
 import {
   Select,
   SelectContent,
@@ -82,6 +83,17 @@ export function InjectionSettingsForm({
   localMode = false,
 }: InjectionSettingsFormProps) {
   const unavailableSuffix = localMode ? "(needs a server)" : "(unavailable on this server)";
+
+  // "Middle" is a shortcut for an explicit page number (the wire contract has
+  // only first/last/N), so it is stored as that number and recognised again
+  // here — otherwise picking it would immediately read back as "Specific page".
+  const middlePage = Math.ceil((pageCount ?? 1) / 2);
+  const targetPageSelectValue =
+    typeof settings.targetPage === "string"
+      ? settings.targetPage
+      : settings.targetPage === middlePage
+        ? "middle"
+        : "custom";
   function update(partial: Partial<InjectionSettings>) {
     onChange({ ...settings, ...partial });
   }
@@ -268,12 +280,20 @@ export function InjectionSettingsForm({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="target-page">Target page</Label>
+          <Label htmlFor="target-page">
+            Target page
+            <RequiredMark />
+          </Label>
           <Select
-            value={typeof settings.targetPage === "string" ? settings.targetPage : "custom"}
+            value={targetPageSelectValue}
             onValueChange={(value) =>
               update({
-                targetPage: value === "custom" ? (pageCount ?? 1) : (value as "first" | "last"),
+                targetPage:
+                  value === "middle"
+                    ? middlePage
+                    : value === "custom"
+                      ? (pageCount ?? 1)
+                      : (value as "first" | "last"),
               })
             }
           >
@@ -281,8 +301,11 @@ export function InjectionSettingsForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="first">First page</SelectItem>
-              <SelectItem value="last">Last page (default)</SelectItem>
+              <SelectItem value="first">First page (default)</SelectItem>
+              <SelectItem value="middle" data-testid="target-page-option-middle">
+                Middle page{pageCount ? ` (${middlePage})` : ""}
+              </SelectItem>
+              <SelectItem value="last">Last page</SelectItem>
               <SelectItem value="custom">Specific page…</SelectItem>
             </SelectContent>
           </Select>
@@ -309,8 +332,8 @@ export function InjectionSettingsForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="top">Top margin</SelectItem>
-              <SelectItem value="bottom">Bottom margin (default)</SelectItem>
+              <SelectItem value="top">Top margin (default)</SelectItem>
+              <SelectItem value="bottom">Bottom margin</SelectItem>
               <SelectItem value="custom">Custom coordinates</SelectItem>
             </SelectContent>
           </Select>

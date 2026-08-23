@@ -19,8 +19,12 @@ export interface InjectionSettings {
 
 export const DEFAULT_INJECTION_SETTINGS: InjectionSettings = {
   mode: "white_text",
-  targetPage: "last",
-  position: "bottom",
+  // Front of the document, top margin: an instruction the model reads early is
+  // more likely to be honoured than one appended after several pages of text.
+  // (The API's own default is still last/bottom — this is the wizard's choice,
+  // and every request sends both fields explicitly.)
+  targetPage: "first",
+  position: "top",
   fontSize: 1,
   payloadLanguage: "en",
 };

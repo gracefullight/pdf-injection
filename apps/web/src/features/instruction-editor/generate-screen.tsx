@@ -33,8 +33,13 @@ export interface GenerateScreenProps {
 }
 
 function targetPageLabel(settings: InjectionSettings, pageCount: number): string {
-  if (settings.targetPage === "first") return "First page";
+  if (settings.targetPage === "first") return "First page (default)";
   if (settings.targetPage === "last") return "Last page";
+  // Mirrors InjectionSettingsForm's "Middle page" shortcut, which stores the
+  // computed page number rather than a distinct wire value.
+  if (settings.targetPage === Math.ceil(pageCount / 2)) {
+    return `Middle page (${settings.targetPage} of ${pageCount})`;
+  }
   return `Page ${settings.targetPage} of ${pageCount}`;
 }
 
@@ -53,8 +58,8 @@ const MODE_LABELS: Record<InjectionSettings["mode"], string> = {
   info_dict: "Info dictionary",
 };
 const POSITION_LABELS: Record<string, string> = {
-  top: "Top margin",
-  bottom: "Bottom margin (default)",
+  top: "Top margin (default)",
+  bottom: "Bottom margin",
   custom: "Custom coordinates",
 };
 

@@ -2,7 +2,6 @@ import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { LocalModeBanner } from "@/components/local-mode-banner";
 import { GenerateScreen } from "@/features/instruction-editor/generate-screen";
 import { InstructionScreen } from "@/features/instruction-editor/instruction-screen";
 import {
@@ -234,14 +233,21 @@ export function App() {
           <h1 className="text-2xl font-bold text-foreground">PDF Injection</h1>
           <p className="text-sm text-muted-foreground">
             Hidden instruction authoring and validation for PDF assignments
+            {localMode.enabled && (
+              // Quiet marker rather than a banner: on-device is the normal mode
+              // for a static deployment, so it should not shout on every screen.
+              // The research tabs explain their own unavailability where they live.
+              <>
+                {" · "}
+                <span data-testid="local-mode-indicator" title="Nothing leaves this browser">
+                  on-device
+                </span>
+              </>
+            )}
           </p>
         </div>
         <ProviderSettingsDialog />
       </header>
-
-      {localMode.enabled && (
-        <LocalModeBanner becauseApiUnreachable={localMode.becauseApiUnreachable} />
-      )}
 
       <div data-testid="wizard-stepper">
         {/* Compact single-line indicator below `sm` — the full step list never wraps cleanly at

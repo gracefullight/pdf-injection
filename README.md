@@ -81,8 +81,13 @@ Node built-in reaches the browser entry's module graph).
 |---|---|---|
 | Injection modes | all nine | — |
 | Payload language | `en`, `ko`, `zh` | — |
+| Distribution | single job, variant (A/B/…) sets, student-keyed sets — including the distribution/mapping CSVs and the ZIP archive | — |
 | Validation | round-trip, geometry, PDF.js text extraction, render + pixel diff, XMP read-back | qpdf structural check |
 | Research tabs | — | Model Test, Submissions, Robustness |
+
+Set generation reuses the server's own key generation, `{{KEY}}` substitution, distribution
+assignment, CSV serialization and archive-name sanitization — that logic moved to
+`@pdf-injection/contracts` (`src/sets.ts`) so both runtimes call the same code.
 
 Mode is chosen automatically (local when `GET /health` fails) and can be forced either way with
 `?local=1` / `?local=0`. Locally generated jobs live in tab memory only and are never written to

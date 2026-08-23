@@ -195,6 +195,9 @@ subset as the server. Constraints specific to local mode:
 
 - qpdf structural validation never runs, so `summary.qpdfStatus` is always `"not_run"`.
 - Model Test, Submissions and Robustness are server features and stay unavailable.
+- Variant sets and student-keyed sets generate fully on-device (keys, `{{KEY}}` substitution,
+  distribution, CSVs and the ZIP archive all come from the shared
+  `@pdf-injection/contracts` set helpers), but like single jobs they live in tab memory only.
 - The first Korean/Chinese (or `unicode_tags`) job downloads a 6–10 MB font and a ~620 KB wasm
   module; they are cached for the tab's lifetime, so later jobs are fast.
 - `image_only` rasterizes with the *browser's* `sans-serif`, not the server's, so the stamped image
