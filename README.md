@@ -452,6 +452,7 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 
 ## Further documentation
 
+- [`docs/prd.md`](docs/prd.md) — the original product requirements document (English translation) this project was built from; the historical baseline, not a description of the current build
 - [`docs/architecture.md`](docs/architecture.md) — system architecture, data flow, storage layout, SQLite schema
 - [`docs/api.md`](docs/api.md) — full HTTP API reference
 - [`docs/validation.md`](docs/validation.md) — validation pipeline, thresholds, PDF.js disclaimer
