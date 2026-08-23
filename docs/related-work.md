@@ -168,6 +168,37 @@ evidence, not the methodology label alone. This project treats that as its own d
 false-positive risk governance requirement 4 and 9 in
 [`docs/ethics-and-privacy.md`](ethics-and-privacy.md) already warn about.
 
+### Round-3 probe modes: detectability expectation, not a measured result
+
+Round 3 added four research/diagnostic probe conditions (`image_only`, `freetext_annot`,
+`acroform_field`, `info_dict` — see [`README.md`](../README.md#injection-modes) and
+[`docs/limitations.md`](limitations.md#image_only--freetext_annot--acroform_field--info_dict-caveats-round-3-probes)).
+None of them have been run against PhantomLint or any other detector by this project — the
+following is stated as an expectation grounded in how the channels are constructed, not as a
+measured finding, and should be read with that caveat every time it is cited.
+
+- **`freetext_annot` and `acroform_field`** draw real, invisible (`3 Tr`) text — the same
+  rendering-mode-3 technique PhantomLint's metamorphic check (extracted text vs. OCR of the
+  rendered page) was built to catch for page content — but inside an annotation's or a form
+  field's own appearance stream rather than the page's content stream. Whether PhantomLint's
+  published detector specifically walks annotation/widget appearance streams the way poppler's
+  `pdftotext` does (measured directly for this project's own injector output — see
+  [`docs/limitations.md`](limitations.md#image_only--freetext_annot--acroform_field--info_dict-caveats-round-3-probes))
+  was not checked by this project; PhantomLint's paper was read for page-content channels only.
+  The expectation is that both are *plausibly* detectable by the same class of tool, for the same
+  reason `white_text`/`render_mode_3` are — real, extractable text that just isn't painted — but
+  that is unverified here.
+- **`info_dict`** places the payload in the classic `/Info` dictionary (`Subject`/`Keywords`), a
+  channel with no counterpart in PhantomLint's own extracted-text-vs-OCR check (which compares
+  page text, not document metadata). Whether any hidden-text scanner inspects `/Info` at all is a
+  distinct, also-unmeasured question.
+- **`image_only` is the odd one out.** It rasterizes the instruction to a visible image stamp, so
+  it defeats every text-extraction-based scanner (PhantomLint included) by construction — there is
+  no text object to extract — but it is trivially visible to any human who looks at the page, the
+  same non-covert trade-off `visible_positive_control` already makes. It measures whether a
+  provider's ingestion has a vision path, not whether a hidden channel evades detection, and it is
+  not positioned as a stealthier alternative to `white_text`/`render_mode_3`.
+
 ## 6. How to keep this page honest
 
 Before this page, or any derived material, claims novelty for anything about this project, do all

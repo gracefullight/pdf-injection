@@ -252,7 +252,11 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 │   │                         # visible_positive_control/xmp_only/unicode_tags, payloadLanguage="ko" via
 │   │                         # @pdf-lib/fontkit), compareGeometry, resolveTargetPage, manifest builder,
 │   │                         # encodeUnicodeTags/decodeUnicodeTags/stripUnicodeTags + readUnicodeTagsPayload
-│   │                         # (unicode_tags codec + CMap read-back, independent of pdfjs-dist)
+│   │                         # (unicode_tags codec + CMap read-back, independent of pdfjs-dist);
+│   │                         # round-3 research/diagnostic probes (not production channels):
+│   │                         # injectImageOnly/injectFreetextAnnot/injectAcroFormField/injectInfoDict +
+│   │                         # their dedicated readers, native-canvas.ts (@napi-rs/canvas resolved
+│   │                         # through pdfjs-dist's own module root, mirroring packages/robustness)
 │   ├── validation/           # sha256Hex, extractText (pdfjs-dist), checkMetadataPayload (xmp_only),
 │   │                         # qpdfCheck, report builder
 │   ├── prompt-lint/          # lintPrompt() — instruction/signal errors and warnings
@@ -291,20 +295,49 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 | `visible_positive_control` | Injects the same instruction, visible to the reader | **Research-only positive control** | Not a stealth mode — used to establish whether a model follows the instruction at all when it can be seen, as a baseline for the other two modes |
 | `xmp_only` | Writes the instruction into the PDF's XMP metadata stream (catalog `/Metadata`) only — no page content stream is touched | **Research-only, no page text** | Never extracted by ordinary page-text extraction (`hiddenTextExtracted` is not required for this mode); presence is checked via `metadataPayloadPresent` instead. Most robustness transforms (print-to-PDF, OCR regeneration, screenshot OCR) strip XMP metadata entirely, since they rebuild the page content from a raster image — this mode is expected to have near-zero survival under those transforms, which is itself a useful research data point, not a defect |
 | `unicode_tags` | Draws the instruction as ordinary ASCII in an invisible (`3 Tr`) text object, then rewrites the embedded font's `/ToUnicode` CMap (post-save, public `pdf-lib` APIs only) so each glyph decodes to a Unicode Tag character (U+E0000–U+E007F) instead of its drawn ASCII value — prior art: PRD §4.2 In-Context Watermarking, §4.3 SteganoPrompt | **Experimental** | The payload is verified present in the output file's font/CMap (a server-side CMap read-back independent of PDF.js), but this app's own PDF.js-based text extraction can never display it: `pdfjs-dist` unconditionally filters Unicode General Category "Cf" (Format) characters, and the entire Unicode Tags block is Cf — so `hiddenTextExtracted` is always `false` for this mode and every job is `PASS_WITH_WARNINGS`, never plain `PASS`, by design, not a defect. Whether a given LLM provider's own document ingestion sees the payload is exactly what the Model Test benchmark measures, not something this local view can answer either way. ASCII-only: `payloadLanguage: "ko"` is rejected with `422 PROMPT_ENCODING_FAILED` for this mode |
+| `image_only` | Rasterizes the instruction to a PNG (`@napi-rs/canvas`, resolved through `pdfjs-dist`'s own module root — no top-level `@napi-rs/canvas` dependency) and stamps it in the page margin. **No text object of any kind is written to the page** — verified by decoding the output content stream and asserting no `BT`/`ET` | **Round-3 research/diagnostic probe — not a production channel** | Visible by design, like `visible_positive_control` (`diffThreshold` is `Infinity`); no text extractor, including this project's own PDF.js-based one, can ever find it — that is the point: it tests whether a provider's ingestion pipeline has a vision path at all, not text extractability. Requires `@napi-rs/canvas` at runtime; raises `422 CANVAS_UNAVAILABLE` (never a silent text-free no-op) when the native module can't be resolved |
+| `freetext_annot` | Draws the instruction as real invisible (`3 Tr`) text inside a FreeText annotation's own `/AP /N` appearance stream — never the page's content stream. `/Contents` is also set structurally, though it isn't what extracts the text (see caveats) | **Round-3 research/diagnostic probe — not a production channel** | Present in the output (verified via a public-`pdf-lib`-API read-back of the appearance stream), but invisible to this app's own PDF.js-based `extractText()`, which never walks an annotation's appearance stream. Measured directly against this project's own injector output with poppler `pdftotext`/`pdfinfo` v26.08.0: **surfaced** by `pdftotext` (poppler extracts a widget/annotation's text by walking its appearance-stream operators — render mode doesn't matter to that walk), **not present** in `pdfinfo` metadata |
+| `acroform_field` | Same technique as `freetext_annot`, inside a brand-new AcroForm text-field widget's own appearance stream (pdf-lib's public `PDFForm`/`PDFTextField.updateAppearances()` escape hatch). Never mutates a pre-existing field, even on a source PDF that already has an AcroForm | **Round-3 research/diagnostic probe — not a production channel** | Same measured result as `freetext_annot`: surfaced by `pdftotext`, not present in `pdfinfo` metadata, invisible to this app's own PDF.js-based extraction |
+| `info_dict` | Writes the instruction into the classic `/Info` dictionary's `Subject` and `Keywords` fields only — no page content stream is touched. The original `/Info /Title` is preserved | **Round-3 research/diagnostic probe — not a production channel** | Not found in page text by any of this project's tested extractors (`pdfjs-dist`, and — measured directly — poppler's `pdftotext`); surfaced by metadata reads instead (poppler's `pdfinfo`, e.g. pypdf's `reader.metadata`) |
 
-Four of the five modes accept `payloadLanguage: "en" | "ko"` (default `"en"`); `unicode_tags` is
+All four round-3 probe modes (`image_only`, `freetext_annot`, `acroform_field`, `info_dict`) are
+**deterministically not extractable** by this project's own PDF.js-based `extractText()` —
+`hiddenTextExtracted` is always `false` for every one of them, so every such job lands
+`PASS_WITH_WARNINGS`, never plain `PASS`, and the web UI's Extracted Text tab shows no matched
+text for these modes. That is expected, by-design behavior — the same treatment `render_mode_3`
+and `unicode_tags` already get (see
+[`docs/api.md`](docs/api.md#overall-computation-packagescontractssrcoverallts)) — not a bug.
+Whether a given LLM provider's own ingestion actually surfaces any of these four channels is
+exactly what the Model Test benchmark measures; that measurement is separate from, and not
+settled by, this local PDF.js view.
+
+Eight of the nine modes accept `payloadLanguage: "en" | "ko"` (default `"en"`); `unicode_tags` is
 `"en"`-only (`"ko"` is rejected with `PROMPT_ENCODING_FAILED`, since the Unicode Tag block has no
 defined mapping outside the ASCII range). `"en"` requires the instruction to be printable ASCII
-(`PROMPT_ENCODING_FAILED` otherwise, for every mode including `xmp_only` and `unicode_tags`).
-`"ko"` embeds a Korean (Noto Sans KR, static Regular) font subset for the three
-drawn-text modes (`white_text`/`render_mode_3`/`visible_positive_control`): the font is first
-pre-subset with HarfBuzz WASM (`subset-font`) to just the instruction's codepoints plus printable
-ASCII, then embedded through `pdf-lib`'s CID-keyed subset path (`@pdf-lib/fontkit` handles the
-font registration `pdf-lib` needs to embed it at all) — this combination renders at the correct
-weight with full, correctly-shaped glyphs and extracts with an exact `pdfjs-dist` text match for
-all three modes, at a few KB of embedded font size (well inside the "<400KB output growth" budget
-for every mode). Missing the font on the server returns `422 FONT_UNAVAILABLE`
-(`PDFI_FONT_DIR`-configurable; see [Environment variables](#environment-variables)).
+(`PROMPT_ENCODING_FAILED` otherwise, for every mode). `"ko"` embeds a Korean (Noto Sans KR, static
+Regular) font subset for the five modes that draw real PDF text: the three page-content modes
+(`white_text`/`render_mode_3`/`visible_positive_control`) plus the two round-3 annotation/widget
+probes that draw their own private appearance-stream text the same way (`freetext_annot`/
+`acroform_field`). The font is first pre-subset with HarfBuzz WASM (`subset-font`) to just the
+instruction's codepoints plus printable ASCII, then embedded through `pdf-lib`'s CID-keyed subset
+path (`@pdf-lib/fontkit` handles the font registration `pdf-lib` needs to embed it at all) — this
+combination renders at the correct weight with full, correctly-shaped glyphs, at a few KB of
+embedded font size (well inside the "<400KB output growth" budget for every mode). For the three
+page-content modes it extracts with an exact `pdfjs-dist` text match (verified by the golden-test
+suite). `freetext_annot`/`acroform_field` are never extracted by `pdfjs-dist` at all, with any
+payload language (see the non-extractability note above) — their own Korean-payload tests instead
+confirm the font renders and the structural `/Contents`/`/V` value round-trips correctly, not a
+`pdftotext` exact-text-match, which this project's automated test suite does not check for Korean
+text on these two modes specifically (only for the ASCII marker strings used in the poppler
+cross-check above). Missing the font on the server returns `422 FONT_UNAVAILABLE`
+(`PDFI_FONT_DIR`-configurable; see [Environment variables](#environment-variables)). `xmp_only` and
+`info_dict` accept `"ko"` too but
+never embed a font at all — no glyphs are drawn into any page or appearance stream; the payload is
+metadata-only. `image_only` also accepts `"ko"`, but rasterizes via `@napi-rs/canvas`'s own
+`sans-serif` font resolution rather than the bundled Noto Sans KR subset path — this project's own
+test suite does not exercise non-ASCII text for this mode, so Korean glyph rendering quality
+depends on whatever fonts are available to the native canvas module on the deployment machine and
+is unverified here.
 
 ## Validation and the PDF.js disclaimer
 

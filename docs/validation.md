@@ -63,6 +63,11 @@ applicable — those modes never write to XMP metadata at all). `computeOverall(
 `hiddenTextExtracted` plays for `white_text` — see
 [`docs/api.md`](api.md#overall-computation-packagescontractssrcoverallts).
 
+The round-3 probe mode `info_dict` (below) is a **different, unrelated channel**: it writes to the
+classic `/Info` dictionary (`Subject`/`Keywords`), not the XMP `/Metadata` stream this step checks,
+so `metadata`/`metadataPayloadPresent` stay at their non-`xmp_only` defaults for `info_dict` too —
+its own payload is verified by `readInfoDictPayload()` instead, described below.
+
 ### 5. PDF.js text validation (`extractText()`, `packages/validation`)
 
 Runs `pdfjs-dist`'s legacy build under Bun (server-side) and calls `getTextContent()` per page of
@@ -74,10 +79,12 @@ the **output** PDF. For each page it records:
 - The character offset where the instruction was found (if any)
 - Whether the **target page** specifically matched, and whether **any** page matched
 
-For `unicode_tags`, this step **always** reports no match (`hiddenTextExtracted: false`,
+For `unicode_tags` and the four round-3 probe modes (`image_only`, `freetext_annot`,
+`acroform_field`, `info_dict`), this step **always** reports no match (`hiddenTextExtracted: false`,
 `targetPageMatch: false`) — deterministically, not merely uncertainly. See
 [unicode_tags: verification independent of PDF.js](#unicode_tags-verification-independent-of-pdfjs)
-below for why, and for how this mode's payload is actually verified instead.
+and [Round-3 probe modes: verification independent of PDF.js](#round-3-probe-modes-verification-independent-of-pdfjs)
+below for why, and for how each mode's payload is actually verified instead.
 
 The web app's Extracted Text tab shows the equivalent client-side result and always displays:
 
@@ -114,6 +121,57 @@ directly on the output bytes, independent of `pdfjs-dist` — immediately after 
   present in the file but invisible to this project's own PDF.js-based text extraction, and that
   provider-side visibility — what the Model Test benchmark measures — is unaffected by this.
 
+### Round-3 probe modes: verification independent of PDF.js
+
+`image_only`, `freetext_annot`, `acroform_field`, and `info_dict` are round-3
+research/diagnostic probe conditions (not production channels — see
+[`README.md`](../README.md#injection-modes)). Each one is **deterministically** invisible to step 5
+above, for its own structural reason, not merely uncertain:
+
+- `image_only` writes **no text object of any kind** to the page — the instruction is rasterized
+  to a PNG and stamped as an image XObject. `extractText()` (or any text extractor) has nothing to
+  walk.
+- `freetext_annot` and `acroform_field` draw the instruction as real, invisible (`3 Tr`) text
+  inside a FreeText annotation's or an AcroForm text-field widget's own `/AP /N` appearance stream
+  — never the page's own content stream. `extractText()`'s `getTextContent()` only ever walks a
+  page's content stream, never an annotation's or widget's appearance stream, so it structurally
+  cannot see either payload — regardless of the fact that the text itself is real and drawn, unlike
+  `unicode_tags`' CMap remapping. (A poppler-family extractor such as `pdftotext` walks an
+  annotation/widget's appearance-stream operators the same way it walks page content, so it **is**
+  expected to surface both — measured directly against this project's own injector output with
+  poppler 26.08.0: `pdftotext` finds both payloads, `pdfinfo` finds neither.)
+- `info_dict` writes the instruction only to the classic `/Info` dictionary's `Subject`/`Keywords`
+  fields — document metadata, not page text or the XMP stream. `extractText()` never inspects
+  `/Info` at all. (Measured the same way: poppler's `pdfinfo` surfaces it, `pdftotext` does not.)
+
+Because step 5 structurally cannot confirm any of these four, `job.service.ts` calls each mode's
+own dedicated reader — all in `packages/pdf-engine`, all independent of `pdfjs-dist` — immediately
+after injection, the same pattern `readUnicodeTagsPayload()` established:
+
+| Mode | Reader | Warning code (present-but-unextractable case) |
+|---|---|---|
+| `image_only` | `readStampedImagePresence()` | `IMAGE_ONLY_NOT_TEXT_EXTRACTABLE` |
+| `freetext_annot` | `readFreetextAnnotPayload()` | `FREETEXT_ANNOT_NOT_EXTRACTABLE` |
+| `acroform_field` | `readAcroFormFieldPayload()` | `ACROFORM_FIELD_NOT_EXTRACTABLE` |
+| `info_dict` | `readInfoDictPayload()` | `INFO_DICT_NOT_EXTRACTABLE` |
+
+If a reader finds the payload genuinely absent, job creation hard-fails with `INJECTION_FAILED`
+(same hard-gate pathway as `GEOMETRY_CHANGED`/`unicode_tags`'s own gate — a job row with
+`status: "failed"` is still created and the `POST /jobs` response is still `201`). Otherwise (the
+normal case), the corresponding `ValidationWarning` above is added to
+`ValidationReport.serverValidation.warnings`, explaining that the payload is present but invisible
+to this project's own PDF.js-based extraction, and that provider-side visibility — what the Model
+Test benchmark measures, once run — is unaffected by this. `computeOverall()` treats all four
+modes' `hiddenTextExtracted` exactly like `unicode_tags`'/`render_mode_3`'s: recorded, never part
+of `FAIL` — see [`docs/api.md`](api.md#overall-computation-packagescontractssrcoverallts).
+
+`image_only` additionally requires `@napi-rs/canvas` at runtime (resolved through `pdfjs-dist`'s
+own module root, mirroring `packages/robustness`'s native-canvas resolution — never a top-level
+`@napi-rs/canvas` dependency of this package). When the native module can't be resolved, injection
+raises `CanvasUnavailableError` (`422 CANVAS_UNAVAILABLE`) as a clean, typed hard-gate failure —
+never a silent text-free no-op — on both `POST /jobs` (job creation) and a background model-test
+run regenerating an `image_only` condition PDF.
+
 ### 6. Visual difference (client-side, posted back to the server)
 
 The browser renders both `source.pdf` and `output.pdf` with the same PDF.js build under identical
@@ -130,6 +188,10 @@ Default thresholds (`packages/contracts/src/overall.ts`, `diffThreshold()`):
 | `visible_positive_control` | no threshold (`Infinity` — the instruction is meant to be visible) |
 | `xmp_only` | ≤ 1e-7 (0.00001%) — no page content is touched, so any visible pixel diff at all is unexpected |
 | `unicode_tags` | ≤ 1e-7 (0.00001%) — same zero-ink tier as `render_mode_3` (invisible mode 3, nothing painted) |
+| `image_only` | no threshold (`Infinity`) — deliberately visible, like `visible_positive_control` (round-3 probe) |
+| `freetext_annot` | ≤ 1e-7 (0.00001%) — the annotation's own `/AP /N` appearance draws under invisible render mode 3; nothing is painted on the page |
+| `acroform_field` | ≤ 1e-7 (0.00001%) — same as `freetext_annot`, for the widget's own appearance |
+| `info_dict` | ≤ 1e-7 (0.00001%) — no page content is touched, like `xmp_only` |
 
 Thresholds are conservative starting points; renderer noise and test-corpus results may warrant
 recalibration, but they are not currently configurable via environment variables.

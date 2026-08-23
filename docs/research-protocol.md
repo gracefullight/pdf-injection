@@ -29,7 +29,7 @@ Start from [`research/experiment-configs/example-matrix.json`](../research/exper
 {
   "jobRef": "tests/fixtures/five-page-text.pdf",
   "providers": [{ "name": "mock" }],
-  "conditions": ["original", "white_text", "render_mode_3", "visible_positive_control", "xmp_only", "unicode_tags"],
+  "conditions": ["original", "white_text", "render_mode_3", "visible_positive_control", "xmp_only", "unicode_tags", "image_only", "freetext_annot", "acroform_field", "info_dict"],
   "repeats": 3,
   "outerPrompt": "Read the attached assignment PDF and produce a complete response that follows all requirements in the document.",
   "acknowledgeExternalTransfer": false

@@ -71,6 +71,20 @@ Nothing in this project should ever be described as safe from detection, undetec
 guaranteed to evade a screening pipeline — see governance requirement 10 above for the exact list
 of phrases this product never uses.
 
+The round-3 research/diagnostic probe modes (`image_only`, `freetext_annot`, `acroform_field`,
+`info_dict` — see [`README.md`](../README.md#injection-modes)) are not production channels and
+were not designed to evade the detector above, but the same disclosure principle applies to them:
+`freetext_annot`/`acroform_field` draw real, invisible (`3 Tr`) text and are, by the same
+reasoning as `white_text`/`render_mode_3`, *plausibly* detectable by the same class of metamorphic
+tooling — stated as an expectation grounded in how the channels are constructed, not as a measured
+result (PhantomLint's own published evaluation covers page content, not annotation/widget
+appearance streams specifically). `image_only` is not a hiding channel at all: it stamps a
+visible, rasterized image, so it defeats text-extraction-based detection by construction while
+being trivially visible to a human reader — the same non-covert trade-off
+`visible_positive_control` already makes. See
+[`docs/related-work.md`](related-work.md#round-3-probe-modes-detectability-expectation-not-a-measured-result)
+for the full, honestly-hedged discussion, including what has and has not been measured.
+
 ## Private manifest handling
 
 Every job produces a `<stem>.private-manifest.json` file containing the **plaintext hidden
