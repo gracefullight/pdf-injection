@@ -26,12 +26,12 @@ import { isResearchProbeMode } from "@/lib/injection-modes";
 function ReachesModelIndicator() {
   return (
     <span
-      className="ml-auto inline-flex items-center gap-1 pl-2 text-[10px] font-medium text-success-foreground"
+      className="ml-auto inline-flex items-center pl-2"
       title="Reached gpt-5.6-luna (5/5) in the 2026-08-23 benchmark"
       data-testid="injection-mode-reaches-indicator"
     >
-      <span aria-hidden="true" className="size-1.5 rounded-full bg-success-foreground" />
-      reaches
+      <span className="size-1.5 rounded-full bg-success-foreground" />
+      <span className="sr-only">reaches the model</span>
     </span>
   );
 }
