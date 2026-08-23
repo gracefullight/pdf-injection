@@ -3,7 +3,7 @@
 
 PDF Injection is a research proof-of-concept tool for professors and academic-integrity /
 LLM-ingestion researchers. It lets a professor upload an assignment PDF, write a hidden
-instruction and expected signals, generate a new PDF with a machine-readable text object
+instruction and (optionally) expected signals, generate a new PDF with a machine-readable text object
 injected into it, and validate that the injected PDF still opens, renders, and looks the same
 as the original.
 
@@ -190,7 +190,7 @@ comment-per-site would just be noise.
 | `PDFI_MAX_SUBMISSIONS_PER_JOB` | `500` | Max submissions stored per job |
 | `PDFI_MODEL_TEST_MAX_REPEATS` | `10` | Max `repeats` accepted by `POST /jobs/:jobId/model-tests` |
 | `PDFI_MODEL_TEST_CONCURRENCY` | `2` | Bounded parallelism for provider calls within a single model-test run |
-| `PDFI_FONT_DIR` | `packages/pdf-engine/fonts` | Directory containing the CJK font subset (Noto Sans KR, OFL) used for `payloadLanguage="ko"` |
+| `PDFI_FONT_DIR` | `packages/pdf-engine/fonts` | Directory containing the CJK fonts (Noto Sans KR for `payloadLanguage="ko"`, Noto Sans SC for `"zh"`; both OFL) |
 | `PDFI_RESEARCH_RESULTS_DIR` | (unset) | When set, a completed model-test run's export (JSON/CSV) is also copied here — see [`research/results/README.md`](research/results/README.md). Unset by default (no copy) |
 
 ### `apps/web` (see [`apps/web/.env.example`](apps/web/.env.example))
@@ -311,11 +311,14 @@ Whether a given LLM provider's own ingestion actually surfaces any of these four
 exactly what the Model Test benchmark measures; that measurement is separate from, and not
 settled by, this local PDF.js view.
 
-Eight of the nine modes accept `payloadLanguage: "en" | "ko"` (default `"en"`); `unicode_tags` is
-`"en"`-only (`"ko"` is rejected with `PROMPT_ENCODING_FAILED`, since the Unicode Tag block has no
-defined mapping outside the ASCII range). `"en"` requires the instruction to be printable ASCII
-(`PROMPT_ENCODING_FAILED` otherwise, for every mode). `"ko"` embeds a Korean (Noto Sans KR, static
-Regular) font subset for the five modes that draw real PDF text: the three page-content modes
+Eight of the nine modes accept `payloadLanguage: "en" | "ko" | "zh"` (default `"en"`);
+`unicode_tags` is `"en"`-only (`"ko"`/`"zh"` are rejected with `PROMPT_ENCODING_FAILED`, since the
+Unicode Tag block has no defined mapping outside the ASCII range). `"en"` requires the instruction
+to be printable ASCII (`PROMPT_ENCODING_FAILED` otherwise, for every mode). `"ko"` embeds a Korean
+(Noto Sans KR, static Regular) font subset and `"zh"` a Simplified-Chinese (Noto Sans SC, static
+Regular) one — the two languages share the same pipeline and rules, so everything below about
+`"ko"` applies to `"zh"` as well (`health.features.zhPayload` mirrors `koPayload`) — for the five
+modes that draw real PDF text: the three page-content modes
 (`white_text`/`render_mode_3`/`visible_positive_control`) plus the two round-3 annotation/widget
 probes that draw their own private appearance-stream text the same way (`freetext_annot`/
 `acroform_field`). The font is first pre-subset with HarfBuzz WASM (`subset-font`) to just the
@@ -388,8 +391,8 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 | [`pdfjs-dist`](https://mozilla.github.io/pdf.js/) (PDF.js) | Apache-2.0 | Browser + server-side rendering and text extraction |
 | [`pixelmatch`](https://github.com/mapbox/pixelmatch) | ISC | Client-side pixel-diff comparison |
 | [`qpdf`](https://qpdf.sourceforge.io/) | Apache-2.0 | Optional external structural-validation binary (`PDFI_QPDF_ENABLED`) — not a package dependency, invoked via `Bun.spawn` when installed |
-| [`@pdf-lib/fontkit`](https://github.com/Hopding/fontkit) | MIT | Font registration/embedding support `pdf-lib` needs for `payloadLanguage="ko"` (`packages/pdf-engine`) |
-| [`subset-font`](https://github.com/papandreou/subset-font) | BSD-3-Clause | Pre-subsets the Korean font with HarfBuzz before `pdf-lib` embeds it (`payloadLanguage="ko"`, `packages/pdf-engine`) |
+| [`@pdf-lib/fontkit`](https://github.com/Hopding/fontkit) | MIT | Font registration/embedding support `pdf-lib` needs for `payloadLanguage="ko"`/`"zh"` (`packages/pdf-engine`) |
+| [`subset-font`](https://github.com/papandreou/subset-font) | BSD-3-Clause | Pre-subsets the CJK font with HarfBuzz before `pdf-lib` embeds it (`payloadLanguage="ko"`/`"zh"`, `packages/pdf-engine`) |
 | [`harfbuzzjs`](https://github.com/harfbuzz/harfbuzzjs) | MIT | WASM HarfBuzz shaping/subsetting engine `subset-font` wraps (transitive dependency) |
 | [`fflate`](https://github.com/101arrowz/fflate) | MIT | ZIP archive building for variant-set / student-keyed-set downloads (`apps/api`) |
 | [`@anthropic-ai/sdk`](https://github.com/anthropics/anthropic-sdk-typescript) | MIT | Anthropic provider adapter (`packages/benchmark`) — only invoked when `PDFI_ALLOW_EXTERNAL_PROVIDERS=true` and `ANTHROPIC_API_KEY` is set |
@@ -397,6 +400,7 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 | [`tesseract.js`](https://github.com/naptha/tesseract.js) | Apache-2.0 | OCR for the screenshot-OCR robustness transform and OCR-regenerated PDF text layer (`packages/robustness`) — downloads its `eng` trained-data file over the network on first use, cached thereafter |
 | [`@napi-rs/canvas`](https://github.com/Brooooooklyn/canvas) | MIT | Native canvas rendering for print-to-PDF / OCR-regeneration page rasterization (`packages/robustness`) — resolved as an optional dependency through `pdfjs-dist`'s own module root (see `packages/robustness/src/native-canvas.ts`), not a direct dependency of this codebase |
 | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR) (static Regular) | OFL-1.1 | The bundled `payloadLanguage="ko"` CJK font (`packages/pdf-engine/fonts/`), a font asset — not an npm package dependency |
+| [Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC) (static Regular) | OFL-1.1 | The bundled `payloadLanguage="zh"` (Simplified Chinese) CJK font (`packages/pdf-engine/fonts/`), a font asset — not an npm package dependency |
 
 ## Further documentation
 

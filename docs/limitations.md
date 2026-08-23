@@ -194,7 +194,7 @@ detectability framing.
   never draw glyphs and so have no font-rendering reason to require ASCII) — kept uniform for
   predictability rather than carving out a mode-specific exception. `unicode_tags` goes further: it
   rejects
-  `payloadLanguage="ko"` outright (not just non-ASCII text under `"en"`), since its Unicode Tag
+  `payloadLanguage="ko"`/`"zh"` outright (not just non-ASCII text under `"en"`), since its Unicode Tag
   codec only has a defined mapping for the ASCII range — see
   [`unicode_tags` caveats](#unicode_tags-caveats) above.
 - The instruction is capped at `PDFI_MAX_INSTRUCTION_CHARS` (default **1500** characters).
@@ -202,8 +202,16 @@ detectability framing.
   Korean font to be available on the server (`PDFI_FONT_DIR`, default
   `packages/pdf-engine/fonts/`) — see
   [Korean payload (`payloadLanguage="ko"`) mechanism](#korean-payload-payloadlanguageko-mechanism)
-  below. No language besides `"en"`/`"ko"` is supported; `PrivateManifest.prompt.language` records
-  whichever of the two was used (no longer hardcoded to `"en"`).
+  below. `payloadLanguage="zh"` (Simplified Chinese) does the same with the bundled Noto Sans SC
+  font and follows every rule described there for `"ko"` (`health.features.zhPayload` reports font
+  availability). No language besides `"en"`/`"ko"`/`"zh"` is supported;
+  `PrivateManifest.prompt.language` records whichever was used (no longer hardcoded to `"en"`).
+- Expected signals are **optional at generation time**: the injection/validation pipeline never
+  reads them, and an empty list only raises the acknowledgeable `no_expected_signals` lint warning.
+  They are, however, frozen into the job's private manifest and cannot be added afterwards — and
+  every feature that scores text against them (Model Test, Submissions, Robustness text
+  transforms) refuses a job that has none (`422 VALIDATION_ERROR`), so such a job can only be
+  regenerated.
 
 ## Korean payload (`payloadLanguage="ko"`) mechanism
 

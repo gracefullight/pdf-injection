@@ -61,7 +61,7 @@ Error codes (`ApiErrorCode` union in `@pdf-injection/contracts`):
 | `TOO_MANY_PAGES` | 422 | over `PDFI_MAX_PAGES` |
 | `PROMPT_TOO_LONG` | 422 | instruction > `PDFI_MAX_INSTRUCTION_CHARS` |
 | `PROMPT_ENCODING_FAILED` | 422 | non-printable-ASCII / null byte / control chars |
-| `PROMPT_LINT_ERROR` | 422 | other lint errors (empty prompt, empty expected signals) |
+| `PROMPT_LINT_ERROR` | 422 | other lint errors (empty prompt, a signal with a blank value, …). An *empty* `expectedSignals` list is not an error — see the `expectedSignals` field below |
 | `VALIDATION_ERROR` | 422 | malformed multipart field / JSON body |
 | `INJECTION_FAILED` | 500 | pdf-lib modification threw unexpectedly |
 | `OUTPUT_PARSE_FAILED` | 500 | output could not be reloaded by pdf-lib |
@@ -84,7 +84,7 @@ Error codes (`ApiErrorCode` union in `@pdf-injection/contracts`):
 | `OCR_UNAVAILABLE` | 422 | OCR requested (submissions image upload, screenshot-OCR robustness) but `tesseract.js`/its trained-data isn't available in this process (`health.features.ocrAvailable: false`) |
 | `CANVAS_UNAVAILABLE` | 422 | a robustness PDF transform (print-to-PDF, OCR regeneration), or the `image_only` injection mode (job creation, or model-test condition-PDF regeneration), requires `@napi-rs/canvas` rendering but it isn't available (`health.features.canvasAvailable: false`) |
 | `PROCESSING_TIMEOUT` | 504 | `POST /jobs` exceeded `PDFI_MAX_PROCESSING_MS` — no job row or files are left behind |
-| `FONT_UNAVAILABLE` | 422 | `payloadLanguage="ko"` requested but the CJK font subset (`PDFI_FONT_DIR`) is not available on the server |
+| `FONT_UNAVAILABLE` | 422 | `payloadLanguage="ko"` / `"zh"` requested but the matching CJK font (Noto Sans KR / Noto Sans SC under `PDFI_FONT_DIR`) is not available on the server |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | a submission file's extension doesn't match its content, or has an extension outside txt/md/pdf/png/jpg |
 
 `QPDF_WARNING` is **not** an error code — it is surfaced as `validation.qpdfStatus: "warning"` in
@@ -108,7 +108,9 @@ the report.
     "researchMode": false,
     "ocrAvailable": true,
     "canvasAvailable": true,
-    "koPayload": true
+    "koPayload": true,
+    "zhPayload": true,
+    "ollama": { "available": false, "baseUrl": "http://localhost:11434", "models": [] }
   }
 }
 ```
@@ -120,8 +122,11 @@ the report.
     trained-data file) and `@napi-rs/canvas` (resolved through `pdfjs-dist`'s own module root) are
     actually usable in this process, not just installed. Both default to `true` on a normal
     install; they can be `false` in a sandboxed/offline environment.
-  - `features.koPayload` mirrors `packages/pdf-engine`'s `koreanFontAvailable()` — whether the
-    `PDFI_FONT_DIR` CJK font subset can be loaded.
+  - `features.koPayload` / `features.zhPayload` mirror `packages/pdf-engine`'s
+    `koreanFontAvailable()` / `chineseFontAvailable()` — whether the Noto Sans KR / Noto Sans SC
+    font file under `PDFI_FONT_DIR` can be loaded (`payloadLanguage="ko"` / `"zh"`).
+  - `features.ollama` is a live probe of the local Ollama provider (`GET {baseUrl}/api/tags`,
+    cached 10 s, never throws): `{ available, baseUrl, models }`.
 
 ### `POST /api/v1/jobs`
 
@@ -136,15 +141,15 @@ for the full pipeline).
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `file` | File (`application/pdf`) | yes | magic bytes `%PDF-` checked, MIME checked |
-| `instruction` | string | yes | 1..1500 printable ASCII (`\n` and `\t` allowed) when `payloadLanguage="en"`; non-ASCII allowed only with `payloadLanguage="ko"` |
-| `expectedSignals` | string (JSON `ExpectedSignal[]`) | yes | min 1 item |
+| `instruction` | string | yes | 1..1500 printable ASCII (`\n` and `\t` allowed) when `payloadLanguage="en"`; non-ASCII allowed only with `payloadLanguage="ko"` / `"zh"` |
+| `expectedSignals` | string (JSON `ExpectedSignal[]`) | no | default `[]`. Optional for generating the PDF — the injection/validation pipeline never reads them — but they are frozen into the job's private manifest and every feature that *scores* text against them (`POST …/model-tests`, `POST …/submissions`, `POST …/robustness` with `textTransforms`) requires at least one and returns `422 VALIDATION_ERROR` for a job generated without any; they cannot be added afterwards. An empty list surfaces the acknowledgeable `no_expected_signals` lint warning in `lintWarnings` |
 | `injectionMode` | `"white_text" \| "render_mode_3" \| "visible_positive_control" \| "xmp_only" \| "unicode_tags" \| "image_only" \| "freetext_annot" \| "acroform_field" \| "info_dict"` | yes | The last four are round-3 research/diagnostic probe conditions, not production channels — see [`README.md`](../README.md#injection-modes) |
 | `targetPage` | string: `"first"`, `"last"`, or 1-based integer | no | default `"last"`; ignored (no page content is touched) for `xmp_only`/`info_dict` |
 | `position` | `"top" \| "bottom" \| "custom"` | no | default `"bottom"`; ignored for `xmp_only`/`info_dict` |
 | `x`, `y` | number (pt) | when `position=custom` | ignored for `xmp_only`/`info_dict` |
 | `fontSize` | number | no | default `1`; 0.5–12 (visible control ignores and uses 9); ignored for `xmp_only`/`info_dict` |
 | `maxWidth` | number | no | default page width − 2×margin; ignored for `xmp_only`/`info_dict` |
-| `payloadLanguage` | `"en" \| "ko"` | no | default `"en"`. `"ko"` embeds a Noto Sans KR subset (`@pdf-lib/fontkit`) for the 3 page-content drawn-text modes plus the 2 round-3 probes that draw their own appearance-stream text the same way (`freetext_annot`/`acroform_field`); `xmp_only`/`info_dict` accept `"ko"` with no font needed (no glyphs drawn); `image_only` accepts `"ko"` but rasterizes via `@napi-rs/canvas`'s own font resolution, not this bundled subset (unverified for CJK by this project's tests); non-ASCII with `"en"` → `422 PROMPT_ENCODING_FAILED`; missing font → `422 FONT_UNAVAILABLE`; `"ko"` is rejected outright for `unicode_tags` → `422 PROMPT_ENCODING_FAILED` (its Unicode Tag codec has no mapping outside printable ASCII) |
+| `payloadLanguage` | `"en" \| "ko" \| "zh"` | no | default `"en"`. `"ko"` embeds a Noto Sans KR subset and `"zh"` (Simplified Chinese) a Noto Sans SC subset (`@pdf-lib/fontkit`; the two behave identically otherwise — everything said about `"ko"` below applies to `"zh"`) for the 3 page-content drawn-text modes plus the 2 round-3 probes that draw their own appearance-stream text the same way (`freetext_annot`/`acroform_field`); `xmp_only`/`info_dict` accept `"ko"` with no font needed (no glyphs drawn); `image_only` accepts `"ko"` but rasterizes via `@napi-rs/canvas`'s own font resolution, not this bundled subset (unverified for CJK by this project's tests); non-ASCII with `"en"` → `422 PROMPT_ENCODING_FAILED`; missing font → `422 FONT_UNAVAILABLE`; `"ko"` is rejected outright for `unicode_tags` → `422 PROMPT_ENCODING_FAILED` (its Unicode Tag codec has no mapping outside printable ASCII) |
 | `acknowledgedWarnings` | string (JSON `string[]`) | no | lint warning ids the professor acknowledged |
 
 - **Response 201** (`CreateJobResponse`):
@@ -295,7 +300,9 @@ previous 6).
 
 - **Response 202** (`CreateRunResponse`): `{ "runId": "uuid", "status": "queued", "totalCalls": 10 }`
 - **Errors**: 403 (`JOB_FORBIDDEN`/`EXTERNAL_PROVIDERS_DISABLED`), 404 (`JOB_NOT_FOUND`), 422
-  (`VALIDATION_ERROR`/`PROVIDER_NOT_CONFIGURED`), 504 (`PROCESSING_TIMEOUT`)
+  (`VALIDATION_ERROR`/`PROVIDER_NOT_CONFIGURED`), 504 (`PROCESSING_TIMEOUT`). Answers are scored
+  against the job's `expectedSignals`, so a job generated without any is rejected with
+  `422 VALIDATION_ERROR` (regenerate with at least one signal).
 
 #### `GET /api/v1/jobs/:jobId/model-tests`
 
@@ -347,6 +354,9 @@ whether the expected signals still extract afterward. Text transforms run `parap
 `reason` otherwise.
 
 - **Response 202** (`CreateRunResponse`)
+- Text transforms score expected-signal survival, so a request with a non-empty `textTransforms`
+  on a job generated without `expectedSignals` is rejected with `422 VALIDATION_ERROR`; PDF
+  transforms only re-extract the hidden instruction and still run for such jobs.
 - **Errors**: 403 (`RESEARCH_MODE_DISABLED`/`JOB_FORBIDDEN`/`EXTERNAL_PROVIDERS_DISABLED`), 404,
   422 (`VALIDATION_ERROR`/`OCR_UNAVAILABLE`/`CANVAS_UNAVAILABLE`/`PROVIDER_NOT_CONFIGURED`)
 
@@ -395,7 +405,7 @@ research-only one) — only §3/§4 (submissions, robustness) do.
 #### `POST /api/v1/variant-sets`
 
 `multipart/form-data`: `file` (source PDF), `variants` (JSON `VariantSpec[]` — `label`,
-`instruction`, `expectedSignals`), `injectionMode`, plus the same optional injection-settings
+`instruction`, `expectedSignals` — may be `[]`, same optionality as `POST /jobs`), `injectionMode`, plus the same optional injection-settings
 fields as `POST /jobs` (`targetPage`/`position`/`x`/`y`/`fontSize`/`maxWidth`/`payloadLanguage`/
 `acknowledgedWarnings`). Creates one job per variant, sharing the same source PDF.
 
@@ -433,7 +443,7 @@ Deletes the set, every member job, and their artifacts.
 
 #### `POST /api/v1/student-keyed-sets`
 
-`multipart/form-data`: `file`, `instructionTemplate`, `expectedSignals`, `studentIds` (JSON
+`multipart/form-data`: `file`, `instructionTemplate`, `expectedSignals` (optional, default `[]`), `studentIds` (JSON
 `string[]`), `injectionMode`, `keyLength` (optional), plus the same injection-settings fields.
 Generates one job per student, each with a unique random key embedded via the instruction
 template (e.g. a per-student token appended to the hidden instruction) — used to trace which
@@ -487,7 +497,8 @@ detected" — see [`docs/ethics-and-privacy.md`](ethics-and-privacy.md)).
 
 - **Response 201** (`SubmissionAnalysis`)
 - **Errors**: 403 (`RESEARCH_MODE_DISABLED`), 404, 413 (`FILE_TOO_LARGE`), 415
-  (`UNSUPPORTED_MEDIA_TYPE`), 422 (`VALIDATION_ERROR`/`OCR_UNAVAILABLE`)
+  (`UNSUPPORTED_MEDIA_TYPE`), 422 (`VALIDATION_ERROR`/`OCR_UNAVAILABLE`). A job generated without
+  `expectedSignals` has nothing to score against and is rejected with `422 VALIDATION_ERROR`.
 
 #### `GET /api/v1/jobs/:jobId/submissions`
 
