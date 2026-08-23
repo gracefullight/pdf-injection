@@ -69,9 +69,8 @@ export function authHeaders(accessToken: string): HeadersInit {
  * rejecting its own promise, so it never has the `{value: {error: {code, message}}}` shape a
  * real API error response does. Distinguishing this case fixes M-04 (r11 review): before this,
  * every transport failure fell into the generic `VALIDATION_ERROR` fallback below and was shown
- * as "The request contains invalid or missing fields" — the wrong cause, in a mixed-language
- * string (`ERROR_MESSAGES.VALIDATION_ERROR` carries both `en` and `ko` text, rendered together
- * regardless of UI locale).
+ * as "The request contains invalid or missing fields" — the wrong cause. (The UI renders only
+ * the `en` text of `ERROR_MESSAGES`; the `ko` field exists in the map but is not shown.)
  */
 function isTransportFailure(errorValue: unknown): boolean {
   if (errorValue instanceof TypeError) return true;

@@ -92,7 +92,7 @@ export function GenerateScreen({
   function describeError(error: unknown, fallback: string): string {
     if (error instanceof ApiRequestError || error instanceof ResearchApiError) {
       const known = ERROR_MESSAGES[error.code as keyof typeof ERROR_MESSAGES];
-      return known ? `${known.en} (${known.ko})` : error.message;
+      return known ? known.en : error.message;
     }
     return error instanceof Error ? error.message : fallback;
   }
