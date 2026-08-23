@@ -79,6 +79,22 @@ function isTransportFailure(errorValue: unknown): boolean {
   return false;
 }
 
+/**
+ * Client-only synthetic error for "the server answered, but not with this API's error envelope"
+ * — e.g. a static host (GitHub Pages) returning 404/405 HTML because no API backend is deployed
+ * behind `VITE_API_BASE_URL`, or a gateway 502. Before this, such responses fell into the
+ * generic `VALIDATION_ERROR` fallback and rendered as "The request contains invalid or missing
+ * fields", which blamed the user's input for a deployment problem. Like `NETWORK_ERROR`, the code
+ * is deliberately not part of the shared `ApiErrorCode` union (the server never emits it), so
+ * `ERROR_MESSAGES[code]` misses and `error.message` is what renders.
+ */
+export function apiUnavailableError(status: number): ApiError["error"] {
+  return {
+    code: "API_UNAVAILABLE",
+    message: `The API server did not respond as expected (HTTP ${status || "error"}). This site may not have an API backend configured — check the API deployment / VITE_API_BASE_URL.`,
+  } as unknown as ApiError["error"];
+}
+
 export function unwrapEdenAs<T, E extends Error>(
   result: { data: unknown; error: unknown; status: number },
   ErrorClass: new (status: number, error: ApiError["error"]) => E,
@@ -99,7 +115,7 @@ export function unwrapEdenAs<T, E extends Error>(
               code: "NETWORK_ERROR",
               message: "Could not reach the server. Check that the API is running and try again.",
             } as unknown as ApiError["error"])
-          : { code: "VALIDATION_ERROR" as const, message: "Request failed" };
+          : apiUnavailableError(result.status);
     throw new ErrorClass(result.status, errorPayload);
   }
   return result.data as T;
@@ -142,7 +158,5 @@ export async function readErrorPayload(response: Response): Promise<ApiError["er
   } catch {
     // response had no JSON body; synthesize a generic error below
   }
-  return (
-    body?.error ?? { code: "VALIDATION_ERROR", message: response.statusText || "Request failed" }
-  );
+  return body?.error ?? apiUnavailableError(response.status);
 }

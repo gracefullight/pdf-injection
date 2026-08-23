@@ -64,12 +64,21 @@ const PAYLOAD_LANGUAGE_LABELS: Record<InjectionSettings["payloadLanguage"], stri
   zh: "Chinese",
 };
 
-/** Same masking rule as `private-manifest-tab.tsx`'s `maskInstruction` — kept local since this
- * screen never sees a `PrivateManifest` (the job doesn't exist yet at this point in the wizard). */
-function maskInstruction(instruction: string): string {
-  if (instruction.trim().length === 0) return "(empty)";
-  const visibleChars = Math.min(24, Math.floor(instruction.length / 3));
-  return `${instruction.slice(0, visibleChars)}${instruction.length > visibleChars ? "…[masked]" : ""}`;
+/**
+ * Review step: this is the author's own text a moment before it is embedded, so it is shown in
+ * full (wrapped, scrollable past ~10 lines) — it was previously masked like the private-manifest
+ * tab, which made the review useless for actually reviewing the instruction.
+ */
+function InstructionPreview({ text, testId }: { text: string; testId: string }) {
+  if (text.trim().length === 0) return <span className="italic">(empty)</span>;
+  return (
+    <pre
+      className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap break-words rounded-md border border-border bg-muted p-2 font-mono text-xs"
+      data-testid={testId}
+    >
+      {text}
+    </pre>
+  );
 }
 
 export function GenerateScreen({
@@ -249,10 +258,11 @@ export function GenerateScreen({
           {distributionMode === "single" && (
             <>
               <div className="sm:col-span-2">
-                <span className="text-muted-foreground">Instruction (masked): </span>
-                <span className="font-mono" data-testid="generate-summary-instruction-preview">
-                  {maskInstruction(instruction)}
-                </span>
+                <span className="text-muted-foreground">Instruction: </span>
+                <InstructionPreview
+                  text={instruction}
+                  testId="generate-summary-instruction-preview"
+                />
               </div>
               <div className="sm:col-span-2">
                 <span className="text-muted-foreground">Expected signals: </span>
@@ -284,8 +294,11 @@ export function GenerateScreen({
                     <Badge variant="secondary" className="mr-1">
                       {variant.label}
                     </Badge>
-                    {maskInstruction(variant.instruction)} · {variant.signals.length} signal
-                    {variant.signals.length === 1 ? "" : "s"}
+                    {variant.signals.length} signal{variant.signals.length === 1 ? "" : "s"}
+                    <InstructionPreview
+                      text={variant.instruction}
+                      testId={`generate-summary-variant-${variant.label}-instruction`}
+                    />
                   </li>
                 ))}
               </ul>
@@ -297,11 +310,12 @@ export function GenerateScreen({
               <span className="text-muted-foreground">Students: </span>
               {parseStudentIdList(studentKeyedDraft.studentIdsRaw).ids.length} (key length{" "}
               {studentKeyedDraft.keyLength})
-              <div
-                className="mt-1 font-mono text-xs"
-                data-testid="generate-summary-student-keyed-template"
-              >
-                Template: {maskInstruction(studentKeyedDraft.instructionTemplate)}
+              <div className="mt-1">
+                <span className="text-muted-foreground">Template: </span>
+                <InstructionPreview
+                  text={studentKeyedDraft.instructionTemplate}
+                  testId="generate-summary-student-keyed-template"
+                />
               </div>
             </div>
           )}

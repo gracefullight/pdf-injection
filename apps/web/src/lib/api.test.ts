@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { ApiRequestError, resolveEdenDomain, unwrapEden } from "@/lib/api";
+import { readErrorPayload } from "@/lib/eden-client";
 
 describe("resolveEdenDomain", () => {
   it("resolves the default relative base URL to the page origin, so Vite's dev proxy still applies", () => {
@@ -77,7 +78,26 @@ describe("unwrapEden", () => {
     expect(error.details).toEqual({ foo: "bar" });
   });
 
-  it("falls back to a generic VALIDATION_ERROR when the error envelope doesn't have the expected shape", () => {
+  it("maps a non-envelope error response to API_UNAVAILABLE, never VALIDATION_ERROR", () => {
+    // Regression: a static host (GitHub Pages) with no API backend answers POST /api/v1/jobs
+    // with a bodyless 405; this used to surface as VALIDATION_ERROR ("The request contains
+    // invalid or missing fields"), blaming the user's input for a deployment problem.
+    let caught: unknown;
+    try {
+      unwrapEden({ data: null, error: { status: 405, value: "" }, status: 405 });
+    } catch (err) {
+      caught = err;
+    }
+
+    expect(caught).toBeInstanceOf(ApiRequestError);
+    const error = caught as ApiRequestError;
+    expect(error.code).toBe("API_UNAVAILABLE");
+    expect(error.status).toBe(405);
+    expect(error.message).toContain("HTTP 405");
+    expect(error.message).toContain("VITE_API_BASE_URL");
+  });
+
+  it("also maps an unexpected-shape error object (e.g. gateway JSON) to API_UNAVAILABLE", () => {
     let caught: unknown;
     try {
       unwrapEden({ data: null, error: { unexpected: true }, status: 500 });
@@ -87,8 +107,21 @@ describe("unwrapEden", () => {
 
     expect(caught).toBeInstanceOf(ApiRequestError);
     const error = caught as ApiRequestError;
-    expect(error.code).toBe("VALIDATION_ERROR");
+    expect(error.code).toBe("API_UNAVAILABLE");
     expect(error.status).toBe(500);
+  });
+
+  it("readErrorPayload: a non-JSON 404 from a static host becomes API_UNAVAILABLE", async () => {
+    const payload = await readErrorPayload(
+      new Response("<!doctype html><title>404</title>", {
+        status: 404,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    // `code` is typed as the server's ApiErrorCode union; the synthetic client-only code is
+    // deliberately outside it (see `apiUnavailableError`), hence the widening to string.
+    expect(payload.code as string).toBe("API_UNAVAILABLE");
+    expect(payload.message).toContain("HTTP 404");
   });
 
   it("also narrows an error envelope with no `.value` wrapper (error is the payload directly)", () => {
