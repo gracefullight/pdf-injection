@@ -6,6 +6,7 @@ import { shouldPollRun } from "@/features/model-test/model-test-helpers";
 import { ModelTestResults } from "@/features/model-test/model-test-results";
 import { ModelTestRunForm } from "@/features/model-test/model-test-run-form";
 import { ModelTestRunsList } from "@/features/model-test/model-test-runs-list";
+import { OpenAiDirectTestPanel } from "@/features/model-test/openai-direct-test-panel";
 import { triggerBrowserDownload } from "@/lib/api";
 import {
   createModelTestRun,
@@ -106,6 +107,8 @@ export function ModelTestTab({ jobId, accessToken }: ModelTestTabProps) {
           external transfer and have a configured API key.
         </p>
       </div>
+
+      <OpenAiDirectTestPanel jobId={jobId} accessToken={accessToken} />
 
       <ModelTestRunForm
         features={features}

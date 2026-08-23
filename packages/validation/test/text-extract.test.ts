@@ -101,4 +101,19 @@ describe("extractPagesText (additive, round-2 addendum §6)", () => {
     expect(pages).toHaveLength(1);
     expect(pages[0]).toContain("Only page.");
   });
+
+  test("does not emit the missing standard font data warning", async () => {
+    const messages: unknown[][] = [];
+    const originalLog = console.log;
+    console.log = (...args: unknown[]) => messages.push(args);
+
+    try {
+      const bytes = await buildPdfWithText(["Standard font warning regression."]);
+      await extractPagesText(bytes);
+    } finally {
+      console.log = originalLog;
+    }
+
+    expect(messages.flat().join(" ")).not.toContain("standardFontDataUrl");
+  });
 });

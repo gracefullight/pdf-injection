@@ -1,5 +1,5 @@
 /** Server-relative path the sample assignment PDF is served from (see `apps/web/public/samples/`). */
-export const SAMPLE_PDF_URL = "/samples/se-assignment-architecture-quality-plan.pdf";
+export const SAMPLE_PDF_URL = `${import.meta.env?.BASE_URL ?? "/"}samples/se-assignment-architecture-quality-plan.pdf`;
 export const SAMPLE_PDF_FILENAME = "se-assignment-architecture-quality-plan.pdf";
 export const SAMPLE_PDF_CHECKBOX_LABEL =
   "Use the sample assignment PDF (48433 Software Architecture)";

@@ -9,6 +9,7 @@ import {
   type InjectionSettings,
 } from "@/features/instruction-editor/instruction-types";
 import { pruneAcknowledgedWarnings } from "@/features/instruction-editor/prune-acknowledged-warnings";
+import { ProviderSettingsDialog } from "@/features/provider-settings/provider-settings-dialog";
 import { UploadScreen } from "@/features/upload/upload-screen";
 import type { UploadedSource } from "@/features/upload/upload-types";
 import { ValidationScreen } from "@/features/validation-result/validation-screen";
@@ -210,11 +211,14 @@ export function App() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6">
-      <header>
-        <h1 className="text-2xl font-bold text-foreground">PDF Injection</h1>
-        <p className="text-sm text-muted-foreground">
-          Hidden instruction authoring and validation for PDF assignments
-        </p>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">PDF Injection</h1>
+          <p className="text-sm text-muted-foreground">
+            Hidden instruction authoring and validation for PDF assignments
+          </p>
+        </div>
+        <ProviderSettingsDialog />
       </header>
 
       <div data-testid="wizard-stepper">

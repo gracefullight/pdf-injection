@@ -5,6 +5,12 @@
 // @pdf-injection/detector's signal matchers against).
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 
+const STANDARD_FONT_DATA_URL = (() => {
+  const pdfjsPkgUrl = import.meta.resolve("pdfjs-dist/package.json");
+  const packageDir = new URL(pdfjsPkgUrl).pathname.replace(/\/package\.json$/, "");
+  return `${packageDir}/standard_fonts/`;
+})();
+
 /** Extracts and joins the text content of every page of a PDF. */
 export async function extractFullPdfText(bytes: Uint8Array): Promise<string> {
   const loadingTask = pdfjsLib.getDocument({
@@ -12,6 +18,7 @@ export async function extractFullPdfText(bytes: Uint8Array): Promise<string> {
     useWorkerFetch: false,
     isEvalSupported: false,
     disableFontFace: true,
+    standardFontDataUrl: STANDARD_FONT_DATA_URL,
   });
   const pdf = await loadingTask.promise;
 
