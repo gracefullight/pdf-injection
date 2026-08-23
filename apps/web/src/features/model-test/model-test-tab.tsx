@@ -1,6 +1,7 @@
 import { ERROR_MESSAGES, type ModelTestRequest } from "@pdf-injection/contracts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { NoExpectedSignalsNotice } from "@/components/no-expected-signals-notice";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { shouldPollRun } from "@/features/model-test/model-test-helpers";
 import { ModelTestResults } from "@/features/model-test/model-test-results";
@@ -21,6 +22,8 @@ import { useFeatures } from "@/lib/features";
 export interface ModelTestTabProps {
   jobId: string;
   accessToken: string;
+  /** `false` → the job was generated without expected signals and cannot be scored; `undefined` while loading. */
+  hasExpectedSignals?: boolean;
 }
 
 function errorMessage(error: unknown): string {
@@ -32,7 +35,7 @@ function errorMessage(error: unknown): string {
 }
 
 /** Screen 4 "Model Test" tab — Phase 3 provider benchmark (real implementation, replaces the Phase 2 placeholder). */
-export function ModelTestTab({ jobId, accessToken }: ModelTestTabProps) {
+export function ModelTestTab({ jobId, accessToken, hasExpectedSignals }: ModelTestTabProps) {
   const { features } = useFeatures();
   const queryClient = useQueryClient();
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
@@ -110,12 +113,16 @@ export function ModelTestTab({ jobId, accessToken }: ModelTestTabProps) {
 
       <OpenAiDirectTestPanel jobId={jobId} accessToken={accessToken} />
 
-      <ModelTestRunForm
-        features={features}
-        onRun={(request) => createRun.mutate(request)}
-        submitting={createRun.isPending}
-        error={runError}
-      />
+      {hasExpectedSignals === false ? (
+        <NoExpectedSignalsNotice scores="model answers" />
+      ) : (
+        <ModelTestRunForm
+          features={features}
+          onRun={(request) => createRun.mutate(request)}
+          submitting={createRun.isPending}
+          error={runError}
+        />
+      )}
 
       <div>
         <h4 className="mb-2 text-sm font-semibold text-foreground">Runs</h4>

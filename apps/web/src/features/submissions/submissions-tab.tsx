@@ -1,6 +1,7 @@
 import type { SubmissionAnalysis } from "@pdf-injection/contracts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { NoExpectedSignalsNotice } from "@/components/no-expected-signals-notice";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { SubmissionAnalysisCard } from "@/features/submissions/submission-analysis-card";
@@ -14,6 +15,8 @@ import { ResearchApiError } from "@/lib/research-fetch";
 export interface SubmissionsTabProps {
   jobId: string;
   accessToken: string;
+  /** `false` → the job was generated without expected signals and submissions cannot be scored; `undefined` while loading. */
+  hasExpectedSignals?: boolean;
 }
 
 /**
@@ -22,16 +25,20 @@ export interface SubmissionsTabProps {
  * match is never sole evidence; uncertainty + alternatives always shown).
  * Gated by r6's `FeatureGate`/`useFeatures()` (src/lib/features.tsx).
  */
-export function SubmissionsTab({ jobId, accessToken }: SubmissionsTabProps) {
+export function SubmissionsTab({ jobId, accessToken, hasExpectedSignals }: SubmissionsTabProps) {
   const { features } = useFeatures();
   return (
     <FeatureGate feature="researchMode" features={features}>
-      <SubmissionsTabContent jobId={jobId} accessToken={accessToken} />
+      <SubmissionsTabContent
+        jobId={jobId}
+        accessToken={accessToken}
+        hasExpectedSignals={hasExpectedSignals}
+      />
     </FeatureGate>
   );
 }
 
-function SubmissionsTabContent({ jobId, accessToken }: SubmissionsTabProps) {
+function SubmissionsTabContent({ jobId, accessToken, hasExpectedSignals }: SubmissionsTabProps) {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -97,7 +104,11 @@ function SubmissionsTabContent({ jobId, accessToken }: SubmissionsTabProps) {
 
   return (
     <div className="flex flex-col gap-6" data-testid="submissions-tab">
-      <SubmissionForm jobId={jobId} accessToken={accessToken} onCreated={handleCreated} />
+      {hasExpectedSignals === false ? (
+        <NoExpectedSignalsNotice scores="submissions" />
+      ) : (
+        <SubmissionForm jobId={jobId} accessToken={accessToken} onCreated={handleCreated} />
+      )}
 
       <Separator />
 

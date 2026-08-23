@@ -30,6 +30,7 @@ import { PDFDocument } from "pdf-lib";
 import type { AppConfig } from "../config";
 import { ApiError } from "../errors";
 import type { BackgroundRunner } from "../lib/background-runner";
+import { assertJobHasExpectedSignals } from "../lib/expected-signals";
 import {
   deleteJobArtifact,
   jobArtifactExists,
@@ -495,6 +496,9 @@ export async function createRobustnessRun(
   }
 
   const manifest = await loadManifest(config, job.id);
+  // Text transforms score signal survival; PDF transforms only re-extract the
+  // hidden instruction, so a job without signals may still run those.
+  if (body.textTransforms.length > 0) assertJobHasExpectedSignals(manifest);
   const texts = await resolveTexts(deps, job, body.textSource);
 
   const runId = crypto.randomUUID();

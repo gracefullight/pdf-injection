@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
  * its card. They still fully gate `canContinue` upstream because only this display list is
  * filtered; lint's unfiltered `errors` array is untouched.
  */
-const FIELD_ERROR_IDS = new Set(["empty_prompt", "empty_expected_signals", "empty_signal_value"]);
+const FIELD_ERROR_IDS = new Set(["empty_prompt", "empty_signal_value"]);
 
 /** Short rule names instead of the generic "Warning" title on every alert — with 3-4 warnings
  * stacked (variants mode especially), the rule id was only visible in the testid, not to a
@@ -25,6 +25,7 @@ const WARNING_TITLES: Record<string, string> = {
   exact_phrase_too_long: "Signal unusually long",
   common_signal: "Common word signal",
   inappropriate_methodology_hint: "Inappropriate methodology",
+  no_expected_signals: "No expected signals",
 };
 
 export interface LintPanelProps {

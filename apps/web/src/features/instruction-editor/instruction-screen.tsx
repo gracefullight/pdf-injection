@@ -90,14 +90,14 @@ export function InstructionScreen({
         ? isVariantSetValid(variantDrafts, settings.payloadLanguage)
         : isStudentKeyedDraftValid(studentKeyedDraft, settings.payloadLanguage);
 
-  // Neutral disabled-state explanation for the two "unmet requirement" lint ids that
-  // `LintPanel` deliberately never renders as red alerts before the user has typed anything
-  // (r11 review H-09) — the reason still needs to be discoverable somewhere.
+  // Neutral disabled-state explanation for the "unmet requirement" lint id that `LintPanel`
+  // deliberately never renders as a red alert before the user has typed anything (r11 review
+  // H-09) — the reason still needs to be discoverable somewhere. (Expected signals used to be a
+  // second hard requirement; they are now optional at generation and surface as the
+  // acknowledgeable `no_expected_signals` warning instead.)
   const missingRequirements =
     distributionMode === "single"
-      ? lint.errors
-          .filter((issue) => issue.id === "empty_prompt" || issue.id === "empty_expected_signals")
-          .map((issue) => issue.message)
+      ? lint.errors.filter((issue) => issue.id === "empty_prompt").map((issue) => issue.message)
       : [];
   const continueTooltip =
     !canContinue && missingRequirements.length > 0 ? missingRequirements.join(" ") : undefined;

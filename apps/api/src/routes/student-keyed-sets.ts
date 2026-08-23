@@ -73,10 +73,8 @@ export function studentKeyedSetsRoutes(deps: StudentKeyedSetsRouteDeps) {
       if (instructionTemplate === null) {
         throw new ApiError("VALIDATION_ERROR", "instructionTemplate field is required");
       }
-      const expectedSignalsJson = strField(formData, "expectedSignals");
-      if (expectedSignalsJson === null) {
-        throw new ApiError("VALIDATION_ERROR", "expectedSignals field is required");
-      }
+      // Optional, same as POST /jobs — signals only matter for the scoring features.
+      const expectedSignalsJson = strField(formData, "expectedSignals") ?? "[]";
       const studentIdsJson = strField(formData, "studentIds");
       if (studentIdsJson === null) {
         throw new ApiError("VALIDATION_ERROR", "studentIds field is required");

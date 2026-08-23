@@ -148,8 +148,11 @@ export function SignalBuilder({ signals, onChange }: SignalBuilderProps) {
       </div>
 
       {signals.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          At least one expected signal is required (e.g. a methodology label or ordered terms).
+        <p className="text-sm text-muted-foreground" data-testid="signal-builder-empty-hint">
+          Optional for generating the PDF, but required to score results: Model Test, Submissions
+          and Robustness text transforms all check model or student output against these signals
+          (e.g. a methodology label or ordered terms), and signals cannot be added after a PDF is
+          generated.
         </p>
       )}
 

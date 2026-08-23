@@ -55,8 +55,8 @@ describe("isExpectedSignalArray", () => {
     ).toBe(true);
   });
 
-  test("rejects an empty array (min 1 item per API contract)", () => {
-    expect(isExpectedSignalArray([])).toBe(false);
+  test("accepts an empty array (signals are optional at generation time)", () => {
+    expect(isExpectedSignalArray([])).toBe(true);
   });
 
   test("rejects an array containing an invalid signal", () => {
@@ -85,7 +85,11 @@ describe("parseExpectedSignals", () => {
   });
 
   test("throws when JSON is valid but not a valid ExpectedSignal[]", () => {
-    expect(() => parseExpectedSignals("[]")).toThrow();
+    expect(() => parseExpectedSignals("{}")).toThrow();
     expect(() => parseExpectedSignals('[{"type":"bogus"}]')).toThrow();
+  });
+
+  test("accepts an empty list (signals are optional at generation time)", () => {
+    expect(parseExpectedSignals("[]")).toEqual([]);
   });
 });

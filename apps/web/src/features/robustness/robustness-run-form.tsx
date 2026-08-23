@@ -36,6 +36,8 @@ export interface RobustnessRunFormProps {
   onRun: (request: RobustnessRequest) => void;
   submitting: boolean;
   error: string | null;
+  /** Text transforms score expected-signal survival; disable them when the job has no signals. */
+  textTransformsDisabled?: boolean;
 }
 
 const PDF_TRANSFORM_LABELS: Record<PdfTransform, string> = {
@@ -60,6 +62,7 @@ export function RobustnessRunForm({
   onRun,
   submitting,
   error,
+  textTransformsDisabled = false,
 }: RobustnessRunFormProps) {
   const [pdfTransforms, setPdfTransforms] = useState<PdfTransform[]>([]);
   const [textTransforms, setTextTransforms] = useState<TextTransform[]>([]);
@@ -143,12 +146,19 @@ export function RobustnessRunForm({
 
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm font-medium text-foreground">Text transforms</legend>
+        {textTransformsDisabled && (
+          <p className="text-xs text-muted-foreground">
+            Unavailable: text transforms measure whether expected signals survive, and this job has
+            none.
+          </p>
+        )}
         <div className="flex flex-wrap gap-3">
           {ALL_TEXT_TRANSFORMS.map((transform) => (
             <div key={transform} className="flex items-center gap-2">
               <Checkbox
                 id={`robustness-text-transform-${transform}`}
                 data-testid={`robustness-text-transform-${transform}`}
+                disabled={textTransformsDisabled}
                 checked={textTransforms.includes(transform)}
                 onCheckedChange={(value) => toggleTextTransform(transform, value === true)}
               />

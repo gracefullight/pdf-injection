@@ -166,10 +166,10 @@ function parseAcknowledgedWarnings(raw: string | null): string[] {
 /**
  * Parses the `expectedSignals` multipart field. Malformed JSON or a shape
  * that doesn't match ExpectedSignal[] is a VALIDATION_ERROR (contract:
- * "malformed multipart field / JSON"). An empty array is *structurally*
- * valid here — lintPrompt() is responsible for rejecting it with the more
- * specific PROMPT_LINT_ERROR ("empty_expected_signals"), matching the
- * contract's error table.
+ * "malformed multipart field / JSON"). An empty array is valid: expected
+ * signals are optional at generation time (lintPrompt() surfaces a
+ * `no_expected_signals` warning); the scoring endpoints are what require
+ * them — see lib/expected-signals.ts.
  */
 function parseExpectedSignalsField(raw: string): ExpectedSignal[] {
   let parsed: unknown;

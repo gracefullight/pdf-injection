@@ -24,6 +24,7 @@ import { ocrImage } from "@pdf-injection/robustness";
 import { sha256Hex } from "@pdf-injection/validation";
 import type { AppConfig } from "../config";
 import { ApiError } from "../errors";
+import { assertJobHasExpectedSignals } from "../lib/expected-signals";
 import { extractFullPdfText } from "../lib/pdf-text";
 import type { StoredJobRow } from "../repositories/jobs.repository";
 import type { SubmissionsRepository } from "../repositories/submissions.repository";
@@ -292,10 +293,11 @@ export async function createSubmission(
     );
   }
 
-  const { text, source } = await extractSubmissionText(config, fields);
-
   const { manifest } = await getPrivateManifest(deps, job);
+  assertJobHasExpectedSignals(manifest);
   const signals = manifest.expectedSignals;
+
+  const { text, source } = await extractSubmissionText(config, fields);
 
   const baselineTexts = await loadBaselineTexts(config, submissionsRepo, job.id);
   const calibrationResult = calibrateBaseline(signals, baselineTexts);

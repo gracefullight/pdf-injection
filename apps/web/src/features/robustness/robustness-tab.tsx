@@ -1,6 +1,7 @@
 import { ERROR_MESSAGES, type RobustnessRequest } from "@pdf-injection/contracts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { NoExpectedSignalsNotice } from "@/components/no-expected-signals-notice";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { shouldPollRun } from "@/features/robustness/robustness-helpers";
 import { RobustnessResults } from "@/features/robustness/robustness-results";
@@ -23,6 +24,8 @@ import { FeatureGate, useFeatures } from "@/lib/features";
 export interface RobustnessTabProps {
   jobId: string;
   accessToken: string;
+  /** `false` → the job was generated without expected signals; text transforms (which score signal survival) are unavailable. */
+  hasExpectedSignals?: boolean;
 }
 
 function errorMessage(error: unknown): string {
@@ -34,7 +37,7 @@ function errorMessage(error: unknown): string {
 }
 
 /** Screen 4 "Robustness" tab — Phase 5 transformation experiments (research mode only). */
-export function RobustnessTab({ jobId, accessToken }: RobustnessTabProps) {
+export function RobustnessTab({ jobId, accessToken, hasExpectedSignals }: RobustnessTabProps) {
   const { features } = useFeatures();
   const queryClient = useQueryClient();
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
@@ -115,8 +118,12 @@ export function RobustnessTab({ jobId, accessToken }: RobustnessTabProps) {
       </div>
 
       <FeatureGate feature="researchMode" features={features}>
+        {hasExpectedSignals === false && (
+          <NoExpectedSignalsNotice scores="paraphrase, translation and editing transforms" />
+        )}
         <RobustnessRunForm
           features={features}
+          textTransformsDisabled={hasExpectedSignals === false}
           modelTestRuns={modelTestRunsQuery.data?.runs ?? []}
           onRun={(request) => createRun.mutate(request)}
           submitting={createRun.isPending}

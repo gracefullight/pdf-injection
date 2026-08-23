@@ -41,7 +41,15 @@ export const ExpectedSignalSchema = Type.Union([
   SectionOrderSignal,
 ]);
 
-export const ExpectedSignalArraySchema = Type.Array(ExpectedSignalSchema, { minItems: 1 });
+/**
+ * Expected signals are optional at generation time: the PDF can be produced
+ * without any, but every feature that *scores* text against them — Model
+ * Test, Submissions, Robustness text transforms — requires at least one, and
+ * they cannot be added to a job after it has been generated (they are frozen
+ * into the private manifest). That requirement is enforced by those endpoints
+ * (422 VALIDATION_ERROR), not by this schema.
+ */
+export const ExpectedSignalArraySchema = Type.Array(ExpectedSignalSchema);
 
 type _AssertMatchesExpectedSignal =
   Static<typeof ExpectedSignalSchema> extends ExpectedSignal ? true : never;
@@ -67,7 +75,7 @@ export function parseExpectedSignals(json: string): ExpectedSignal[] {
     throw new Error("expectedSignals is not valid JSON");
   }
   if (!isExpectedSignalArray(parsed)) {
-    throw new Error("expectedSignals does not match ExpectedSignal[] schema (min 1 item)");
+    throw new Error("expectedSignals does not match ExpectedSignal[] schema");
   }
   return parsed;
 }

@@ -122,6 +122,12 @@ export function ValidationScreen({
     enabled: jobQuery.data?.status === "completed",
     staleTime: Number.POSITIVE_INFINITY,
   });
+  // Expected signals are optional at generation but frozen into the manifest; the scoring tabs
+  // (Model Test / Robustness text transforms / Submissions) need at least one. `undefined` while
+  // the manifest is still loading so the tabs don't flash the "no signals" notice.
+  const hasExpectedSignals = manifestQuery.data
+    ? manifestQuery.data.expectedSignals.length > 0
+    : undefined;
 
   const sourceBytesQuery = useQuery({
     queryKey: ["job", jobId, "source-bytes"],
@@ -410,19 +416,31 @@ export function ValidationScreen({
 
         <TabsContent value="model-test">
           <ErrorBoundary label="the Model Test tab">
-            <ModelTestTab jobId={jobId} accessToken={accessToken} />
+            <ModelTestTab
+              jobId={jobId}
+              accessToken={accessToken}
+              hasExpectedSignals={hasExpectedSignals}
+            />
           </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="robustness">
           <ErrorBoundary label="the Robustness tab">
-            <RobustnessTab jobId={jobId} accessToken={accessToken} />
+            <RobustnessTab
+              jobId={jobId}
+              accessToken={accessToken}
+              hasExpectedSignals={hasExpectedSignals}
+            />
           </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="submissions">
           <ErrorBoundary label="the Submissions tab">
-            <SubmissionsTab jobId={jobId} accessToken={accessToken} />
+            <SubmissionsTab
+              jobId={jobId}
+              accessToken={accessToken}
+              hasExpectedSignals={hasExpectedSignals}
+            />
           </ErrorBoundary>
         </TabsContent>
       </Tabs>

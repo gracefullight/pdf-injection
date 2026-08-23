@@ -1,4 +1,4 @@
-import { KeyRound, Settings } from "lucide-react";
+import { Info, KeyRound, Settings } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,18 @@ export function ProviderSettingsDialog() {
             Use your own OpenAI project key for direct browser-to-OpenAI model tests.
           </DialogDescription>
         </DialogHeader>
+
+        <Alert data-testid="provider-settings-scoring-note">
+          <Info aria-hidden="true" />
+          <AlertTitle>What a model test checks</AlertTitle>
+          <AlertDescription>
+            A model test sends the injected PDF (and the untouched original) to the provider with
+            the same outer prompt, then scores each answer against the job's expected signals — the
+            phrases, labels or term orders you defined in step 2. Signals are optional for
+            generating the PDF but required for this scoring, and they are frozen into the job when
+            it is generated: a job created without signals cannot be scored, only regenerated.
+          </AlertDescription>
+        </Alert>
 
         <Alert variant="warning">
           <KeyRound aria-hidden="true" />

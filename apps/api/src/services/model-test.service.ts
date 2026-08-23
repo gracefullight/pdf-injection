@@ -25,6 +25,7 @@ import { sha256Hex } from "@pdf-injection/validation";
 import type { AppConfig } from "../config";
 import { ApiError } from "../errors";
 import type { BackgroundRunner } from "../lib/background-runner";
+import { assertJobHasExpectedSignals } from "../lib/expected-signals";
 import {
   deleteJobArtifact,
   jobArtifactExists,
@@ -272,6 +273,7 @@ export async function createModelTestRun(
       ? body.outerPrompt
       : DEFAULT_OUTER_PROMPT;
   const manifest = await loadManifest(config, job.id);
+  assertJobHasExpectedSignals(manifest);
 
   const totalCalls = body.providers.length * conditions.length * body.repeats;
   const runId = crypto.randomUUID();

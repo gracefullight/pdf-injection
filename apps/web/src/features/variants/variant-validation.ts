@@ -5,8 +5,9 @@ import { MAX_VARIANTS, MIN_VARIANTS, type VariantDraft } from "@/features/varian
 /**
  * Gates "Continue to generate" for `distributionMode: "variants"`: count in
  * [MIN_VARIANTS, MAX_VARIANTS], unique non-empty labels, every variant has a
- * non-empty instruction, at least one expected signal, no lint errors, and
- * no unacknowledged lint warnings.
+ * non-empty instruction, no lint errors, and no unacknowledged lint warnings
+ * (expected signals are optional at generation — an empty list is the
+ * acknowledgeable `no_expected_signals` warning, same as single mode).
  *
  * `payloadLanguage` is threaded into `lintPrompt` — otherwise a Korean
  * variant instruction is always flagged `encoding_unsupported` even after
@@ -25,7 +26,6 @@ export function isVariantSetValid(
 
   return variants.every((variant) => {
     if (variant.instruction.trim().length === 0) return false;
-    if (variant.signals.length === 0) return false;
     const lint = lintPrompt(variant.instruction, variant.signals, { payloadLanguage });
     if (lint.errors.length > 0) return false;
     const unacknowledged = lint.warnings.filter(

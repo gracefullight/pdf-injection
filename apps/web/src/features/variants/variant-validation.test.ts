@@ -37,9 +37,14 @@ describe("isVariantSetValid", () => {
     );
   });
 
-  it("rejects a variant with no expected signals", () => {
+  it("treats a variant with no expected signals as an acknowledgeable warning, not a hard block", () => {
     const noSignals: VariantDraft = { ...validVariant("A"), signals: [] };
     expect(isVariantSetValid([noSignals, validVariant("B")], "en")).toBe(false);
+    const acknowledged: VariantDraft = {
+      ...noSignals,
+      acknowledgedWarnings: [...noSignals.acknowledgedWarnings, "no_expected_signals"],
+    };
+    expect(isVariantSetValid([acknowledged, validVariant("B")], "en")).toBe(true);
   });
 
   // Cycle 3: payloadLanguage must reach lintPrompt's non-ASCII check, or a

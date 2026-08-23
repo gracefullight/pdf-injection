@@ -86,10 +86,13 @@ async function extractCreateJobFields(
   if (typeof instruction !== "string") {
     throw new ApiError("VALIDATION_ERROR", "instruction field is required");
   }
-  const expectedSignalsJson = formData.get("expectedSignals");
-  if (typeof expectedSignalsJson !== "string") {
-    throw new ApiError("VALIDATION_ERROR", "expectedSignals field is required");
+  // Optional: signals are only needed by the scoring features (Model Test,
+  // Submissions, Robustness) — see apps/api/src/lib/expected-signals.ts.
+  const expectedSignalsField = formData.get("expectedSignals");
+  if (expectedSignalsField !== null && typeof expectedSignalsField !== "string") {
+    throw new ApiError("VALIDATION_ERROR", "expectedSignals must be a JSON string");
   }
+  const expectedSignalsJson = expectedSignalsField ?? "[]";
   const injectionMode = formData.get("injectionMode");
   if (typeof injectionMode !== "string") {
     throw new ApiError("VALIDATION_ERROR", "injectionMode field is required");

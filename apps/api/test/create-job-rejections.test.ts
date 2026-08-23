@@ -134,7 +134,7 @@ describe("POST /api/v1/jobs - pre-processing rejections (no job row, no files)",
     await expectRejection(res, 422, "PROMPT_LINT_ERROR");
   });
 
-  test("PROMPT_LINT_ERROR: empty expectedSignals", async () => {
+  test("empty expectedSignals is accepted (optional at generation) with a no_expected_signals warning", async () => {
     const { app } = testApp();
     const file = await fixtureFile("one-page-text.pdf");
     const res = await app.handle(
@@ -145,7 +145,9 @@ describe("POST /api/v1/jobs - pre-processing rejections (no job row, no files)",
         injectionMode: "white_text",
       }),
     );
-    await expectRejection(res, 422, "PROMPT_LINT_ERROR");
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { lintWarnings: Array<{ id: string }> };
+    expect(body.lintWarnings.map((w) => w.id)).toContain("no_expected_signals");
   });
 
   test("VALIDATION_ERROR: malformed expectedSignals JSON", async () => {
