@@ -909,7 +909,7 @@
   "expectedPageCount": 50,
   "expectedWarnings": [],
   "fixture": "fifty-page-text.pdf",
-  "generatedAt": "2026-08-22T08:24:14.139Z",
+  "generatedAt": "2026-08-22T16:07:31.732Z",
   "kind": "inject",
   "maxVisualDiffRatio": 1e-7,
   "mode": "render_mode_3",

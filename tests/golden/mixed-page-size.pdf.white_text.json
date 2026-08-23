@@ -65,7 +65,7 @@
     "ACCESSIBILITY_HIDDEN_TEXT"
   ],
   "fixture": "mixed-page-size.pdf",
-  "generatedAt": "2026-08-22T08:24:14.220Z",
+  "generatedAt": "2026-08-22T16:07:32.062Z",
   "kind": "inject",
   "maxVisualDiffRatio": 0.00001,
   "mode": "white_text",

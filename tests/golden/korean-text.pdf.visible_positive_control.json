@@ -27,7 +27,7 @@
   "expectedPageCount": 1,
   "expectedWarnings": [],
   "fixture": "korean-text.pdf",
-  "generatedAt": "2026-08-22T08:24:14.287Z",
+  "generatedAt": "2026-08-22T16:07:32.245Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

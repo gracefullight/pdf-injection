@@ -1,0 +1,42 @@
+{
+  "expectedExtraction": {
+    "hiddenTextExtracted": false,
+    "metadataPayloadPresent": null,
+    "targetPageMatch": false
+  },
+  "expectedGeometry": [
+    {
+      "cropBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "height": 792,
+      "mediaBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "pageIndex": 0,
+      "rotation": 0,
+      "width": 612
+    }
+  ],
+  "expectedPageCount": 1,
+  "expectedWarnings": [
+    "PDF_CONTAINS_EXTERNAL_URIS"
+  ],
+  "fixture": "external-uri.pdf",
+  "generatedAt": "2026-08-22T16:07:32.406Z",
+  "kind": "inject",
+  "maxVisualDiffRatio": 1e-7,
+  "mode": "freetext_annot",
+  "payloadLanguage": "en",
+  "toolVersions": {
+    "bun": "1.3.14",
+    "pdfLib": "^1.17.1",
+    "pdfjsDist": "^4.10.38"
+  }
+}

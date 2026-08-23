@@ -1,0 +1,43 @@
+{
+  "expectedExtraction": {
+    "hiddenTextExtracted": false,
+    "metadataPayloadPresent": null,
+    "targetPageMatch": false
+  },
+  "expectedGeometry": [
+    {
+      "cropBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "height": 792,
+      "mediaBox": [
+        0,
+        0,
+        612,
+        792
+      ],
+      "pageIndex": 0,
+      "rotation": 0,
+      "width": 612
+    }
+  ],
+  "expectedPageCount": 1,
+  "expectedWarnings": [
+    "PDF_CONTAINS_JAVASCRIPT",
+    "PDF_HAS_OPEN_ACTION"
+  ],
+  "fixture": "javascript-openaction.pdf",
+  "generatedAt": "2026-08-22T16:07:32.317Z",
+  "kind": "inject",
+  "maxVisualDiffRatio": "Infinity",
+  "mode": "image_only",
+  "payloadLanguage": "en",
+  "toolVersions": {
+    "bun": "1.3.14",
+    "pdfLib": "^1.17.1",
+    "pdfjsDist": "^4.10.38"
+  }
+}

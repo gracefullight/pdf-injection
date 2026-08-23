@@ -99,7 +99,7 @@
   "expectedPageCount": 5,
   "expectedWarnings": [],
   "fixture": "five-page-text.pdf",
-  "generatedAt": "2026-08-22T08:24:14.056Z",
+  "generatedAt": "2026-08-22T16:07:31.610Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

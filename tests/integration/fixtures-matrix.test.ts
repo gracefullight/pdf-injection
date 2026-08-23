@@ -6,6 +6,7 @@ import {
   inspectSource,
   PdfEncryptedError,
   PdfSignedError,
+  resolveNapiCanvas,
 } from "@pdf-injection/pdf-engine";
 import { checkMetadataPayload, extractText } from "@pdf-injection/validation";
 import { PDFDocument } from "pdf-lib";
@@ -161,6 +162,106 @@ describe("fixture matrix: unicode_tags injection + tag-encoded extraction (never
       // glyph before extractText() ever sees it, so searching for the plain
       // instruction and searching for its tag-encoded form both fail the
       // same way, for the same reason.
+      const extraction = await extractText({
+        bytes: result.bytes,
+        targetInstruction: TEST_INSTRUCTION,
+        targetPageIndex: result.pageIndex,
+      });
+      expect(extraction.targetPageMatch).toBe(false);
+    });
+  }
+});
+
+// Round 3 probe conditions (research/diagnostic, not production channels):
+// info_dict / freetext_annot / acroform_field. All three route the payload through a channel
+// this app's pdfjs-based extractText() never inspects — the classic /Info dict (info_dict) or an
+// annotation/widget's own /AP /N appearance stream (freetext_annot/acroform_field), never the
+// page's own content stream — so, like unicode_tags above, extraction is a STRUCTURAL guarantee
+// (deterministically false), not render_mode_3's merely-recorded uncertainty.
+//
+// Important nuance (see packages/pdf-engine's backend result memory for the full empirical
+// finding): freetext_annot/acroform_field are NOT "structural metadata only" channels the way
+// info_dict is — poppler's pdftotext DOES extract them, via the same content-stream operator walk
+// it uses for ordinary page text (the payload is real, invisible-render-mode `3 Tr` text drawn
+// inside the annotation/widget's own appearance stream). That's a poppler-specific finding,
+// irrelevant to THIS pdfjs-based extractText() check, which is what this describe block verifies.
+//
+// Verifying the payload is genuinely present in the output PDF's /Info dict / annotation
+// /Contents / widget /V (independent of pdfjs) is packages/pdf-engine's own test suite's
+// responsibility (readInfoDictPayload / readFreetextAnnotPayload / readAcroFormFieldPayload — see
+// packages/pdf-engine/test/inject-{info-dict,freetext-annot,acroform-field}.test.ts), not this
+// integration-level file's — mirrors the unicode_tags block's identical division of
+// responsibility above.
+describe("fixture matrix: info_dict / freetext_annot / acroform_field injection + deterministic-false extraction (never pdfjs-extractable)", () => {
+  const PROBE_MODES = ["info_dict", "freetext_annot", "acroform_field"] as const;
+
+  for (const fixtureName of GOOD_FIXTURES) {
+    for (const mode of PROBE_MODES) {
+      test(`${fixtureName} x ${mode}`, async () => {
+        const source = await Bun.file(path.join(FIXTURES_DIR, fixtureName)).bytes();
+        const sourceDoc = await PDFDocument.load(source);
+        const originalPageCount = sourceDoc.getPageCount();
+
+        const result = await injectPdf({
+          source: new Uint8Array(source),
+          instruction: TEST_INSTRUCTION,
+          mode,
+          targetPage: "last",
+          position: "bottom",
+        });
+
+        const reloaded = await PDFDocument.load(result.bytes);
+        expect(reloaded.getPageCount()).toBe(originalPageCount);
+        expect(result.pageGeometryBefore).toEqual(result.pageGeometryAfter);
+
+        // Deterministically false — none of these three channels is ever visited by
+        // extractText()'s page-content-only getTextContent() walk (see block comment above).
+        const extraction = await extractText({
+          bytes: result.bytes,
+          targetInstruction: TEST_INSTRUCTION,
+          targetPageIndex: result.pageIndex,
+        });
+        expect(extraction.targetPageMatch).toBe(false);
+      });
+    }
+  }
+});
+
+// Round 3 probe condition: image_only. Rasterizes the instruction to a PNG and stamps it on the
+// page — NO text object of any kind is written, so this is a stronger guarantee than even
+// unicode_tags/info_dict/freetext_annot/acroform_field above: there is no text-extractable
+// channel here at all, by construction, for ANY text-extraction library, not just this app's
+// pdfjs-based one. Skips gracefully (does not fail) on a machine without @napi-rs/canvas
+// available, mirroring packages/pdf-engine/test/inject-image-only.test.ts's own skip pattern —
+// canvas availability is a real-server-capability question (surfaced to users via
+// health.features.canvasAvailable), not something this suite should hard-fail on.
+describe("fixture matrix: image_only injection + deterministic-false extraction (no text object exists at all)", () => {
+  for (const fixtureName of GOOD_FIXTURES) {
+    test(`${fixtureName} x image_only`, async () => {
+      const { module: canvasModule } = await resolveNapiCanvas();
+      if (!canvasModule) {
+        console.log(
+          "[fixtures-matrix.test.ts] @napi-rs/canvas unavailable — skipping image_only check",
+        );
+        return;
+      }
+
+      const source = await Bun.file(path.join(FIXTURES_DIR, fixtureName)).bytes();
+      const sourceDoc = await PDFDocument.load(source);
+      const originalPageCount = sourceDoc.getPageCount();
+
+      const result = await injectPdf({
+        source: new Uint8Array(source),
+        instruction: TEST_INSTRUCTION,
+        mode: "image_only",
+        targetPage: "last",
+        position: "bottom",
+      });
+
+      const reloaded = await PDFDocument.load(result.bytes);
+      expect(reloaded.getPageCount()).toBe(originalPageCount);
+      expect(result.pageGeometryBefore).toEqual(result.pageGeometryAfter);
+
       const extraction = await extractText({
         bytes: result.bytes,
         targetInstruction: TEST_INSTRUCTION,

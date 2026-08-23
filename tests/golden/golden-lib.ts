@@ -31,6 +31,28 @@ export const MODES: InjectionMode[] = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  // Round-3 research/diagnostic probe conditions (not production channels).
+  // hiddenTextExtracted/targetPageMatch is deterministically false for all four via this
+  // project's pdfjs-based extractText() (image_only: no text object exists at all;
+  // freetext_annot/acroform_field/info_dict: payload lives in an annotation/widget appearance
+  // stream or the classic /Info dict, neither of which extractText()'s page-content-only
+  // getTextContent() walk ever inspects) — same "no per-mode branch needed" treatment as
+  // render_mode_3/unicode_tags above. metadataPayloadPresent stays null for all four: it's
+  // computed by checkMetadataPayload(), which is XMP-/Metadata-specific and unrelated to
+  // info_dict's classic /Info dict fields or the two appearance-stream channels — see
+  // GoldenInjectCase.expectedExtraction's doc comment ("only non-null for mode xmp_only").
+  //
+  // image_only byte-stability, measured (not assumed) before adding it here: injectPdf({mode:
+  // "image_only"}) on the same source+instruction produced byte-identical output.bytes (verified
+  // via sha256) across 3 separate `bun run` process invocations (not just repeated calls in one
+  // process), and a same-process two-run comparison additionally showed the raw image XObject's
+  // decoded PNG stream bytes identical. So image_only's golden uses this file's normal structural
+  // schema (geometry / extraction flags / diffThreshold / warnings) like every other mode, not a
+  // separate byte-hash variant — the measurement ruled that out as unnecessary.
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 
 /**

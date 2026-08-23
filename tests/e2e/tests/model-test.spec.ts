@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  API_BASE_URL,
   continueToGenerateAndSubmit,
   DOWNLOAD_DIR,
   deleteJobAndConfirm,
@@ -11,6 +12,12 @@ import {
   waitForRunTerminal,
 } from "./helpers";
 
+// Mirrors apps/web's ALL_BENCHMARK_CONDITIONS (model-test-helpers.ts) / packages/benchmark's
+// ALL_CONDITIONS (config.ts) — kept as a local literal (not imported) since this spec exercises
+// the UI's default "all conditions checked" state, not the library constant directly. Grew from 6
+// to 10 when the 4 round-3 research/diagnostic probe conditions (image_only/freetext_annot/
+// acroform_field/info_dict) were added and wired into the Model Test condition checklist's
+// default-checked state.
 const CONDITIONS = [
   "original",
   "white_text",
@@ -18,6 +25,10 @@ const CONDITIONS = [
   "visible_positive_control",
   "xmp_only",
   "unicode_tags",
+  "image_only",
+  "freetext_annot",
+  "acroform_field",
+  "info_dict",
 ];
 
 test.beforeAll(async () => {
@@ -31,7 +42,23 @@ test.beforeAll(async () => {
  */
 test("model test: mock provider, all conditions, repeats 2, aggregates + gate + export", async ({
   page,
+  request,
 }) => {
+  // Model Test regenerates each condition's PDF server-side regardless of the mode originally
+  // selected on the Generate screen (getConditionPdf()), and — unlike the injection-mode <Select>
+  // — the condition checklist does not disable image_only's checkbox when @napi-rs/canvas is
+  // unavailable. If it were left checked in that state, getConditionPdf() would throw
+  // CanvasUnavailableError and fail the ENTIRE run (not just that one condition — see
+  // model-test.service.ts's runModelTestJob, which has no per-condition partial-failure path), so
+  // this spec must know canvas availability up front and adjust the expected condition set to
+  // match, the same way image-only.spec.ts gates on the same flag.
+  const health = await (await request.get(`${API_BASE_URL}/api/v1/health`)).json();
+  const canvasAvailable = Boolean(health.features?.canvasAvailable);
+  console.log(`[model_test] health.features.canvasAvailable: ${canvasAvailable}`);
+  const effectiveConditions = canvasAvailable
+    ? CONDITIONS
+    : CONDITIONS.filter((condition) => condition !== "image_only");
+
   await uploadFixtureAndContinue(page);
   await fillInstructionAndSignals(page);
   await continueToGenerateAndSubmit(page);
@@ -58,11 +85,17 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
     "start Ollama to use local models",
   );
 
-  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 6
-  // conditions checked (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2.
+  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 10
+  // conditions checked (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2, and
+  // image_only needs explicitly unchecking when this server has no @napi-rs/canvas (see the
+  // canvasAvailable comment above).
   await expect(page.getByTestId("model-test-provider-mock")).toBeChecked();
   for (const condition of CONDITIONS) {
     await expect(page.getByTestId(`model-test-condition-${condition}`)).toBeChecked();
+  }
+  if (!canvasAvailable) {
+    await page.getByTestId("model-test-condition-image_only").click();
+    await expect(page.getByTestId("model-test-condition-image_only")).not.toBeChecked();
   }
   await page.getByTestId("model-test-repeats-input").fill("2");
 
@@ -80,7 +113,7 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
   console.log(`[model_test] interpretation: ${interpretationText}`);
   expect(interpretationText?.trim().length ?? 0).toBeGreaterThan(0);
 
-  for (const condition of CONDITIONS) {
+  for (const condition of effectiveConditions) {
     const row = page.getByTestId(`model-test-aggregate-row-mock-${condition}`);
     await expect(row).toBeVisible();
     // Table columns: Provider, Condition, n, All-signal rate, Any-signal rate, Δ, Disclosure
@@ -112,7 +145,7 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
   const exportPath = path.join(DOWNLOAD_DIR, exportDownload.suggestedFilename());
   await exportDownload.saveAs(exportPath);
   const exported = JSON.parse(await fs.readFile(exportPath, "utf8"));
-  expect(exported.results.length).toBe(CONDITIONS.length * 2); // 6 conditions x 2 repeats
+  expect(exported.results.length).toBe(effectiveConditions.length * 2); // N conditions x 2 repeats
   expect(exported.smokeTestGate).toBeDefined();
 
   await page.locator('[data-testid^="model-test-run-delete-"]').first().click();

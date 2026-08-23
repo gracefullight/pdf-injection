@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  API_BASE_URL,
   continueToGenerateAndSubmit,
   DOD_INSTRUCTION,
   DOWNLOAD_DIR,
@@ -14,7 +15,7 @@ import {
   waitForOverallLeavesNotTested,
 } from "./helpers";
 
-const API_BASE = "http://localhost:3001";
+const API_BASE = API_BASE_URL;
 
 test.beforeAll(async () => {
   await fs.mkdir(SCREENSHOT_DIR, { recursive: true });

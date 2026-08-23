@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  API_BASE_URL,
   continueToGenerateAndSubmit,
   DOD_INSTRUCTION,
   DOWNLOAD_DIR,
@@ -41,7 +42,7 @@ test("robustness: ocr_regeneration + paraphrase (mock), artifact + samples", asy
   page,
   request,
 }) => {
-  const health = await (await request.get("http://localhost:3001/api/v1/health")).json();
+  const health = await (await request.get(`${API_BASE_URL}/api/v1/health`)).json();
   console.log(`[robustness_ocr_paraphrase] health.features: ${JSON.stringify(health.features)}`);
 
   await page.goto("/");

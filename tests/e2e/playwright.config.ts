@@ -23,8 +23,12 @@ const apiDbPath = path.join(tmpDir, "pdf-injection.sqlite");
 // SQLITE_CANTOPEN on a clean checkout / after `.tmp/` is wiped between runs.
 fs.mkdirSync(apiStorageDir, { recursive: true });
 
-const API_PORT = 3001;
-const WEB_PORT = 5173;
+// Overridable via env (default: the project's normal dev ports). Lets this suite run its own
+// dedicated pair of servers alongside another apps/api instance already occupying 3001 (e.g. a
+// long-running benchmark) without touching it — set PDFI_E2E_API_PORT/PDFI_E2E_WEB_PORT to a free
+// pair and CI=1 (forces reuseExistingServer: false below) to guarantee a fresh, isolated pair.
+const API_PORT = Number(process.env.PDFI_E2E_API_PORT ?? 3001);
+const WEB_PORT = Number(process.env.PDFI_E2E_WEB_PORT ?? 5173);
 
 export default defineConfig({
   testDir: "./tests",

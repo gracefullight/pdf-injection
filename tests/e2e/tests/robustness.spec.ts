@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  API_BASE_URL,
   continueToGenerateAndSubmit,
   deleteJobAndConfirm,
   fillInstructionAndSignals,
@@ -40,7 +41,7 @@ test("robustness: print_to_pdf + human_edit run, artifact download, screenshot O
   page,
   request,
 }) => {
-  const health = await (await request.get("http://localhost:3001/api/v1/health")).json();
+  const health = await (await request.get(`${API_BASE_URL}/api/v1/health`)).json();
   console.log(`[robustness] health.features: ${JSON.stringify(health.features)}`);
 
   await uploadFixtureAndContinue(page);

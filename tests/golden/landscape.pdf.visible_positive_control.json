@@ -27,7 +27,7 @@
   "expectedPageCount": 1,
   "expectedWarnings": [],
   "fixture": "landscape.pdf",
-  "generatedAt": "2026-08-22T08:24:14.202Z",
+  "generatedAt": "2026-08-22T16:07:31.967Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

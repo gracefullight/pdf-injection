@@ -29,7 +29,7 @@
     "PDF_CONTAINS_EXTERNAL_URIS"
   ],
   "fixture": "annotations.pdf",
-  "generatedAt": "2026-08-22T08:24:14.246Z",
+  "generatedAt": "2026-08-22T16:07:32.152Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

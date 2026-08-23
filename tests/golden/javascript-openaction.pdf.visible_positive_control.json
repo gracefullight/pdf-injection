@@ -30,7 +30,7 @@
     "PDF_HAS_OPEN_ACTION"
   ],
   "fixture": "javascript-openaction.pdf",
-  "generatedAt": "2026-08-22T08:24:14.300Z",
+  "generatedAt": "2026-08-22T16:07:32.290Z",
   "kind": "inject",
   "maxVisualDiffRatio": "Infinity",
   "mode": "visible_positive_control",

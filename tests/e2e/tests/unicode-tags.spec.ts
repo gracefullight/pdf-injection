@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  API_BASE_URL,
   DOWNLOAD_DIR,
   deleteJobAndConfirm,
   fillInstructionAndSignals,
@@ -36,7 +37,7 @@ test("unicode_tags mode: generate, PASS_WITH_WARNINGS, warning surfaces, extract
   page,
   request,
 }) => {
-  const health = await (await request.get("http://localhost:3001/api/v1/health")).json();
+  const health = await (await request.get(`${API_BASE_URL}/api/v1/health`)).json();
   const koPayloadAvailable = Boolean(health.features?.koPayload);
   console.log(`[unicode_tags] health.features.koPayload: ${koPayloadAvailable}`);
 
