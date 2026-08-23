@@ -21,6 +21,15 @@ import {
   readErrorPayload,
   unwrapEdenAs,
 } from "@/lib/eden-client";
+import {
+  applyLocalClientValidation,
+  deleteLocalJob,
+  localJobStatus,
+  putLocalJob,
+  requireLocalJob,
+} from "@/lib/local-job/local-job-store";
+import { isLocalJobId, runLocalJob } from "@/lib/local-job/run-local-job";
+import { isLocalModeEnabled } from "@/lib/local-mode";
 
 export { API_PREFIX, authHeaders, resolveEdenDomain } from "@/lib/eden-client";
 
@@ -83,6 +92,15 @@ export interface CreateJobInput {
 }
 
 export async function createJob(input: CreateJobInput): Promise<CreateJobResponse> {
+  // Local (server-free) mode: run the whole pipeline on-device. Every function
+  // below then serves that job from the in-memory store instead of the API, so
+  // the wizard, the validation screen and the download buttons are unchanged.
+  if (isLocalModeEnabled()) {
+    const { job, response } = await runLocalJob(input);
+    putLocalJob(job);
+    return response;
+  }
+
   const fields: Record<string, string | File> = {
     file: input.file,
     instruction: input.instruction,
@@ -108,6 +126,7 @@ export async function createJob(input: CreateJobInput): Promise<CreateJobRespons
 }
 
 export async function getJobStatus(jobId: string, accessToken: string): Promise<JobStatusResponse> {
+  if (isLocalJobId(jobId)) return localJobStatus(jobId);
   const result = await eden.api.v1
     .jobs({ jobId })
     .get({ headers: authHeaders(accessToken) as Record<string, string> });
@@ -119,6 +138,10 @@ export async function postClientValidation(
   accessToken: string,
   input: ClientValidationInput,
 ): Promise<JobStatusResponse> {
+  if (isLocalJobId(jobId)) {
+    applyLocalClientValidation(jobId, input);
+    return localJobStatus(jobId);
+  }
   const result = await eden.api.v1.jobs({ jobId })["client-validation"].post(input as never, {
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -129,6 +152,7 @@ export async function getPrivateManifest(
   jobId: string,
   accessToken: string,
 ): Promise<PrivateManifest> {
+  if (isLocalJobId(jobId)) return requireLocalJob(jobId).manifest;
   const result = await eden.api.v1.jobs({ jobId })["private-manifest"].get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -139,6 +163,7 @@ export async function getValidationReport(
   jobId: string,
   accessToken: string,
 ): Promise<ValidationReport> {
+  if (isLocalJobId(jobId)) return requireLocalJob(jobId).report;
   const result = await eden.api.v1.jobs({ jobId })["validation-report"].get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -146,6 +171,10 @@ export async function getValidationReport(
 }
 
 export async function deleteJob(jobId: string, accessToken: string): Promise<void> {
+  if (isLocalJobId(jobId)) {
+    deleteLocalJob(jobId);
+    return;
+  }
   const result = await eden.api.v1.jobs({ jobId }).delete(undefined, {
     headers: authHeaders(accessToken) as Record<string, string>,
   });
@@ -157,6 +186,14 @@ export async function deleteJob(jobId: string, accessToken: string): Promise<voi
 export interface DownloadedFile {
   blob: Blob;
   filename: string;
+}
+
+/** Same pretty-printed JSON artifact the server serves, built from an in-memory local job. */
+function jsonFile(data: unknown, filename: string): DownloadedFile {
+  return {
+    blob: new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }),
+    filename,
+  };
 }
 
 /**
@@ -216,6 +253,7 @@ export function getOutputPdfUrl(jobId: string): string {
 
 /** Fetches the source PDF bytes (used by Human View / Visual Diff to render the original). */
 export async function fetchSourcePdfBytes(jobId: string, accessToken: string): Promise<Uint8Array> {
+  if (isLocalJobId(jobId)) return requireLocalJob(jobId).sourceBytes;
   const response = await fetch(getSourcePdfUrl(jobId), { headers: authHeaders(accessToken) });
   if (!response.ok) {
     await throwFetchError(response);
@@ -225,6 +263,7 @@ export async function fetchSourcePdfBytes(jobId: string, accessToken: string): P
 
 /** Fetches the output PDF bytes (used by Human View / Visual Diff / Extracted Text). */
 export async function fetchOutputPdfBytes(jobId: string, accessToken: string): Promise<Uint8Array> {
+  if (isLocalJobId(jobId)) return requireLocalJob(jobId).outputBytes;
   const response = await fetch(getOutputPdfUrl(jobId), { headers: authHeaders(accessToken) });
   if (!response.ok) {
     await throwFetchError(response);
@@ -237,7 +276,14 @@ export async function downloadOutputPdf(
   accessToken: string,
   sourceStem: string,
 ): Promise<DownloadedFile> {
-  return downloadPdfLike(getOutputPdfUrl(jobId), accessToken, `${sourceStem}.injected.pdf`);
+  const filename = `${sourceStem}.injected.pdf`;
+  if (isLocalJobId(jobId)) {
+    const blob = new Blob([requireLocalJob(jobId).outputBytes as BlobPart], {
+      type: "application/pdf",
+    });
+    return { blob, filename };
+  }
+  return downloadPdfLike(getOutputPdfUrl(jobId), accessToken, filename);
 }
 
 export async function downloadPrivateManifest(
@@ -245,10 +291,12 @@ export async function downloadPrivateManifest(
   accessToken: string,
   sourceStem: string,
 ): Promise<DownloadedFile> {
+  const filename = `${sourceStem}.private-manifest.json`;
+  if (isLocalJobId(jobId)) return jsonFile(requireLocalJob(jobId).manifest, filename);
   const result = await eden.api.v1.jobs({ jobId })["private-manifest"].get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
-  return downloadJsonArtifact<PrivateManifest>(result, `${sourceStem}.private-manifest.json`);
+  return downloadJsonArtifact<PrivateManifest>(result, filename);
 }
 
 export async function downloadValidationReport(
@@ -256,10 +304,12 @@ export async function downloadValidationReport(
   accessToken: string,
   sourceStem: string,
 ): Promise<DownloadedFile> {
+  const filename = `${sourceStem}.validation-report.json`;
+  if (isLocalJobId(jobId)) return jsonFile(requireLocalJob(jobId).report, filename);
   const result = await eden.api.v1.jobs({ jobId })["validation-report"].get({
     headers: authHeaders(accessToken) as Record<string, string>,
   });
-  return downloadJsonArtifact<ValidationReport>(result, `${sourceStem}.validation-report.json`);
+  return downloadJsonArtifact<ValidationReport>(result, filename);
 }
 
 /** Triggers a browser download for an already-fetched blob via a temporary object URL. */

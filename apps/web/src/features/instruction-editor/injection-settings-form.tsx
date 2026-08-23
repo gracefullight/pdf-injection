@@ -48,6 +48,11 @@ export interface InjectionSettingsFormProps {
   zhPayloadAvailable: boolean;
   /** From `useFeatures()`; when false, `image_only` cannot rasterize (no `@napi-rs/canvas` on this server). */
   canvasAvailable: boolean;
+  /**
+   * On-device mode: there is no server at all, so the suffix on a disabled
+   * option must not say "on this server" — these modes/languages need one.
+   */
+  localMode?: boolean;
 }
 
 export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
@@ -74,7 +79,9 @@ export function InjectionSettingsForm({
   koPayloadAvailable,
   zhPayloadAvailable,
   canvasAvailable,
+  localMode = false,
 }: InjectionSettingsFormProps) {
+  const unavailableSuffix = localMode ? "(needs a server)" : "(unavailable on this server)";
   function update(partial: Partial<InjectionSettings>) {
     onChange({ ...settings, ...partial });
   }
@@ -123,14 +130,14 @@ export function InjectionSettingsForm({
               disabled={!koPayloadAvailable}
               data-testid="injection-mode-option-unicode-tags"
             >
-              Unicode tags (research) {koPayloadAvailable ? "" : "(unavailable on this server)"}
+              Unicode tags (research) {koPayloadAvailable ? "" : unavailableSuffix}
             </SelectItem>
             <SelectItem
               value="image_only"
               disabled={!canvasAvailable}
               data-testid="injection-mode-option-image-only"
             >
-              Image only (visible) {canvasAvailable ? "" : "(unavailable on this server)"}
+              Image only (visible) {canvasAvailable ? "" : unavailableSuffix}
             </SelectItem>
             <SelectItem value="freetext_annot" data-testid="injection-mode-option-freetext-annot">
               FreeText annotation
@@ -228,14 +235,14 @@ export function InjectionSettingsForm({
               disabled={!koPayloadAvailable}
               data-testid="payload-language-option-ko"
             >
-              Korean {koPayloadAvailable ? "" : "(unavailable on this server)"}
+              Korean {koPayloadAvailable ? "" : unavailableSuffix}
             </SelectItem>
             <SelectItem
               value="zh"
               disabled={!zhPayloadAvailable}
               data-testid="payload-language-option-zh"
             >
-              Chinese {zhPayloadAvailable ? "" : "(unavailable on this server)"}
+              Chinese {zhPayloadAvailable ? "" : unavailableSuffix}
             </SelectItem>
           </SelectContent>
         </Select>

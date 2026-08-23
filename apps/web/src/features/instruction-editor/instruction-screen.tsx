@@ -21,6 +21,7 @@ import type {
 } from "@/features/variants/variant-types";
 import { isVariantSetValid } from "@/features/variants/variant-validation";
 import { useFeatures } from "@/lib/features";
+import { useLocalMode } from "@/lib/local-mode";
 
 export interface InstructionScreenProps {
   instruction: string;
@@ -74,6 +75,7 @@ export function InstructionScreen({
     [instruction, signals, settings.payloadLanguage],
   );
   const { features } = useFeatures();
+  const localMode = useLocalMode().enabled;
 
   // "single" mode reuses the existing raw/guided instruction + signals above;
   // "variants"/"student_keyed" (Phase 5, contract §1/§5) instead validate
@@ -225,6 +227,7 @@ export function InstructionScreen({
             koPayloadAvailable={features.koPayload}
             zhPayloadAvailable={features.zhPayload}
             canvasAvailable={features.canvasAvailable}
+            localMode={localMode}
           />
         </div>
       </div>

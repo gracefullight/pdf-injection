@@ -2,6 +2,7 @@ import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { LocalModeBanner } from "@/components/local-mode-banner";
 import { GenerateScreen } from "@/features/instruction-editor/generate-screen";
 import { InstructionScreen } from "@/features/instruction-editor/instruction-screen";
 import {
@@ -24,6 +25,8 @@ import {
 } from "@/features/variants/variant-types";
 import { clearDraft, type InstructionDraft, loadDraft, saveDraft } from "@/lib/draft-storage";
 import { clearJobCredentials, loadJobCredentials, saveJobCredentials } from "@/lib/job-storage";
+import { isLocalJobId } from "@/lib/local-job/run-local-job";
+import { useLocalMode } from "@/lib/local-mode";
 import { clearAllSetCredentials, loadSetCredentials, saveSetCredentials } from "@/lib/set-storage";
 import { cn } from "@/lib/utils";
 
@@ -52,8 +55,19 @@ interface SetCredentials {
   accessToken: string;
 }
 
+/**
+ * A locally generated job lives only in this tab's memory (see
+ * `lib/local-job/local-job-store.ts`), so a restored credential pair would
+ * send the wizard straight to a step-4 screen with nothing behind it. Drop it
+ * and start fresh instead.
+ */
 function initialJob(): JobCredentials | null {
-  return loadJobCredentials();
+  const stored = loadJobCredentials();
+  if (stored && isLocalJobId(stored.jobId)) {
+    clearJobCredentials();
+    return null;
+  }
+  return stored;
 }
 
 function initialVariantSet(): SetCredentials | null {
@@ -86,6 +100,8 @@ export function App() {
     () => restoredDraft?.settings ?? DEFAULT_INJECTION_SETTINGS,
   );
   const [acknowledgedWarnings, setAcknowledgedWarnings] = useState<string[]>([]);
+  // Decides (and publishes, for `api.ts`) whether jobs run on-device — see lib/local-mode.ts.
+  const localMode = useLocalMode();
   const [job, setJob] = useState<JobCredentials | null>(initialJob);
   const [distributionMode, setDistributionMode] = useState<DistributionMode>(
     () => restoredDraft?.distributionMode ?? "single",
@@ -175,7 +191,9 @@ export function App() {
 
   function handleGenerated(jobId: string, accessToken: string) {
     const credentials = { jobId, accessToken };
-    saveJobCredentials(credentials);
+    // Local jobs are memory-only, so persisting their credentials would just
+    // restore an empty step 4 after a reload (see `initialJob`).
+    if (!isLocalJobId(jobId)) saveJobCredentials(credentials);
     clearDraft();
     setJob(credentials);
     setStep(4);
@@ -220,6 +238,10 @@ export function App() {
         </div>
         <ProviderSettingsDialog />
       </header>
+
+      {localMode.enabled && (
+        <LocalModeBanner becauseApiUnreachable={localMode.becauseApiUnreachable} />
+      )}
 
       <div data-testid="wizard-stepper">
         {/* Compact single-line indicator below `sm` — the full step list never wraps cleanly at
