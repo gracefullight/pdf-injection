@@ -2,8 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>PDF Injection — Hidden Instruction Authoring &amp; Validation</title>
+    <meta
+      name="description"
+      content="Author PDF-native hidden instructions, validate them against parsers and OCR, and run model-behaviour tests."
+    />
+    <!--
+      Favicons / home-screen icons (sources: public/icons/*.svg, regenerate with
+      scripts/generate-icons.sh). <link rel="manifest"> and <meta name="theme-color">
+      are injected from manifest.ts by the webManifest() Vite plugin so the
+      values have a single source of truth.
+    -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <!-- PWA: standalone when launched from the home screen (iOS + the standards-track name) -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="PDF Injection" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="color-scheme" content="light" />
   </head>
   <body>
     <div id="root"></div>

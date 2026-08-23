@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="PDF Injection">
+  <!--
+    Maskable variant of icon.svg: full-bleed tile (the OS applies its own
+    mask / corner radius) and the artwork scaled to 88% so it stays inside
+    the 80%-diameter safe zone required by `purpose: "maskable"`.
+  -->
+  <rect width="512" height="512" fill="#0f172a"/>
+  <g transform="translate(256 256) scale(0.88) translate(-256 -256)">
+    <path d="M156 96h148l76 76v244a20 20 0 0 1-20 20H156a20 20 0 0 1-20-20V116a20 20 0 0 1 20-20z" fill="#f8fafc"/>
+    <path d="M304 96v56a20 20 0 0 0 20 20h56z" fill="#cbd5e1"/>
+    <rect x="180" y="214" width="152" height="22" rx="11" fill="#64748b"/>
+    <rect x="180" y="262" width="120" height="22" rx="11" fill="#64748b"/>
+    <rect x="180" y="358" width="136" height="22" rx="11" fill="#64748b"/>
+    <rect x="164" y="300" width="184" height="36" rx="18" fill="#0369a1"/>
+    <rect x="180" y="311" width="152" height="14" rx="7" fill="#e0f2fe"/>
+  </g>
+</svg>
