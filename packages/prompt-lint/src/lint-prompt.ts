@@ -84,7 +84,7 @@ const COMMON_SIGNAL_WORDS = new Set([
 ]);
 
 /** True when a signal is missing the text it needs to match against (blank/whitespace-only). */
-function signalHasEmptyValue(signal: ExpectedSignal): boolean {
+export function signalHasEmptyValue(signal: ExpectedSignal): boolean {
   switch (signal.type) {
     case "exact_phrase":
     case "methodology_label":

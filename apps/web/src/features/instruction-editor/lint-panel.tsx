@@ -6,15 +6,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 /**
- * `empty_prompt` / `empty_expected_signals` describe an unmet *requirement*, not a mistake — the
- * screen opens with both true on every fresh form, so showing them as red "Fix required" alerts
- * before the user has typed anything reads as "something broke" (r11 review H-09). The relevant
- * field already carries neutral affordance instead (`SignalBuilder`'s own empty-state helper
- * text; the Continue button's disabled-state tooltip in `instruction-screen.tsx`), so these two
- * ids are never rendered as alerts here — they still fully gate `canContinue` upstream (lint's
- * unfiltered `errors` array is untouched, only this display list is filtered).
+ * These errors are owned by their fields rather than the top-level lint panel. Empty form
+ * requirements use neutral helper text, while an added-but-empty signal gets an inline error on
+ * its card. They still fully gate `canContinue` upstream because only this display list is
+ * filtered; lint's unfiltered `errors` array is untouched.
  */
-const REQUIREMENT_ERROR_IDS = new Set(["empty_prompt", "empty_expected_signals"]);
+const FIELD_ERROR_IDS = new Set(["empty_prompt", "empty_expected_signals", "empty_signal_value"]);
 
 /** Short rule names instead of the generic "Warning" title on every alert — with 3-4 warnings
  * stacked (variants mode especially), the rule id was only visible in the testid, not to a
@@ -51,7 +48,7 @@ export function LintPanel({
   onAcknowledgedChange,
   onSwitchToKorean,
 }: LintPanelProps) {
-  const visibleErrors = errors.filter((issue) => !REQUIREMENT_ERROR_IDS.has(issue.id));
+  const visibleErrors = errors.filter((issue) => !FIELD_ERROR_IDS.has(issue.id));
   if (visibleErrors.length === 0 && warnings.length === 0) return null;
 
   function toggle(id: string, checked: boolean) {
