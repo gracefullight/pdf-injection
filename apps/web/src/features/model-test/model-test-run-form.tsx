@@ -42,17 +42,17 @@ const PROVIDER_LABELS: Record<ProviderName, string> = {
   openai: "OpenAI",
 };
 
-const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
+export const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
   original: "Original (untouched source)",
   white_text: "White text",
   render_mode_3: "Render mode 3",
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only",
   unicode_tags: "Unicode tags (research)",
-  image_only: "Image only (research probe, visible)",
-  freetext_annot: "FreeText annotation (research probe)",
-  acroform_field: "AcroForm field (research probe)",
-  info_dict: "Info dictionary (research probe)",
+  image_only: "Image only (visible)",
+  freetext_annot: "FreeText annotation",
+  acroform_field: "AcroForm field",
+  info_dict: "PDF metadata",
 };
 
 export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTestRunFormProps) {
@@ -214,7 +214,7 @@ export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTe
               </Label>
               {condition !== "original" && isResearchProbeMode(condition) && (
                 <Badge variant="warning" data-testid={`model-test-condition-${condition}-badge`}>
-                  Research/diagnostic
+                  Experimental
                 </Badge>
               )}
             </div>

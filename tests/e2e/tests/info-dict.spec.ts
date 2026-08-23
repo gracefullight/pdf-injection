@@ -36,7 +36,7 @@ test("info_dict mode: generate, PASS_WITH_WARNINGS, warning surfaces, extracted-
   const modeOption = page.getByTestId("injection-mode-option-info-dict");
   await expect(modeOption).toBeVisible();
   await modeOption.click();
-  await expect(page.getByTestId("injection-mode-description")).toContainText("/Info");
+  await expect(page.getByTestId("injection-mode-description")).toContainText("PDF metadata");
   await expect(page.getByTestId("injection-mode-info-dict-caveat")).toBeVisible();
   await expect(page.getByTestId("injection-mode-research-probe-badge")).toBeVisible();
 
@@ -63,8 +63,8 @@ test("info_dict mode: generate, PASS_WITH_WARNINGS, warning surfaces, extracted-
   await expect(page.getByTestId("extracted-text-tab")).toBeVisible();
   const note = page.getByTestId("extracted-text-non-extractable-note-info-dict");
   await expect(note).toBeVisible();
-  await expect(note).toContainText("/Info");
-  await expect(note).toContainText("pdfinfo");
+  await expect(note).toContainText("PDF metadata");
+  await expect(note).toContainText("metadata-aware reader");
 
   await page.getByTestId("tab-model-test").click();
   await expect(page.getByTestId("model-test-tab")).toBeVisible();

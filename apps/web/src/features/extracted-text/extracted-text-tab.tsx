@@ -24,23 +24,17 @@ export const NON_EXTRACTABLE_MODE_NOTES: Partial<Record<InjectionMode, string>> 
     "(Cf-category characters are filtered). Whether a provider's extractor sees it is what " +
     "the Model Test measures.",
   image_only:
-    "Round-3 research probe, visible by design: the instruction is rasterized to an image, not " +
-    "written as a text object at all. No text-based extractor — including PDF.js — can find it " +
-    "here; this mode exists to test whether a provider's ingestion has a vision path instead.",
+    "The instruction is a visible image rather than a text object. No text-based extractor can " +
+    "show it here; use this mode to test whether a document reader processes images.",
   freetext_annot:
-    "Round-3 research probe: the payload is invisible (Tr 3) text inside a FreeText annotation's " +
-    "appearance stream. PDF.js's page text extraction (used by this tab) does not walk annotation " +
-    "appearance streams, so it will not appear here — that's expected, not a bug. It is extracted " +
-    "by poppler's pdftotext, which is what this mode measures.",
+    "The instruction is stored as invisible text in a FreeText annotation. This tab reads page " +
+    "text only, so it will not appear here, although some PDF readers may extract annotation content.",
   acroform_field:
-    "Round-3 research probe: the payload is invisible (Tr 3) text inside an AcroForm text-field " +
-    "widget's appearance. PDF.js's page text extraction (used by this tab) does not walk widget " +
-    "appearance streams, so it will not appear here — that's expected, not a bug. It is extracted " +
-    "by poppler's pdftotext, which is what this mode measures.",
+    "The instruction is stored as invisible text in an AcroForm field. This tab reads page text " +
+    "only, so it will not appear here, although form-aware PDF readers may find the field value.",
   info_dict:
-    "Round-3 research probe: the payload lives only in the PDF /Info dictionary's Subject and " +
-    "Keywords fields, never in page text. No text extractor — including PDF.js — will show it " +
-    "here; it is surfaced only by metadata reads such as pdfinfo.",
+    "The instruction is stored in PDF metadata, not in page text, so it will not appear in this " +
+    "tab. A metadata-aware reader can still find it.",
 };
 
 function highlight(text: string, needle: string) {

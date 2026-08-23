@@ -60,14 +60,10 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   xmp_only: "Research control: payload only in XMP metadata; not a production mode.",
   unicode_tags:
     "Zero-width Unicode Tag characters (U+E00xx) carried by an invisible text object; many pipelines strip tag characters — research channel, not a production default.",
-  image_only:
-    "Round-3 diagnostic probe, visible by design: the instruction is rasterized to an image and stamped in the page margin. No text object exists at all — nothing text-based can extract it. Tests whether a provider's ingestion has a vision path.",
-  freetext_annot:
-    "Round-3 diagnostic probe: invisible (PDF Tr 3) text inside a FreeText annotation's appearance stream. Not seen by this app's PDF.js-based extractor, but is extracted by poppler pdftotext.",
-  acroform_field:
-    "Round-3 diagnostic probe: the same invisible-text technique inside an AcroForm text-field widget's appearance. Not seen by this app's PDF.js-based extractor, but is extracted by poppler pdftotext.",
-  info_dict:
-    "Round-3 diagnostic probe: payload placed in the PDF /Info dictionary's Subject and Keywords fields, not in any page's text. Surfaced only by metadata reads (e.g. pdfinfo); the document's original Title is preserved.",
+  image_only: "Visible image stamped in the page margin; it contains no text object.",
+  freetext_annot: "Invisible text stored in a PDF annotation rather than page text.",
+  acroform_field: "Invisible text stored in a PDF form field rather than page text.",
+  info_dict: "Stores the instruction in PDF metadata instead of page text.",
 };
 
 export function InjectionSettingsForm({
@@ -151,7 +147,7 @@ export function InjectionSettingsForm({
           </p>
           {isResearchProbeMode(settings.mode) && (
             <Badge variant="warning" data-testid="injection-mode-research-probe-badge">
-              Research/diagnostic probe — not a production channel
+              Experimental
             </Badge>
           )}
           {settings.mode === "image_only" && (
@@ -181,12 +177,9 @@ export function InjectionSettingsForm({
         {settings.mode === "image_only" && (
           <Alert variant="warning" data-testid="injection-mode-image-only-caveat">
             <AlertDescription>
-              Round-3 research probe, visible by design: the instruction is rasterized to a PNG and
-              stamped as a grey mark in the page margin — a human reader will see it, the same as
-              Visible positive control. This is not a hiding technique; it exists to test whether a
-              provider's ingestion has a vision path. No text object is written at all, so this
-              app's Extracted Text tab will always be empty for this mode — that's expected, not a
-              bug.
+              This mode rasterizes the instruction as a visible image in the page margin. Use it to
+              test whether a document reader processes images. Because no text object is written,
+              the Extracted Text tab will remain empty.
               {!canvasAvailable &&
                 " Image only is currently unavailable on this server (the native canvas dependency is missing)."}
             </AlertDescription>
@@ -195,31 +188,25 @@ export function InjectionSettingsForm({
         {settings.mode === "freetext_annot" && (
           <Alert variant="warning" data-testid="injection-mode-freetext-annot-caveat">
             <AlertDescription>
-              Round-3 research probe: invisible (PDF Tr 3) text inside a FreeText annotation's
-              appearance stream — not a production channel. This app's PDF.js-based Extracted Text
-              tab will not show the payload (that's expected, not a bug); poppler's pdftotext does
-              extract it, which is what this mode measures.
+              This mode stores invisible text in a FreeText annotation. The Extracted Text tab will
+              not show it, although some PDF readers may still extract annotation content.
             </AlertDescription>
           </Alert>
         )}
         {settings.mode === "acroform_field" && (
           <Alert variant="warning" data-testid="injection-mode-acroform-field-caveat">
             <AlertDescription>
-              Round-3 research probe: the same invisible-text technique as FreeText annotation,
-              inside an AcroForm text-field widget's appearance — not a production channel. This
-              app's PDF.js-based Extracted Text tab will not show the payload (that's expected, not
-              a bug); poppler's pdftotext does extract it, which is what this mode measures.
+              This mode stores invisible text in an AcroForm field. The Extracted Text tab will not
+              show it, although form-aware PDF readers may still find the field value.
             </AlertDescription>
           </Alert>
         )}
         {settings.mode === "info_dict" && (
           <Alert variant="warning" data-testid="injection-mode-info-dict-caveat">
             <AlertDescription>
-              Round-3 research probe: the payload lives only in the PDF /Info dictionary's Subject
-              and Keywords fields — not a production channel. It is never part of any page's text,
-              so no text extractor (including this app's Extracted Text tab) will show it; it is
-              surfaced only by metadata reads such as pdfinfo. The document's original Title is
-              preserved.
+              This mode stores the instruction only in PDF metadata, not on a page. It will not
+              appear in Extracted Text. Use it only when testing software that reads document
+              metadata. The original document title stays unchanged.
             </AlertDescription>
           </Alert>
         )}

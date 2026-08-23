@@ -190,7 +190,7 @@ export const INJECTION_ANATOMY: Record<InjectionMode, ModeAnatomy> = {
     location: "Trailer › /Info (Subject & Keywords; original Title preserved)",
     visible: false,
     reach: { verdict: "not_reached", delta: "0/5" },
-    extractors: { level: "blocked", summary: "metadata reads only (pdfinfo, reader.metadata)" },
+    extractors: { level: "blocked", summary: "metadata-aware readers only" },
     detector: { verdict: "clean", summary: "CLEAN · not inspected" },
     body: "The classic document-info dictionary. Surfaced only by metadata readers, never in page text, and this provider's ingestion doesn't read it, so it **never arrives**.",
   },

@@ -38,31 +38,53 @@ describe("MODE_DESCRIPTIONS", () => {
     }
   });
 
-  it("image_only's description says it is visible by design, not a hiding technique", () => {
-    expect(MODE_DESCRIPTIONS.image_only).toContain("visible by design");
-    expect(MODE_DESCRIPTIONS.image_only).toContain("No text object exists");
+  it("image_only's description says it is visible and has no text object", () => {
+    expect(MODE_DESCRIPTIONS.image_only).toContain("Visible image");
+    expect(MODE_DESCRIPTIONS.image_only).toContain("no text object");
   });
 
-  it("freetext_annot and acroform_field describe the PDF.js-vs-poppler extraction split", () => {
-    expect(MODE_DESCRIPTIONS.freetext_annot).toContain(
-      "Not seen by this app's PDF.js-based extractor",
-    );
-    expect(MODE_DESCRIPTIONS.freetext_annot).toContain("poppler pdftotext");
-    expect(MODE_DESCRIPTIONS.acroform_field).toContain(
-      "Not seen by this app's PDF.js-based extractor",
-    );
-    expect(MODE_DESCRIPTIONS.acroform_field).toContain("poppler pdftotext");
+  it("freetext_annot and acroform_field identify their storage locations", () => {
+    expect(MODE_DESCRIPTIONS.freetext_annot).toContain("PDF annotation");
+    expect(MODE_DESCRIPTIONS.acroform_field).toContain("PDF form field");
   });
 
-  it("info_dict's description says the payload never appears in page text and Title is preserved", () => {
-    expect(MODE_DESCRIPTIONS.info_dict).toContain("not in any page's text");
-    expect(MODE_DESCRIPTIONS.info_dict).toContain("original Title is preserved");
+  it("info_dict's description says it uses PDF metadata instead of page text", () => {
+    expect(MODE_DESCRIPTIONS.info_dict).toContain("PDF metadata instead of page text");
   });
 
   it("none of the four round-3 probe descriptions claim the payload reaches a model", () => {
     for (const mode of RESEARCH_PROBE_MODES) {
       expect(MODE_DESCRIPTIONS[mode].toLowerCase()).not.toContain("the model");
     }
+  });
+
+  it("uses user-facing language instead of internal research-phase terminology", () => {
+    for (const mode of RESEARCH_PROBE_MODES) {
+      expect(MODE_DESCRIPTIONS[mode]).not.toMatch(
+        /round[- ]?3|diagnostic probe|production channel/i,
+      );
+    }
+  });
+});
+
+describe("InjectionSettingsForm — experimental mode guidance", () => {
+  it("explains PDF metadata mode without internal research jargon or CLI tool names", () => {
+    const html = renderToStaticMarkup(
+      <InjectionSettingsForm
+        settings={{ ...DEFAULT_INJECTION_SETTINGS, mode: "info_dict" }}
+        onChange={noop}
+        pageCount={1}
+        instruction="Use Method C."
+        koPayloadAvailable={true}
+        zhPayloadAvailable={true}
+        canvasAvailable={true}
+      />,
+    );
+
+    expect(html).toContain("Experimental");
+    expect(html).toContain("PDF metadata");
+    expect(html).toContain("original document title stays unchanged");
+    expect(html).not.toMatch(/round[- ]?3|diagnostic probe|production channel|pdfinfo/i);
   });
 });
 

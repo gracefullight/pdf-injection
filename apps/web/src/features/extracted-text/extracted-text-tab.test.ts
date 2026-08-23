@@ -21,22 +21,30 @@ describe("NON_EXTRACTABLE_MODE_NOTES", () => {
     );
   });
 
-  it("image_only's note says no text-based extractor can find it, not even this app's", () => {
+  it("image_only's note says no text-based extractor can show it", () => {
     expect(NON_EXTRACTABLE_MODE_NOTES.image_only).toContain("No text-based extractor");
   });
 
-  it("freetext_annot and acroform_field notes name the PDF.js-vs-poppler split", () => {
-    expect(NON_EXTRACTABLE_MODE_NOTES.freetext_annot).toContain("poppler's pdftotext");
-    expect(NON_EXTRACTABLE_MODE_NOTES.acroform_field).toContain("poppler's pdftotext");
+  it("freetext_annot and acroform_field notes explain the relevant reader behavior", () => {
+    expect(NON_EXTRACTABLE_MODE_NOTES.freetext_annot).toContain("annotation content");
+    expect(NON_EXTRACTABLE_MODE_NOTES.acroform_field).toContain("form-aware PDF readers");
   });
 
   it("info_dict's note says it is surfaced only by metadata reads", () => {
-    expect(NON_EXTRACTABLE_MODE_NOTES.info_dict).toContain("surfaced only by metadata reads");
+    expect(NON_EXTRACTABLE_MODE_NOTES.info_dict).toContain("metadata-aware reader");
   });
 
   it("none of the four round-3 probe notes claim the payload reaches a model", () => {
     for (const mode of ["image_only", "freetext_annot", "acroform_field", "info_dict"] as const) {
       expect(NON_EXTRACTABLE_MODE_NOTES[mode]?.toLowerCase()).not.toContain("the model");
+    }
+  });
+
+  it("does not expose internal research-phase terminology", () => {
+    for (const mode of ["image_only", "freetext_annot", "acroform_field", "info_dict"] as const) {
+      expect(NON_EXTRACTABLE_MODE_NOTES[mode]).not.toMatch(
+        /round[- ]?3|research probe|production channel|pdfinfo/i,
+      );
     }
   });
 });
