@@ -3,10 +3,9 @@
 ## PDF Hidden Instruction Authoring and Validation on Bun + TypeScript
 
 > **About this document.** This is an English translation of the original product requirements
-> document (`PhantomStamp Web PoC PRD — Bun + TypeScript Edition`, v0.2, written in Korean on
-> 2026-08-22) that this project was built from. The product name has been changed from
-> *PhantomStamp* to *PDF Injection* to match the repository; nothing else about the requirements
-> has been rewritten, reordered or softened.
+> document (v0.2, written in Korean on 2026-08-22) that this project was built from. Only the
+> product name was updated to the current one; nothing else about the requirements has been
+> rewritten, reordered or softened.
 >
 > It is kept as the historical baseline, not as a description of the current build. The
 > implementation has since gone beyond it — nine injection modes instead of three, Korean and
