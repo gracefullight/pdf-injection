@@ -15,7 +15,26 @@ import {
   type InjectionSettings,
 } from "@/features/instruction-editor/instruction-types";
 import { PdfStructureMap } from "@/features/instruction-editor/pdf-structure-map";
+import { reachesModelInvisibly } from "@/lib/injection-anatomy";
 import { isResearchProbeMode } from "@/lib/injection-modes";
+
+/**
+ * Marks the invisible channels that reached the model in the 2026-08-23 gpt-5.6-luna run
+ * (white_text / render_mode_3 / acroform_field). Green dot mirrors the structure map's
+ * "reaches model" legend; `title` carries the provider-specific caveat.
+ */
+function ReachesModelIndicator() {
+  return (
+    <span
+      className="ml-auto inline-flex items-center gap-1 pl-2 text-[10px] font-medium text-success-foreground"
+      title="Reached gpt-5.6-luna (5/5) in the 2026-08-23 benchmark"
+      data-testid="injection-mode-reaches-indicator"
+    >
+      <span aria-hidden="true" className="size-1.5 rounded-full bg-success-foreground" />
+      reaches
+    </span>
+  );
+}
 
 export interface InjectionSettingsFormProps {
   settings: InjectionSettings;
@@ -87,10 +106,17 @@ export function InjectionSettingsForm({
               single-provider empirical ordering, not a universal ranking — see
               research/results/2026-08-23-round3-probe-modes/.
             */}
-            <SelectItem value="white_text">White text (default)</SelectItem>
-            <SelectItem value="render_mode_3">Render mode 3 (non-rendering)</SelectItem>
+            <SelectItem value="white_text">
+              White text (default)
+              {reachesModelInvisibly("white_text") && <ReachesModelIndicator />}
+            </SelectItem>
+            <SelectItem value="render_mode_3">
+              Render mode 3 (non-rendering)
+              {reachesModelInvisibly("render_mode_3") && <ReachesModelIndicator />}
+            </SelectItem>
             <SelectItem value="acroform_field" data-testid="injection-mode-option-acroform-field">
               AcroForm field
+              {reachesModelInvisibly("acroform_field") && <ReachesModelIndicator />}
             </SelectItem>
             <SelectItem value="visible_positive_control">Visible positive control</SelectItem>
             <SelectItem value="xmp_only" data-testid="injection-mode-option-xmp-only">
