@@ -269,6 +269,7 @@ export function App() {
               onContinue={() => setStep(2)}
               draftRestored={draftRestored && !source}
               onClearDraft={handleClearDraft}
+              onClearSource={() => setSource(null)}
             />
           )}
 
