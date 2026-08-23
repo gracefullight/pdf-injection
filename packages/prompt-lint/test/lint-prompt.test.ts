@@ -82,17 +82,16 @@ describe("lintPrompt errors", () => {
     expect(ids(result.errors)).toContain("control_character");
   });
 
-  test("empty expectedSignals is an acknowledgeable warning, not an error", () => {
+  test("empty expectedSignals is neither an error nor a warning (signals are optional)", () => {
     const result = lintPrompt("Use Method C.", []);
-    expect(ids(result.errors)).not.toContain("empty_expected_signals");
-    expect(ids(result.warnings)).toContain("no_expected_signals");
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
   });
 
   test("a signal with a blank value is an error (not just an empty list)", () => {
     const blank: ExpectedSignal[] = [{ type: "exact_phrase", value: "  ", caseSensitive: false }];
     const result = lintPrompt("Use Method C.", blank);
     expect(ids(result.errors)).toContain("empty_signal_value");
-    expect(ids(result.warnings)).not.toContain("no_expected_signals");
   });
 
   test("a signal with a blank value among valid ones is still an error", () => {

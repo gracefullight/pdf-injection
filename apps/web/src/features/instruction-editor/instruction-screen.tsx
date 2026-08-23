@@ -2,7 +2,6 @@ import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { lintPrompt } from "@pdf-injection/prompt-lint";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { RequiredMark } from "@/components/ui/required-mark";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GuidedEditor } from "@/features/instruction-editor/guided-editor";
@@ -92,9 +91,7 @@ export function InstructionScreen({
 
   // Neutral disabled-state explanation for the "unmet requirement" lint id that `LintPanel`
   // deliberately never renders as a red alert before the user has typed anything (r11 review
-  // H-09) — the reason still needs to be discoverable somewhere. (Expected signals used to be a
-  // second hard requirement; they are now optional at generation and surface as the
-  // acknowledgeable `no_expected_signals` warning instead.)
+  // H-09) — the reason still needs to be discoverable somewhere. (Expected signals are optional.)
   const missingRequirements =
     distributionMode === "single"
       ? lint.errors.filter((issue) => issue.id === "empty_prompt").map((issue) => issue.message)
@@ -177,8 +174,8 @@ export function InstructionScreen({
 
           <div>
             <h3 className="text-lg font-semibold text-foreground">
-              Expected signals
-              <RequiredMark />
+              Expected signals{" "}
+              <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Signals a matching submission should contain (used later to score compliance, never to

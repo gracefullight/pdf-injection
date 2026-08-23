@@ -160,17 +160,9 @@ export function lintPrompt(
     );
   }
 
-  if (expectedSignals.length === 0) {
-    // Signals are optional for generating the PDF, but every scoring feature
-    // needs them and they are frozen into the job at generation — surface that
-    // as an acknowledgeable warning rather than a hard error.
-    warnings.push(
-      warn(
-        "no_expected_signals",
-        "No expected signals are defined. The PDF can still be generated, but Model Test, Submissions and Robustness scoring all need at least one expected signal, and signals cannot be added to a job after it is generated.",
-      ),
-    );
-  } else if (expectedSignals.some(signalHasEmptyValue)) {
+  // An empty signal list is fine: expected signals are optional at generation
+  // (only the scoring endpoints require them). Only *blank* signal rows are errors.
+  if (expectedSignals.some(signalHasEmptyValue)) {
     // A signal row with a blank required value would be rejected server-side with a
     // generic VALIDATION_ERROR; catch it here with a clear, actionable message instead.
     errors.push(

@@ -25,7 +25,6 @@ const WARNING_TITLES: Record<string, string> = {
   exact_phrase_too_long: "Signal unusually long",
   common_signal: "Common word signal",
   inappropriate_methodology_hint: "Inappropriate methodology",
-  no_expected_signals: "No expected signals",
 };
 
 export interface LintPanelProps {

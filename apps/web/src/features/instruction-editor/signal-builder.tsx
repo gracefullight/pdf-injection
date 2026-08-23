@@ -149,10 +149,8 @@ export function SignalBuilder({ signals, onChange }: SignalBuilderProps) {
 
       {signals.length === 0 && (
         <p className="text-sm text-muted-foreground" data-testid="signal-builder-empty-hint">
-          Optional for generating the PDF, but required to score results: Model Test, Submissions
-          and Robustness text transforms all check model or student output against these signals
-          (e.g. a methodology label or ordered terms), and signals cannot be added after a PDF is
-          generated.
+          No signals yet. Add at least one if you plan to run Model Test, Submissions or Robustness
+          scoring on this PDF.
         </p>
       )}
 

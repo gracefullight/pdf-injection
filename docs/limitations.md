@@ -207,8 +207,7 @@ detectability framing.
   availability). No language besides `"en"`/`"ko"`/`"zh"` is supported;
   `PrivateManifest.prompt.language` records whichever was used (no longer hardcoded to `"en"`).
 - Expected signals are **optional at generation time**: the injection/validation pipeline never
-  reads them, and an empty list only raises the acknowledgeable `no_expected_signals` lint warning.
-  They are, however, frozen into the job's private manifest and cannot be added afterwards — and
+  reads them and an empty list is not a lint issue. They are, however, frozen into the job's private manifest and cannot be added afterwards — and
   every feature that scores text against them (Model Test, Submissions, Robustness text
   transforms) refuses a job that has none (`422 VALIDATION_ERROR`), so such a job can only be
   regenerated.
