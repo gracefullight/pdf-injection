@@ -166,7 +166,8 @@ export const INJECTION_ANATOMY: Record<InjectionMode, ModeAnatomy> = {
   freetext_annot: {
     displayName: "FreeText annotation",
     siteIds: ["annot"],
-    location: "Page › /Annots › FreeText › /AP (invisible 3 Tr text in the annotation's appearance)",
+    location:
+      "Page › /Annots › FreeText › /AP (invisible 3 Tr text in the annotation's appearance)",
     visible: false,
     reach: { verdict: "not_reached", delta: "0/5" },
     extractors: { level: "warn", summary: "poppler & PyMuPDF; not PDF.js/pypdf" },
