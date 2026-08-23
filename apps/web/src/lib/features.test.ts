@@ -22,6 +22,7 @@ function health(
       ocrAvailable: false,
       canvasAvailable: false,
       koPayload: false,
+      zhPayload: false,
       ollama: DEFAULT_OLLAMA_FEATURE,
       ...overrides,
     },
@@ -40,6 +41,7 @@ describe("deriveFeatures", () => {
       ocrAvailable: false,
       canvasAvailable: false,
       koPayload: false,
+      zhPayload: false,
       qpdfAvailable: true,
       ollama: DEFAULT_OLLAMA_FEATURE,
     });
@@ -52,6 +54,12 @@ describe("deriveFeatures", () => {
     // biome-ignore lint/suspicious/noExplicitAny: intentional runtime-shape simulation, not a real value
     (stale.features as any).ollama = undefined;
     expect(deriveFeatures(stale).ollama).toEqual(DEFAULT_OLLAMA_FEATURE);
+  });
+
+  it("carries zhPayload through, independently of koPayload", () => {
+    expect(deriveFeatures(health({ koPayload: false, zhPayload: true }))).toEqual(
+      expect.objectContaining({ koPayload: false, zhPayload: true }),
+    );
   });
 
   it("carries ollama through when present on health.features", () => {
@@ -91,6 +99,12 @@ describe("resolveFeatureGateMessage", () => {
 
   it("falls back to a capability reason for canvasAvailable (no env toggle)", () => {
     expect(resolveFeatureGateMessage("canvasAvailable")).toContain("@napi-rs/canvas");
+  });
+
+  it("names the exact env var for zhPayload (same font dir gate as koPayload)", () => {
+    expect(resolveFeatureGateMessage("zhPayload")).toBe(
+      "Not available on this server (PDFI_FONT_DIR is not set). Ask the operator to set PDFI_FONT_DIR=true to enable it.",
+    );
   });
 
   it("honors an explicit envVar override", () => {

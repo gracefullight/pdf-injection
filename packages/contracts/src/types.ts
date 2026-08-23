@@ -20,10 +20,12 @@ export type InjectionMode =
 
 /**
  * Payload language for the hidden instruction. `"en"` is printable-ASCII only
- * (existing v0.1 behavior); `"ko"` allows non-ASCII text and requires a CJK
- * font subset (embedded via @pdf-lib/fontkit in packages/pdf-engine).
+ * (existing v0.1 behavior); `"ko"` (Korean) and `"zh"` (Simplified Chinese)
+ * each allow non-ASCII text and require their own bundled CJK font subset
+ * (embedded via @pdf-lib/fontkit in packages/pdf-engine — see
+ * `embedCjkFont`/`FONT_FILENAMES` in `korean-font.ts`).
  */
-export type PayloadLanguage = "en" | "ko";
+export type PayloadLanguage = "en" | "ko" | "zh";
 
 /** Round 2 cross-cutting unions — see .agents/results/api-contracts/pdf-injection-phase3-5-api.md §0.1 */
 export type BenchmarkCondition = "original" | InjectionMode;
@@ -273,6 +275,7 @@ export interface HealthResponse {
     ocrAvailable: boolean;
     canvasAvailable: boolean;
     koPayload: boolean;
+    zhPayload: boolean;
     /** Round-2 addendum §6 — local Ollama provider probe (`GET {baseUrl}/api/tags`, cached 10s, never throws). */
     ollama: { available: boolean; baseUrl: string; models: string[] };
   };
@@ -340,7 +343,7 @@ export interface InjectPdfInput {
   y?: number;
   fontSize?: number;
   maxWidth?: number;
-  /** default "en" (printable ASCII only). "ko" allows non-ASCII + requires a CJK font subset. */
+  /** default "en" (printable ASCII only). "ko"/"zh" allow non-ASCII + require a CJK font subset. */
   payloadLanguage?: PayloadLanguage;
 }
 

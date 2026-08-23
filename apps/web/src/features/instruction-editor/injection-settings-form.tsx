@@ -25,6 +25,8 @@ export interface InjectionSettingsFormProps {
   instruction: string;
   /** From `useFeatures()`; when false, "ko" cannot actually be embedded server-side (no font available). */
   koPayloadAvailable: boolean;
+  /** From `useFeatures()`; when false, "zh" cannot actually be embedded server-side (no font available). */
+  zhPayloadAvailable: boolean;
   /** From `useFeatures()`; when false, `image_only` cannot rasterize (no `@napi-rs/canvas` on this server). */
   canvasAvailable: boolean;
 }
@@ -55,6 +57,7 @@ export function InjectionSettingsForm({
   pageCount,
   instruction,
   koPayloadAvailable,
+  zhPayloadAvailable,
   canvasAvailable,
 }: InjectionSettingsFormProps) {
   function update(partial: Partial<InjectionSettings>) {
@@ -214,19 +217,30 @@ export function InjectionSettingsForm({
             >
               Korean {koPayloadAvailable ? "" : "(unavailable on this server)"}
             </SelectItem>
+            <SelectItem
+              value="zh"
+              disabled={!zhPayloadAvailable}
+              data-testid="payload-language-option-zh"
+            >
+              Chinese {zhPayloadAvailable ? "" : "(unavailable on this server)"}
+            </SelectItem>
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">
           {settings.payloadLanguage === "en"
             ? "English payload uses printable ASCII only. Non-ASCII characters will be rejected at generation time."
-            : "Korean payload embeds a CJK font subset (Noto Sans KR) so non-ASCII text can be drawn."}
+            : settings.payloadLanguage === "ko"
+              ? "Korean payload embeds a CJK font subset (Noto Sans KR) so non-ASCII text can be drawn."
+              : "Chinese payload embeds a Simplified-Chinese CJK font subset (Noto Sans SC) so non-ASCII text can be drawn."}
         </p>
         {suggestKo && (
           <Alert data-testid="payload-language-ko-suggestion">
             <AlertDescription>
-              The instruction contains non-ASCII characters. Switch payload language to Korean, or
-              the "en" payload language will reject it at generation time.
-              {!koPayloadAvailable && " Korean payload is currently unavailable on this server."}
+              The instruction contains non-ASCII characters. Switch payload language to Korean or
+              Chinese, or the "en" payload language will reject it at generation time.
+              {!koPayloadAvailable &&
+                !zhPayloadAvailable &&
+                " Both Korean and Chinese payload are currently unavailable on this server."}
             </AlertDescription>
           </Alert>
         )}

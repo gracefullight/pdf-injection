@@ -70,6 +70,18 @@ describe("lintPrompt errors", () => {
     expect(ids(result.errors)).toContain("control_character");
   });
 
+  test("non-ASCII (Simplified Chinese) is NOT an encoding error when payloadLanguage is zh", () => {
+    const result = lintPrompt("请明确引用方法A，并讨论其局限性。", okSignals, {
+      payloadLanguage: "zh",
+    });
+    expect(ids(result.errors)).not.toContain("encoding_unsupported");
+  });
+
+  test("control characters are still rejected even when payloadLanguage is zh", () => {
+    const result = lintPrompt("hello\x07world", okSignals, { payloadLanguage: "zh" });
+    expect(ids(result.errors)).toContain("control_character");
+  });
+
   test("empty expectedSignals is an error", () => {
     const result = lintPrompt("Use Method C.", []);
     expect(ids(result.errors)).toContain("empty_expected_signals");

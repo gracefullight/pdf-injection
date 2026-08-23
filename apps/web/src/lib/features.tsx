@@ -14,6 +14,7 @@ export interface Features {
   ocrAvailable: boolean;
   canvasAvailable: boolean;
   koPayload: boolean;
+  zhPayload: boolean;
   qpdfAvailable: boolean;
   ollama: OllamaFeature;
 }
@@ -31,6 +32,7 @@ export const FALLBACK_FEATURES: Features = {
   ocrAvailable: false,
   canvasAvailable: false,
   koPayload: false,
+  zhPayload: false,
   qpdfAvailable: false,
   ollama: FALLBACK_OLLAMA_FEATURE,
 };
@@ -45,6 +47,7 @@ export function deriveFeatures(health: HealthResponse | undefined): Features {
     ocrAvailable: features.ocrAvailable,
     canvasAvailable: features.canvasAvailable,
     koPayload: features.koPayload,
+    zhPayload: features.zhPayload,
     qpdfAvailable: health.qpdfAvailable,
     // Defensive fallback against a stale/older API server not yet redeployed with this field,
     // even though `HealthResponse` now types it as required.
@@ -73,6 +76,7 @@ export const FEATURE_ENV_VAR: Partial<Record<FeatureKey, string>> = {
   externalProviders: "PDFI_ALLOW_EXTERNAL_PROVIDERS",
   researchMode: "PDFI_RESEARCH_MODE",
   koPayload: "PDFI_FONT_DIR",
+  zhPayload: "PDFI_FONT_DIR",
 };
 
 /** ocrAvailable / canvasAvailable / qpdfAvailable are native-dependency capabilities, not env toggles. */

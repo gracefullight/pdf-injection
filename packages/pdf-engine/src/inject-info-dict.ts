@@ -23,8 +23,8 @@ export interface InjectInfoDictInput {
  * `/Subject`/`/Keywords` keys on the shared Info dict (verified in
  * `packages/pdf-engine/test/inject-info-dict.test.ts`). Both setters
  * encode via pdf-lib's own `PDFHexString.fromText` internally, so
- * non-ASCII (`payloadLanguage="ko"`) instructions round-trip correctly with
- * no font embedding required (nothing is drawn).
+ * non-ASCII (`payloadLanguage="ko"`/`"zh"`) instructions round-trip
+ * correctly with no font embedding required (nothing is drawn).
  *
  * Returns boundingBox=[0,0,0,0] and fontSize=0 (no drawn text), matching
  * xmp_only's InjectTextResult shape for manifest continuity.

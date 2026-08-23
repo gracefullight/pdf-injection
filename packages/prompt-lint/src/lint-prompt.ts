@@ -9,13 +9,13 @@ export interface LintPromptOptions {
   /** default: LIMITS.maxInstructionChars (1500) */
   maxLength?: number;
   /**
-   * Round 2 §0.1 — default "en" (printable-ASCII-only, unchanged v0.1
-   * behavior). "ko" allows non-ASCII text (the `encoding_unsupported` check
-   * below is specifically about drawable-font-glyph ASCII, which no longer
-   * applies once a CJK font subset is embedded for payloadLanguage "ko" —
-   * see packages/pdf-engine's inject.ts, which enforces the same gate at
-   * the engine layer). Control characters / null bytes are still always
-   * rejected regardless of language.
+   * Round 2 §0.1 (+ zh) — default "en" (printable-ASCII-only, unchanged v0.1
+   * behavior). "ko"/"zh" allow non-ASCII text (the `encoding_unsupported`
+   * check below is specifically about drawable-font-glyph ASCII, which no
+   * longer applies once the matching CJK font subset is embedded for
+   * payloadLanguage "ko"/"zh" — see packages/pdf-engine's inject.ts, which
+   * enforces the same gate at the engine layer). Control characters / null
+   * bytes are still always rejected regardless of language.
    */
   payloadLanguage?: PayloadLanguage;
 }
@@ -133,7 +133,11 @@ export function lintPrompt(
     );
   }
 
-  if (opts.payloadLanguage !== "ko" && NON_PRINTABLE_ASCII_RE.test(instruction)) {
+  if (
+    opts.payloadLanguage !== "ko" &&
+    opts.payloadLanguage !== "zh" &&
+    NON_PRINTABLE_ASCII_RE.test(instruction)
+  ) {
     errors.push(
       err(
         "encoding_unsupported",

@@ -16,6 +16,7 @@ describe("GET /api/v1/health", () => {
       ocrAvailable: expect.any(Boolean),
       canvasAvailable: expect.any(Boolean),
       koPayload: expect.any(Boolean),
+      zhPayload: expect.any(Boolean),
       ollama: {
         available: expect.any(Boolean),
         baseUrl: expect.any(String),

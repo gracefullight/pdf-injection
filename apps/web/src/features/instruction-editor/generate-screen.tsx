@@ -58,6 +58,12 @@ const POSITION_LABELS: Record<string, string> = {
   custom: "Custom coordinates",
 };
 
+const PAYLOAD_LANGUAGE_LABELS: Record<InjectionSettings["payloadLanguage"], string> = {
+  en: "English",
+  ko: "Korean",
+  zh: "Chinese",
+};
+
 /** Same masking rule as `private-manifest-tab.tsx`'s `maskInstruction` — kept local since this
  * screen never sees a `PrivateManifest` (the job doesn't exist yet at this point in the wizard). */
 function maskInstruction(instruction: string): string {
@@ -223,7 +229,7 @@ export function GenerateScreen({
           </div>
           <div>
             <span className="text-muted-foreground">Payload language: </span>
-            {settings.payloadLanguage === "ko" ? "Korean" : "English"}
+            {PAYLOAD_LANGUAGE_LABELS[settings.payloadLanguage] ?? settings.payloadLanguage}
           </div>
           <div>
             <span className="text-muted-foreground">Font size: </span>

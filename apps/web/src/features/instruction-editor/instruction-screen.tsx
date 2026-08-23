@@ -2,6 +2,7 @@ import type { ExpectedSignal } from "@pdf-injection/contracts";
 import { lintPrompt } from "@pdf-injection/prompt-lint";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { RequiredMark } from "@/components/ui/required-mark";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GuidedEditor } from "@/features/instruction-editor/guided-editor";
@@ -175,7 +176,10 @@ export function InstructionScreen({
           <Separator />
 
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Expected signals</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Expected signals
+              <RequiredMark />
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Signals a matching submission should contain (used later to score compliance, never to
               render an "AI detected" verdict).
@@ -222,6 +226,7 @@ export function InstructionScreen({
             pageCount={pageCount}
             instruction={instruction}
             koPayloadAvailable={features.koPayload}
+            zhPayloadAvailable={features.zhPayload}
             canvasAvailable={features.canvasAvailable}
           />
         </div>

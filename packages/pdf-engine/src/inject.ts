@@ -23,15 +23,19 @@ import { injectVisibleControl } from "./inject-visible-control";
 import { injectWhiteText } from "./inject-white-text";
 import { injectXmpOnly } from "./inject-xmp-only";
 import { detectRiskFlags } from "./inspect-source";
-import { embedKoreanFont } from "./korean-font";
+import { type CjkPayloadLanguage, embedCjkFont } from "./korean-font";
 import { normalizePrompt } from "./normalize-prompt";
 import { snapshotPageGeometry } from "./page-geometry";
 import { resolveTargetPage } from "./resolve-target-page";
 
 // PRD §10.7: payloadLanguage "en" (default) is limited to printable ASCII (+
-// newline). "ko" (round 2 §0.1) allows non-ASCII and requires a CJK font
-// subset (embedKoreanFont) for the three drawn-text modes.
+// newline). "ko" (round 2 §0.1) and "zh" allow non-ASCII and require a CJK
+// font subset (embedCjkFont) for the three drawn-text modes.
 const PRINTABLE_ASCII_RE = /^[\x20-\x7E\n]*$/;
+
+function isCjkPayloadLanguage(language: PayloadLanguage): language is CjkPayloadLanguage {
+  return language === "ko" || language === "zh";
+}
 
 const RISK_FLAG_WARNINGS: Array<{
   check: (flags: ReturnType<typeof detectRiskFlags>) => boolean;
@@ -80,18 +84,18 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
   if (hasNonAscii && payloadLanguage === "en") {
     throw new PromptEncodingFailedError(
       "Instruction contains characters outside printable ASCII (0x20-0x7E) plus newline. " +
-        'Set payloadLanguage="ko" to allow non-ASCII text (requires a CJK font).',
+        'Set payloadLanguage="ko" or payloadLanguage="zh" to allow non-ASCII text (requires a CJK font).',
     );
   }
 
   // unicode_tags: the Unicode Tag block only has a defined mapping for the
-  // ASCII range (0x00-0x7F) — payloadLanguage="ko" is rejected up front,
+  // ASCII range (0x00-0x7F) — payloadLanguage="ko"/"zh" is rejected up front,
   // before any font embedding is attempted (fail fast, no wasted work, no
   // partial PDF state). Round 2 addendum §7 / plan architecture_decisions #2.
-  if (input.mode === "unicode_tags" && payloadLanguage === "ko") {
+  if (input.mode === "unicode_tags" && isCjkPayloadLanguage(payloadLanguage)) {
     throw new PromptEncodingFailedError(
-      'unicode_tags does not support payloadLanguage="ko" — the Unicode Tag block ' +
-        "(U+E0000-U+E007F) only has a defined mapping for printable ASCII (0x20-0x7E).",
+      `unicode_tags does not support payloadLanguage="${payloadLanguage}" — the Unicode Tag ` +
+        "block (U+E0000-U+E007F) only has a defined mapping for printable ASCII (0x20-0x7E).",
     );
   }
 
@@ -115,19 +119,20 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
   let boundingBox: [number, number, number, number];
   let fontSize: number;
 
-  // Korean (non-ASCII) payload on a drawn-text mode requires the CJK font;
-  // ASCII text under payloadLanguage="ko" can still use Helvetica. See
-  // korean-font.ts's doc comment on embedKoreanFont for the cycle-2/3/4 QA
-  // investigation and the HarfBuzz-pre-subsetting fix (correct rendering
-  // AND extraction, for every mode including visible_positive_control).
-  // Shared by every mode that draws text with a pdf-lib font — white_text /
-  // render_mode_3 / visible_positive_control (page content) and
-  // freetext_annot / acroform_field (their own annotation/widget appearance
-  // streams, drawn under invisible render mode 3 — see those injectors'
-  // module docs for why they need a real font at all).
+  // Korean/Chinese (non-ASCII) payload on a drawn-text mode requires the
+  // matching CJK font; ASCII text under payloadLanguage="ko"/"zh" can still
+  // use Helvetica. See korean-font.ts's doc comment on embedCjkFont for the
+  // cycle-2/3/4 QA investigation and the HarfBuzz-pre-subsetting fix
+  // (correct rendering AND extraction, for every mode including
+  // visible_positive_control). Shared by every mode that draws text with a
+  // pdf-lib font — white_text / render_mode_3 / visible_positive_control
+  // (page content) and freetext_annot / acroform_field (their own
+  // annotation/widget appearance streams, drawn under invisible render mode
+  // 3 — see those injectors' module docs for why they need a real font at
+  // all).
   let font: PDFFont | undefined;
   if (
-    payloadLanguage === "ko" &&
+    isCjkPayloadLanguage(payloadLanguage) &&
     hasNonAscii &&
     (input.mode === "white_text" ||
       input.mode === "render_mode_3" ||
@@ -135,7 +140,7 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
       input.mode === "freetext_annot" ||
       input.mode === "acroform_field")
   ) {
-    font = await embedKoreanFont(doc, normalizedInstruction);
+    font = await embedCjkFont(payloadLanguage, doc, normalizedInstruction);
   }
 
   if (input.mode === "xmp_only") {

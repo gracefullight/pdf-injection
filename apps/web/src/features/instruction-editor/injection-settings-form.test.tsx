@@ -1,6 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import type { InjectionMode } from "@pdf-injection/contracts";
-import { MODE_DESCRIPTIONS } from "@/features/instruction-editor/injection-settings-form";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  InjectionSettingsForm,
+  MODE_DESCRIPTIONS,
+} from "@/features/instruction-editor/injection-settings-form";
+import { DEFAULT_INJECTION_SETTINGS } from "@/features/instruction-editor/instruction-types";
 import { isResearchProbeMode, RESEARCH_PROBE_MODES } from "@/lib/injection-modes";
 
 /**
@@ -85,5 +90,66 @@ describe("isResearchProbeMode", () => {
     for (const mode of nonProbeModes) {
       expect(isResearchProbeMode(mode)).toBe(false);
     }
+  });
+});
+
+/** noop — these render() calls only inspect static markup, never trigger onChange. */
+function noop() {}
+
+describe("InjectionSettingsForm — Chinese payload language", () => {
+  // The Chinese `SelectItem` (data-testid="payload-language-option-zh") and its
+  // zhPayloadAvailable-gated disabled/"(unavailable on this server)" state live inside Radix
+  // Select's Portal-rendered `SelectContent`, which only mounts once the trigger is opened —
+  // this codebase has no jsdom/testing-library setup to open it, so that markup never appears
+  // in `renderToStaticMarkup` output (same limitation noted in instruction-screen.tsx for its
+  // own UI-wiring bug; the E2E suite is the regression test for interactive Select behavior).
+  // What IS always in the static markup — the payload-language helper text and the non-ASCII
+  // suggestion alert — is covered below.
+
+  it("does not claim Korean payload covers Chinese: the zh description names its own font", () => {
+    const html = renderToStaticMarkup(
+      <InjectionSettingsForm
+        settings={{ ...DEFAULT_INJECTION_SETTINGS, payloadLanguage: "zh" }}
+        onChange={noop}
+        pageCount={1}
+        instruction=""
+        koPayloadAvailable={true}
+        zhPayloadAvailable={true}
+        canvasAvailable={true}
+      />,
+    );
+    expect(html).toContain("Noto Sans SC");
+    expect(html).not.toContain("Noto Sans KR");
+  });
+
+  it("suggests both Korean and Chinese (not just Korean) for non-ASCII instructions", () => {
+    const html = renderToStaticMarkup(
+      <InjectionSettingsForm
+        settings={DEFAULT_INJECTION_SETTINGS}
+        onChange={noop}
+        pageCount={1}
+        instruction="한국어와 中文 mixed"
+        koPayloadAvailable={true}
+        zhPayloadAvailable={true}
+        canvasAvailable={true}
+      />,
+    );
+    expect(html).toContain('data-testid="payload-language-ko-suggestion"');
+    expect(html).toContain("Switch payload language to Korean or Chinese");
+  });
+
+  it("notes both are unavailable only when neither Korean nor Chinese payload is available", () => {
+    const html = renderToStaticMarkup(
+      <InjectionSettingsForm
+        settings={DEFAULT_INJECTION_SETTINGS}
+        onChange={noop}
+        pageCount={1}
+        instruction="한국어"
+        koPayloadAvailable={false}
+        zhPayloadAvailable={false}
+        canvasAvailable={true}
+      />,
+    );
+    expect(html).toContain("Both Korean and Chinese payload are currently unavailable");
   });
 });

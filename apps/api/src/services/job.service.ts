@@ -70,7 +70,7 @@ export interface CreateJobFields {
   fontSizeRaw: string | null;
   maxWidthRaw: string | null;
   acknowledgedWarningsRaw: string | null;
-  /** Round 2 §0.1/§0.3 — "en" (default) or "ko"; ko allows non-ASCII + requires a CJK font subset. */
+  /** Round 2 §0.1/§0.3 — "en" (default), "ko", or "zh"; ko/zh allow non-ASCII + require a CJK font subset. */
   payloadLanguageRaw: string | null;
 }
 
@@ -96,7 +96,7 @@ const INJECTION_MODES: InjectionMode[] = [
   "info_dict",
 ];
 const POSITIONS: Position[] = ["top", "bottom", "custom"];
-const PAYLOAD_LANGUAGES: PayloadLanguage[] = ["en", "ko"];
+const PAYLOAD_LANGUAGES: PayloadLanguage[] = ["en", "ko", "zh"];
 
 function parseInjectionMode(raw: string): InjectionMode {
   if (!INJECTION_MODES.includes(raw as InjectionMode)) {
@@ -252,10 +252,10 @@ export async function createJob(
   // so reject it here as a genuine pre-processing 422 (no job row, no
   // source.pdf persisted) — matching every other structurally-invalid
   // input-combination check in this function.
-  if (injectionMode === "unicode_tags" && payloadLanguage === "ko") {
+  if (injectionMode === "unicode_tags" && (payloadLanguage === "ko" || payloadLanguage === "zh")) {
     throw new ApiError(
       "PROMPT_ENCODING_FAILED",
-      "injectionMode 'unicode_tags' only supports ASCII payloads; payloadLanguage 'ko' is not supported for this mode.",
+      `injectionMode 'unicode_tags' only supports ASCII payloads; payloadLanguage '${payloadLanguage}' is not supported for this mode.`,
     );
   }
 
