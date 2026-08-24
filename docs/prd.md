@@ -70,26 +70,28 @@ single common instruction per assignment.
 
 ## 2.1 Technology stack
 
-| Area | Technology | Purpose |
-|---|---|---|
-| Runtime | Bun | TypeScript execution, package management |
-| Monorepo | Bun Workspaces | Managing apps and shared packages |
-| Backend | Elysia | PDF processing API |
-| API type sharing | Eden Treaty | Type sharing between frontend and backend |
-| Frontend | React + Vite + TypeScript | Web interface for professors |
-| UI | Tailwind CSS + shadcn/ui | Form, tabs, alert, result UI |
-| PDF creation and modification | `pdf-lib` | Inserting hidden text objects into an existing PDF |
-| User fonts | `@pdf-lib/fontkit` | Later CJK and custom font support |
-| PDF preview | `pdfjs-dist` | Browser rendering |
-| PDF text extraction | `pdfjs-dist` | Producing the parser view |
-| Visual comparison | Canvas API + `pixelmatch` | Pixel diff between original and modified |
-| Metadata DB | `bun:sqlite` | Job and artifact metadata |
-| File storage | `Bun.file`, `Bun.write` | Managing temporary PDFs and reports |
-| Hash | `Bun.CryptoHasher` | SHA-256 of PDFs and prompts |
-| Unit test | `bun:test` | PDF engine and signal matcher tests |
-| E2E test | Playwright | Full browser workflow |
-| Structural check | qpdf (optional) | PDF structural validation for research |
-| LLM benchmark | Bun native `fetch` | Phase 2 OpenAI / Anthropic experiments |
+
+| Area                          | Technology                | Purpose                                            |
+| ----------------------------- | ------------------------- | -------------------------------------------------- |
+| Runtime                       | Bun                       | TypeScript execution, package management           |
+| Monorepo                      | Bun Workspaces            | Managing apps and shared packages                  |
+| Backend                       | Elysia                    | PDF processing API                                 |
+| API type sharing              | Eden Treaty               | Type sharing between frontend and backend          |
+| Frontend                      | React + Vite + TypeScript | Web interface for professors                       |
+| UI                            | Tailwind CSS + shadcn/ui  | Form, tabs, alert, result UI                       |
+| PDF creation and modification | `pdf-lib`                 | Inserting hidden text objects into an existing PDF |
+| User fonts                    | `@pdf-lib/fontkit`        | Later CJK and custom font support                  |
+| PDF preview                   | `pdfjs-dist`              | Browser rendering                                  |
+| PDF text extraction           | `pdfjs-dist`              | Producing the parser view                          |
+| Visual comparison             | Canvas API + `pixelmatch` | Pixel diff between original and modified           |
+| Metadata DB                   | `bun:sqlite`              | Job and artifact metadata                          |
+| File storage                  | `Bun.file`, `Bun.write`   | Managing temporary PDFs and reports                |
+| Hash                          | `Bun.CryptoHasher`        | SHA-256 of PDFs and prompts                        |
+| Unit test                     | `bun:test`                | PDF engine and signal matcher tests                |
+| E2E test                      | Playwright                | Full browser workflow                              |
+| Structural check              | qpdf (optional)           | PDF structural validation for research             |
+| LLM benchmark                 | Bun native `fetch`        | Phase 2 OpenAI / Anthropic experiments             |
+
 
 Bun provides TypeScript execution, workspaces, a test runner, SQLite and subprocess execution;
 Elysia and Eden provide end-to-end type safety between a Bun-based TypeScript API and the frontend.
@@ -216,7 +218,7 @@ The MVP offers two modes:
 
 - **Raw editor**: the professor writes the whole instruction directly
 - **Guided editor**: methodology, ordered terms, section order and so on are entered as structured
-  fields
+fields
 
 The raw editor is the required feature; the guided editor is an authoring aid.
 
@@ -1579,20 +1581,22 @@ LLM-mediated detection hypothesis is then recorded as unsupported.
 
 # 24. Error Handling
 
-| Error code | Condition | User message |
-|---|---|---|
-| `INVALID_PDF` | PDF parsing failed | Please upload a valid PDF file. |
-| `PDF_ENCRYPTED` | Encrypted PDF | Encrypted PDFs are not supported at this time. |
-| `PDF_SIGNED` | Signed PDF | This cannot be modified because it would invalidate the signature. |
-| `FILE_TOO_LARGE` | Size exceeded | The file exceeds the allowed size. |
-| `TOO_MANY_PAGES` | Page limit exceeded | The file exceeds the allowed page count. |
-| `PROMPT_TOO_LONG` | Prompt limit exceeded | Please shorten the hidden instruction. |
-| `PROMPT_ENCODING_FAILED` | Font encoding failed | Please revise the instruction using supported characters. |
-| `INJECTION_FAILED` | PDF modification failed | The selected PDF or injection mode could not be processed. |
-| `OUTPUT_PARSE_FAILED` | Re-parsing the output failed | Validation of the generated PDF failed. |
-| `GEOMETRY_CHANGED` | Page geometry changed | The page structure changed, so no result is provided. |
-| `RENDER_FAILED` | PDF.js rendering failed | The generated PDF cannot be displayed correctly. |
-| `QPDF_WARNING` | qpdf warning | The PDF was generated but there are structure-related warnings. |
+
+| Error code               | Condition                    | User message                                                       |
+| ------------------------ | ---------------------------- | ------------------------------------------------------------------ |
+| `INVALID_PDF`            | PDF parsing failed           | Please upload a valid PDF file.                                    |
+| `PDF_ENCRYPTED`          | Encrypted PDF                | Encrypted PDFs are not supported at this time.                     |
+| `PDF_SIGNED`             | Signed PDF                   | This cannot be modified because it would invalidate the signature. |
+| `FILE_TOO_LARGE`         | Size exceeded                | The file exceeds the allowed size.                                 |
+| `TOO_MANY_PAGES`         | Page limit exceeded          | The file exceeds the allowed page count.                           |
+| `PROMPT_TOO_LONG`        | Prompt limit exceeded        | Please shorten the hidden instruction.                             |
+| `PROMPT_ENCODING_FAILED` | Font encoding failed         | Please revise the instruction using supported characters.          |
+| `INJECTION_FAILED`       | PDF modification failed      | The selected PDF or injection mode could not be processed.         |
+| `OUTPUT_PARSE_FAILED`    | Re-parsing the output failed | Validation of the generated PDF failed.                            |
+| `GEOMETRY_CHANGED`       | Page geometry changed        | The page structure changed, so no result is provided.              |
+| `RENDER_FAILED`          | PDF.js rendering failed      | The generated PDF cannot be displayed correctly.                   |
+| `QPDF_WARNING`           | qpdf warning                 | The PDF was generated but there are structure-related warnings.    |
+
 
 ---
 
@@ -1743,21 +1747,23 @@ Completion condition:
 
 # 27. Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| The provider ignores hidden text | No signal | Compare several injection modes and the positive control |
-| The model does not follow the prompt | Low detection rate | Simplify the instruction; establish a compliance baseline |
-| White text becomes visible | Exposure to students | Background warning, Human View, TR-03 |
-| A parser strips render mode 3 | Delivery failure | PDF.js report and provider benchmark |
-| The method choice matches by chance | False positive | Combine a structural or lexical signal |
-| Paraphrasing | False negative | Robustness experiments and limited interpretation |
-| A student finds the prompt and shares it | Evasion possible | A/B/C variants later |
-| The PDF is re-saved or printed | Payload removed | Print-to-PDF benchmark |
-| Accessibility problems | Screen-reader confusion | Warnings, policy review, research-only mode |
-| Model API changes | Reduced reproducibility | Record model ID, date and config |
-| Overlap with prior work | Insufficient novelty | Focus on the PDF-native validation framework |
-| The professor's prompt is inappropriate | Ethical/assessment problems | Prompt lint, warnings and the audit manifest |
-| qpdf not installed | No structural check | Keep it as an optional dependency |
+
+| Risk                                     | Impact                      | Mitigation                                                |
+| ---------------------------------------- | --------------------------- | --------------------------------------------------------- |
+| The provider ignores hidden text         | No signal                   | Compare several injection modes and the positive control  |
+| The model does not follow the prompt     | Low detection rate          | Simplify the instruction; establish a compliance baseline |
+| White text becomes visible               | Exposure to students        | Background warning, Human View, TR-03                     |
+| A parser strips render mode 3            | Delivery failure            | PDF.js report and provider benchmark                      |
+| The method choice matches by chance      | False positive              | Combine a structural or lexical signal                    |
+| Paraphrasing                             | False negative              | Robustness experiments and limited interpretation         |
+| A student finds the prompt and shares it | Evasion possible            | A/B/C variants later                                      |
+| The PDF is re-saved or printed           | Payload removed             | Print-to-PDF benchmark                                    |
+| Accessibility problems                   | Screen-reader confusion     | Warnings, policy review, research-only mode               |
+| Model API changes                        | Reduced reproducibility     | Record model ID, date and config                          |
+| Overlap with prior work                  | Insufficient novelty        | Focus on the PDF-native validation framework              |
+| The professor's prompt is inappropriate  | Ethical/assessment problems | Prompt lint, warnings and the audit manifest              |
+| qpdf not installed                       | No structural check         | Keep it as an optional dependency                         |
+
 
 ---
 
@@ -1836,19 +1842,14 @@ ordered_terms: robustness → limitations
 
 # 30. References
 
-1. Aiersilan, A., Yousefi, A., & Pless, R. (2026). *On Seeding Watermarks to Detect Verbatim LLM Copy-Paste Responses*. arXiv:2605.16336. Accepted at AIES 2026.
-
-2. Rao, V. S., Kumar, A., Lakkaraju, H., & Shah, N. B. (2025). Detecting LLM-generated peer reviews. *PLOS ONE, 20*(9), e0331871. DOI 10.1371/journal.pone.0331871.
-
-3. Liu, Y., Zhao, X., Kruegel, C., Song, D., & Bu, Y. (2026). *In-Context Watermarks for Large Language Models*. ICLR 2026. arXiv:2505.16934.
-
-4. Kirchenbauer, J., Geiping, J., Wen, Y., Katz, J., Miers, I., & Goldstein, T. (2023). A Watermark for Large Language Models. *Proceedings of ICML 2023*, PMLR 202.
-
+1. Aiersilan, A., Yousefi, A., &amp; Pless, R. (2026). *On Seeding Watermarks to Detect Verbatim LLM Copy-Paste Responses*. arXiv:2605.16336. Accepted at AIES 2026.
+2. Rao, V. S., Kumar, A., Lakkaraju, H., &amp; Shah, N. B. (2025). Detecting LLM-generated peer reviews. *PLOS ONE, 20*(9), e0331871. DOI 10.1371/journal.pone.0331871.
+3. Liu, Y., Zhao, X., Kruegel, C., Song, D., &amp; Bu, Y. (2026). *In-Context Watermarks for Large Language Models*. ICLR 2026. arXiv:2505.16934.
+4. Kirchenbauer, J., Geiping, J., Wen, Y., Katz, J., Miers, I., &amp; Goldstein, T. (2023). A Watermark for Large Language Models. *Proceedings of ICML 2023*, PMLR 202.
 5. Dathathri, S., See, A., Ghaisas, S., Huang, P.-S., McAdam, R., Welbl, J., et al. (2024). Scalable watermarking for identifying large language model outputs. *Nature, 634*, 818–823. DOI 10.1038/s41586-024-08025-4.
-
-6. Zhang, H., Edelman, B. L., Francati, D., Venturi, D., Ateniese, G., & Barak, B. (2024). Watermarks in the Sand: Impossibility of Strong Watermarking for Language Models. *Proceedings of ICML 2024*, PMLR 235.
-
-7. Tu, S., Sun, Y., Bai, Y., Yu, J., Hou, L., & Li, J. (2024). WaterBench: Towards Holistic Evaluation of Watermarks for Large Language Models. *Proceedings of ACL 2024*.
+6. Zhang, H., Edelman, B. L., Francati, D., Venturi, D., Ateniese, G., &amp; Barak, B. (2024). Watermarks in the Sand: Impossibility of Strong Watermarking for Language Models. *Proceedings of ICML 2024*, PMLR 235.
+7. Tu, S., Sun, Y., Bai, Y., Yu, J., Hou, L., &amp; Li, J. (2024). WaterBench: Towards Holistic Evaluation of Watermarks for Large Language Models. *Proceedings of ACL 2024*.
+8. Torrielli, F., Locci, S., Rapp, A., &amp; Di Caro, L. (2026). Exploiting large language models in peer review: Indirect prompt injection attacks and integrity probes. *Scientometrics, 131*, 4889–4951. [https://doi.org/10.1007/s11192-026-05695-x](https://doi.org/10.1007/s11192-026-05695-x)
 
 ---
 
