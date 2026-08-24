@@ -28,13 +28,12 @@ import { isLocalJobId } from "@/lib/local-job/run-local-job";
 import { useLocalMode } from "@/lib/local-mode";
 import { clearAllSetCredentials, loadSetCredentials, saveSetCredentials } from "@/lib/set-storage";
 import { cn } from "@/lib/utils";
+import { canNavigateBackToStep, type WizardStep } from "@/lib/wizard-navigation";
 
 /** Debounce delay for the draft-persistence effect (r11 review M-18) — long enough that a fast
  * typist doesn't trigger a sessionStorage write on every keystroke, short enough that closing the
  * tab a moment after the last keystroke still saves. */
 const DRAFT_SAVE_DEBOUNCE_MS = 600;
-
-type WizardStep = 1 | 2 | 3 | 4;
 
 const STEP_LABELS: Record<WizardStep, string> = {
   1: "Upload",
@@ -226,6 +225,24 @@ export function App() {
     setAcknowledgedWarnings((prev) => pruneAcknowledgedWarnings(prev, []));
   }
 
+  /**
+   * Backwards-only navigation via the stepper — lets the professor return from
+   * a later step (notably the terminal step 4 result) to step 2/3 to adjust the
+   * instruction or injection settings and regenerate, instead of only being
+   * able to Start Over (which wipes everything). Forward jumps are intentionally
+   * NOT allowed here: step 4 is reached by generating (a new job), never by
+   * clicking ahead to a stale one.
+   *
+   * The in-memory instruction/signals/settings survive this move (they live in
+   * this component, not just the sessionStorage draft), so a step-4 → step-3
+   * hop lands on the same settings the job was built from. A still-set
+   * `job`/`variantSet`/`studentKeyedSet` is left untouched so the existing
+   * result stays reachable until a regenerate replaces it.
+   */
+  function goToStep(target: WizardStep) {
+    if (canNavigateBackToStep(target, step, source !== null)) setStep(target);
+  }
+
   return (
     <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-4 py-8 sm:px-6">
       <header className="flex items-start justify-between gap-4">
@@ -253,16 +270,27 @@ export function App() {
         {/* Compact single-line indicator below `sm` — the full step list never wraps cleanly at
             375px (r11 review H-01: `document.scrollWidth` exceeded the viewport on every screen,
             causing horizontal scroll app-wide). */}
-        <p
-          className="text-sm font-medium text-foreground sm:hidden"
-          role="status"
-          aria-label="Progress"
-        >
-          Step {step} of 4 · {STEP_LABELS[step]}
-        </p>
+        <div className="flex items-center justify-between gap-2 sm:hidden">
+          <p className="text-sm font-medium text-foreground" role="status" aria-label="Progress">
+            Step {step} of 4 · {STEP_LABELS[step]}
+          </p>
+          {step > 1 && canNavigateBackToStep((step - 1) as WizardStep, step, source !== null) && (
+            <button
+              type="button"
+              onClick={() => goToStep((step - 1) as WizardStep)}
+              className="shrink-0 rounded-md px-2 py-1 text-sm font-medium text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              data-testid="wizard-back-step"
+            >
+              ← {STEP_LABELS[(step - 1) as WizardStep]}
+            </button>
+          )}
+        </div>
         <ol className="hidden items-center gap-2 sm:flex" aria-label="Progress">
-          {([1, 2, 3, 4] as WizardStep[]).map((s, index) => (
-            <li key={s} className="flex min-w-0 flex-1 items-center gap-2">
+          {([1, 2, 3, 4] as WizardStep[]).map((s, index) => {
+            // Earlier steps are clickable to go back (Upload needs no source;
+            // Instruction/Generate do). The current and later steps are not.
+            const navigable = canNavigateBackToStep(s, step, source !== null);
+            const circle = (
               <span
                 className={cn(
                   "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
@@ -276,6 +304,8 @@ export function App() {
               >
                 {s < step ? <Check className="size-4" /> : s}
               </span>
+            );
+            const label = (
               <span
                 className={cn(
                   "truncate text-sm",
@@ -284,11 +314,32 @@ export function App() {
               >
                 {STEP_LABELS[s]}
               </span>
-              {index < 3 && (
-                <span className="mx-1 h-px min-w-4 flex-1 bg-border" aria-hidden="true" />
-              )}
-            </li>
-          ))}
+            );
+            return (
+              <li key={s} className="flex min-w-0 flex-1 items-center gap-2">
+                {navigable ? (
+                  <button
+                    type="button"
+                    onClick={() => goToStep(s)}
+                    className="-mx-1 flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    aria-label={`Go back to step ${s}: ${STEP_LABELS[s]}`}
+                    data-testid={`wizard-step-${s}`}
+                  >
+                    {circle}
+                    {label}
+                  </button>
+                ) : (
+                  <div className="flex min-w-0 items-center gap-2">
+                    {circle}
+                    {label}
+                  </div>
+                )}
+                {index < 3 && (
+                  <span className="mx-1 h-px min-w-4 flex-1 bg-border" aria-hidden="true" />
+                )}
+              </li>
+            );
+          })}
         </ol>
       </div>
 
