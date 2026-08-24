@@ -43,15 +43,37 @@ injection pipeline: there is still no LMS integration, no automated grading, and
 ## `render_mode_3` caveats
 
 `render_mode_3` (PDF text-rendering mode 3 / `3 Tr`) is an **experimental** injection mode, not
-the production default (`white_text` is the default). It is not visible in any renderer regardless
-of background color, and produces no pixel difference when implemented correctly — but it comes
-with real risk of the payload simply disappearing before it ever reaches a model:
+the production default (`white_text` is the default). Its glyphs are never painted in any renderer
+regardless of background color, so it produces no pixel difference when implemented correctly —
+but it comes with real risk of the payload simply disappearing before it ever reaches a model:
 
 - Some PDF parsers or sanitizers strip invisible/non-rendering text objects entirely.
 - Some provider document-ingestion pipelines may ignore render-mode-3 text, since it is not part
   of the visible page.
 - "Print to PDF" or other re-flattening pipelines can drop it.
 - Different parsers (PDF.js vs. others) may disagree on whether the text is present at all.
+
+### Not painted is not the same as not discoverable
+
+"Never painted" describes rendering only. The payload is still a real text object in the page
+content stream — that is exactly what makes it extractable — so **it is selectable and
+copy-pasteable like any other text**, in every viewer, and this is unavoidable for any mode that
+puts text on the page. Two consequences, both verified in macOS Preview (a native viewer, so this
+is inherent to the mode and not a PDF.js text-layer artifact):
+
+- **Drag-select paints a highlight over it.** In the top or bottom margin, where the visible page
+  has no text, the selection shows as bare highlight bars — one per wrapped line of the
+  instruction, at the injected font size. No letterforms appear (the glyphs are never drawn), but
+  the bars themselves are a visible tell that something is there.
+- **Copy-paste yields the instruction in plaintext.** Selecting the page and pasting elsewhere
+  reproduces the hidden text verbatim, the same way it does for `white_text`.
+
+The difference from `white_text` is one of degree, not of kind: `white_text` renders readable
+glyphs under a selection highlight (white-on-highlight is legible), whereas `render_mode_3` reveals
+only the highlighted region until the selection is actually copied out.
+
+Only the modes that write no page text at all escape selection: `freetext_annot`, `acroform_field`,
+`info_dict`, `xmp_only` and `image_only`.
 
 Because of this, the extraction result for `render_mode_3` is always **recorded explicitly** as
 success or failure (`ValidationReport.serverValidation.textExtraction`,

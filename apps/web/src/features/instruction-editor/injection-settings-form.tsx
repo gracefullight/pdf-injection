@@ -61,7 +61,7 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   white_text:
     "White-on-white text: likely readable by text extraction, but visible if the background isn't white.",
   render_mode_3:
-    "Non-rendering text (PDF Tr 3): invisible regardless of background, but some parsers may drop it.",
+    "Non-rendering text (PDF Tr 3): never painted, regardless of background — but still selectable and copy-pasteable, and some parsers may drop it.",
   visible_positive_control:
     "Visible control condition: the instruction is shown to readers; research use only, not for distribution.",
   xmp_only: "Research control: payload only in XMP metadata; not a production mode.",
