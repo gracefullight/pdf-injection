@@ -1,7 +1,7 @@
 import type { InjectPdfInput, InjectPdfResult } from "@pdf-injection/contracts";
 import { type CjkFontSources, createCjkFontEmbedder } from "./browser-cjk-font";
 import { FontUnavailableError } from "./errors";
-import { type InjectPlatform, injectPdfWith } from "./inject-core";
+import { type InjectPlatform, injectPdfMultiWith, injectPdfWith } from "./inject-core";
 import { injectImageOnlyInBrowser } from "./inject-image-only-browser";
 import { injectUnicodeTags } from "./inject-unicode-tags";
 
@@ -88,4 +88,17 @@ export async function injectPdfInBrowser(
   platform: InjectPlatform = createBrowserPlatform(),
 ): Promise<InjectPdfResult> {
   return injectPdfWith(platform, input);
+}
+
+/**
+ * Multi-channel browser injection — the on-device equivalent of
+ * `injectPdfInBrowser` for a selection of two or more modes (see
+ * `injectPdfMultiWith`). A single-mode `input.modes` (or none) behaves
+ * identically to `injectPdfInBrowser`.
+ */
+export async function injectPdfModesInBrowser(
+  input: InjectPdfInput,
+  platform: InjectPlatform = createBrowserPlatform(),
+): Promise<InjectPdfResult> {
+  return injectPdfMultiWith(platform, input);
 }

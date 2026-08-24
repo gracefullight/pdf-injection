@@ -1,4 +1,5 @@
 import type {
+  InjectionMode,
   InjectPdfInput,
   InjectPdfResult,
   PayloadLanguage,
@@ -399,11 +400,106 @@ export async function injectPdfWith(
     promptSha256,
     pageIndex: pageIndexes[0] as number,
     pageIndexes,
+    modes: [input.mode],
     pageGeometryBefore,
     pageGeometryAfter,
     warnings,
     boundingBox: boundingBoxes[0] as [number, number, number, number],
     boundingBoxes,
     fontSize,
+  };
+}
+
+/** Deduplicate an injection-mode list, preserving first-seen order. */
+function dedupeModes(modes: readonly InjectionMode[]): InjectionMode[] {
+  const seen = new Set<InjectionMode>();
+  const out: InjectionMode[] = [];
+  for (const mode of modes) {
+    if (!seen.has(mode)) {
+      seen.add(mode);
+      out.push(mode);
+    }
+  }
+  return out;
+}
+
+/**
+ * Multi-channel injection dispatcher. Applies every mode in `input.modes`
+ * (deduped, in first-seen order) to the same document by chaining the existing
+ * single-mode `injectPdfWith` — each mode injects into the previous mode's
+ * output bytes.
+ *
+ * This composes rather than re-implementing the per-mode dispatch because the
+ * mode-specific injectors each touch an independent PDF structure (page
+ * content stream / AcroForm widget / FreeText annotation / /Info dict / XMP
+ * metadata), so a serial pass is equivalent to injecting them together, and
+ * every mode's own geometry-preservation gate re-runs against the combined
+ * output. A `["render_mode_3", "acroform_field"]` selection therefore yields
+ * one PDF carrying both an invisible page text object and a hidden form-field
+ * payload.
+ *
+ * Single-mode input (`modes` absent, empty, or length 1) delegates straight to
+ * `injectPdfWith` and returns an identical result.
+ *
+ * The aggregated result reports the ORIGINAL source geometry/hash as `before`/
+ * `sourceSha256`, the FINAL combined output as `bytes`/`outputSha256`, the
+ * union of every injected page index, and every mode's bounding boxes in
+ * application order. Duplicate warnings (e.g. a source risk flag re-detected on
+ * each pass) are collapsed by `code` + `pageIndex`.
+ */
+export async function injectPdfMultiWith(
+  platform: InjectPlatform,
+  input: InjectPdfInput,
+): Promise<InjectPdfResult> {
+  const modes = dedupeModes(input.modes?.length ? input.modes : [input.mode]);
+  if (modes.length === 1) {
+    return injectPdfWith(platform, { ...input, mode: modes[0] as InjectionMode });
+  }
+
+  let source = input.source;
+  let first: InjectPdfResult | undefined;
+  let last: InjectPdfResult | undefined;
+  const boundingBoxes: Array<[number, number, number, number]> = [];
+  const pageIndexSet = new Set<number>();
+  const warnings: ValidationWarning[] = [];
+  const seenWarnings = new Set<string>();
+
+  for (const mode of modes) {
+    const result = await injectPdfWith(platform, { ...input, source, mode });
+    // Chain: the next mode injects into this mode's output. `sourceSha256`/
+    // geometry-before below deliberately come from the FIRST pass (the real
+    // original document), not from these intermediate bytes.
+    source = result.bytes;
+    first ??= result;
+    last = result;
+    boundingBoxes.push(...result.boundingBoxes);
+    for (const pageIndex of result.pageIndexes) pageIndexSet.add(pageIndex);
+    for (const warning of result.warnings) {
+      const key = `${warning.code}@${warning.pageIndex ?? "-"}`;
+      if (!seenWarnings.has(key)) {
+        seenWarnings.add(key);
+        warnings.push(warning);
+      }
+    }
+  }
+
+  const firstResult = first as InjectPdfResult;
+  const lastResult = last as InjectPdfResult;
+  const pageIndexes = [...pageIndexSet].sort((a, b) => a - b);
+
+  return {
+    bytes: lastResult.bytes,
+    sourceSha256: firstResult.sourceSha256,
+    outputSha256: lastResult.outputSha256,
+    promptSha256: firstResult.promptSha256,
+    pageIndex: pageIndexes[0] as number,
+    pageIndexes,
+    modes,
+    pageGeometryBefore: firstResult.pageGeometryBefore,
+    pageGeometryAfter: lastResult.pageGeometryAfter,
+    warnings,
+    boundingBox: boundingBoxes[0] as [number, number, number, number],
+    boundingBoxes,
+    fontSize: firstResult.fontSize,
   };
 }

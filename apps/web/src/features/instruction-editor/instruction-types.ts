@@ -7,6 +7,13 @@ import type {
 
 export interface InjectionSettings {
   mode: InjectionMode;
+  /**
+   * Extra channels injected alongside `mode` into the same PDF (on-device
+   * generation only). Excludes `mode` itself; the full set handed to the engine
+   * is `[mode, ...additionalModes]`. Empty for the common single-channel case.
+   * Optional so drafts persisted before multi-channel existed still load.
+   */
+  additionalModes?: InjectionMode[];
   targetPage: TargetPage;
   position: Position;
   x?: number;
@@ -19,6 +26,7 @@ export interface InjectionSettings {
 
 export const DEFAULT_INJECTION_SETTINGS: InjectionSettings = {
   mode: "white_text",
+  additionalModes: [],
   // Front of the document, top margin: an instruction the model reads early is
   // more likely to be honoured than one appended after several pages of text.
   // (The API's own default is still last/bottom — this is the wizard's choice,

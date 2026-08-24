@@ -1,6 +1,7 @@
 import type { InjectionMode, PayloadLanguage, Position } from "@pdf-injection/contracts";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RequiredMark } from "@/components/ui/required-mark";
@@ -72,6 +73,32 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   info_dict: "Stores the instruction in PDF metadata instead of page text.",
 };
 
+/** Concise labels for the additional-channels checkbox group (the mode <Select> above carries the long descriptions). */
+const MODE_SHORT_LABELS: Record<InjectionMode, string> = {
+  white_text: "White text",
+  render_mode_3: "Render mode 3 (non-rendering)",
+  visible_positive_control: "Visible positive control",
+  xmp_only: "XMP metadata only",
+  unicode_tags: "Unicode tags",
+  image_only: "Image only (visible)",
+  freetext_annot: "FreeText annotation",
+  acroform_field: "AcroForm field",
+  info_dict: "Info dictionary",
+};
+
+/** Order of the additional-channel checkboxes — mirrors the mode <Select>. */
+const ADDITIONAL_MODE_ORDER: InjectionMode[] = [
+  "white_text",
+  "render_mode_3",
+  "acroform_field",
+  "visible_positive_control",
+  "xmp_only",
+  "unicode_tags",
+  "image_only",
+  "freetext_annot",
+  "info_dict",
+];
+
 export function InjectionSettingsForm({
   settings,
   onChange,
@@ -83,6 +110,23 @@ export function InjectionSettingsForm({
   localMode = false,
 }: InjectionSettingsFormProps) {
   const unavailableSuffix = localMode ? "(needs a server)" : "(unavailable on this server)";
+
+  // Extra channels injected alongside the primary `mode` into the same PDF.
+  // On-device only — the server path injects a single mode.
+  const additionalModes = settings.additionalModes ?? [];
+  function modeUnavailable(mode: InjectionMode): boolean {
+    return (
+      (mode === "unicode_tags" && !koPayloadAvailable) ||
+      (mode === "image_only" && !canvasAvailable)
+    );
+  }
+  function toggleAdditionalMode(mode: InjectionMode, checked: boolean) {
+    update({
+      additionalModes: checked
+        ? [...additionalModes, mode]
+        : additionalModes.filter((m) => m !== mode),
+    });
+  }
 
   // "Middle" is a shortcut for an explicit page number (the wire contract has
   // only first/last/N), so it is stored as that number and recognised again
@@ -111,7 +155,15 @@ export function InjectionSettingsForm({
         <Label htmlFor="injection-mode">Injection mode</Label>
         <Select
           value={settings.mode}
-          onValueChange={(value) => update({ mode: value as InjectionMode })}
+          onValueChange={(value) => {
+            const nextMode = value as InjectionMode;
+            // A channel can't be both the primary and an "additional" one — drop
+            // it from the extras if the user just promoted it to primary.
+            update({
+              mode: nextMode,
+              additionalModes: additionalModes.filter((m) => m !== nextMode),
+            });
+          }}
         >
           <SelectTrigger id="injection-mode" data-testid="injection-mode-select">
             <SelectValue />
@@ -234,6 +286,38 @@ export function InjectionSettingsForm({
           </Alert>
         )}
       </div>
+
+      {localMode && (
+        <div className="flex flex-col gap-1.5" data-testid="additional-channels">
+          <Label>Also inject these channels (optional)</Label>
+          <p className="text-xs text-muted-foreground">
+            Add one or more channels to embed alongside the primary mode above. Every selected
+            channel is injected into the same PDF — e.g. Render mode 3 plus AcroForm field writes
+            both an invisible page-text object and a hidden form-field payload. On-device only.
+          </p>
+          <div className="flex flex-col gap-2">
+            {ADDITIONAL_MODE_ORDER.filter((mode) => mode !== settings.mode).map((mode) => {
+              const disabled = modeUnavailable(mode);
+              const checkboxId = `additional-mode-${mode.replace(/_/g, "-")}`;
+              return (
+                <div key={mode} className="flex items-center gap-2">
+                  <Checkbox
+                    id={checkboxId}
+                    checked={additionalModes.includes(mode)}
+                    disabled={disabled}
+                    onCheckedChange={(checked) => toggleAdditionalMode(mode, checked === true)}
+                    data-testid={`${checkboxId}-checkbox`}
+                  />
+                  <Label htmlFor={checkboxId} className="font-normal">
+                    {MODE_SHORT_LABELS[mode]}
+                    {disabled ? ` ${unavailableSuffix}` : ""}
+                  </Label>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="payload-language">Payload language</Label>

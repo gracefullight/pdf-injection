@@ -166,6 +166,13 @@ export interface PrivateManifest {
   expectedSignals: ExpectedSignal[];
   injection: {
     mode: InjectionMode;
+    /**
+     * Every injection mode applied to the output, in order — `mode` is the
+     * first/primary entry. Optional: manifests written before multi-channel
+     * injection existed have no such field, and a reader must treat its
+     * absence as `[mode]`.
+     */
+    modes?: InjectionMode[];
     /** First injected page (0-based). Equal to `pageIndexes[0]`. */
     pageIndex: number;
     /**
@@ -400,6 +407,13 @@ export interface InjectPdfResult {
    * `info_dict`) always report a single entry, since they write no page content.
    */
   pageIndexes: number[];
+  /**
+   * Every injection mode applied to the output, in order. `[mode]` for a
+   * single-mode run; two or more entries when `InjectPdfInput.modes` selected
+   * multiple channels (`injectPdfMultiWith`). `modes[0]` equals `mode` on the
+   * input side.
+   */
+  modes: InjectionMode[];
   pageGeometryBefore: PageGeometry[];
   pageGeometryAfter: PageGeometry[];
   warnings: ValidationWarning[];

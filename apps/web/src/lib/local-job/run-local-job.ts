@@ -1,14 +1,16 @@
-import type {
-  CreateJobResponse,
-  PrivateManifest,
-  ValidationReport,
-  ValidationWarning,
+import {
+  type CreateJobResponse,
+  diffThreshold,
+  type InjectionMode,
+  type PrivateManifest,
+  type ValidationReport,
+  type ValidationWarning,
 } from "@pdf-injection/contracts";
 import {
   buildManifest,
   compareGeometry,
   createBrowserPlatform,
-  injectPdfInBrowser,
+  injectPdfModesInBrowser,
   inspectSource,
   isBrowserSupportedMode,
   normalizePrompt,
@@ -154,6 +156,48 @@ async function localMetadataCheck(
   };
 }
 
+/** Deduplicate an injection-mode list, preserving first-seen (primary-first) order. */
+function dedupeModes(modes: readonly InjectionMode[]): InjectionMode[] {
+  const seen = new Set<InjectionMode>();
+  const out: InjectionMode[] = [];
+  for (const mode of modes) {
+    if (!seen.has(mode)) {
+      seen.add(mode);
+      out.push(mode);
+    }
+  }
+  return out;
+}
+
+/**
+ * The mode whose overall-status rules govern a combined (multi-channel) output.
+ * The combined PDF's rendered pixel delta is the union of every applied mode's
+ * paint, so the governing threshold is the *most lenient* (largest
+ * `diffThreshold`) across the selection — otherwise a visible or white-text
+ * channel in the set would push a stricter channel's diff over its limit and
+ * FAIL a genuinely-good PDF. Ties keep the primary (first) mode.
+ */
+function governingValidationMode(modes: InjectionMode[]): InjectionMode {
+  return modes.reduce(
+    (best, mode) => (diffThreshold(mode) > diffThreshold(best) ? mode : best),
+    modes[0] as InjectionMode,
+  );
+}
+
+/** Collapse warnings sharing the same code + pageIndex, keeping the first. */
+function dedupeWarnings(warnings: ValidationWarning[]): ValidationWarning[] {
+  const seen = new Set<string>();
+  const out: ValidationWarning[] = [];
+  for (const warning of warnings) {
+    const key = `${warning.code}@${warning.pageIndex ?? "-"}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(warning);
+    }
+  }
+  return out;
+}
+
 /** Thrown for inputs a local job structurally cannot handle; carries a user-facing reason. */
 export class LocalModeUnsupportedError extends Error {
   readonly code = "LOCAL_MODE_UNSUPPORTED";
@@ -166,10 +210,19 @@ export class LocalModeUnsupportedError extends Error {
 export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobResult> {
   const payloadLanguage = input.payloadLanguage ?? "en";
 
-  if (!isBrowserSupportedMode(input.injectionMode)) {
-    throw new LocalModeUnsupportedError(
-      `Injection mode "${input.injectionMode}" cannot be generated in this browser.`,
-    );
+  // Multi-channel selection: the primary mode is `injectionMode`; `modes` may
+  // list additional channels to inject into the same PDF. Deduped, primary
+  // first. A single-entry list is exactly the old single-mode behavior.
+  const modes = dedupeModes(
+    input.injectionModes?.length ? input.injectionModes : [input.injectionMode],
+  );
+
+  for (const mode of modes) {
+    if (!isBrowserSupportedMode(mode)) {
+      throw new LocalModeUnsupportedError(
+        `Injection mode "${mode}" cannot be generated in this browser.`,
+      );
+    }
   }
 
   const sourceBytes = new Uint8Array(await input.file.arrayBuffer());
@@ -183,11 +236,12 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
 
   const normalizedInstruction = normalizePrompt(input.instruction);
 
-  const result = await injectPdfInBrowser(
+  const result = await injectPdfModesInBrowser(
     {
       source: sourceBytes,
       instruction: input.instruction,
-      mode: input.injectionMode,
+      mode: modes[0] as InjectionMode,
+      modes,
       targetPage: input.targetPage ?? "last",
       position: input.position ?? "bottom",
       x: input.x,
@@ -207,17 +261,24 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
     targetPageIndexes: result.pageIndexes,
   });
 
+  // The mode whose extraction/threshold expectations govern the overall
+  // verdict for the combined output. With several channels in one PDF the
+  // rendered pixel delta is the union of every mode's paint, so the most
+  // lenient diff threshold (largest) must win or a visible/whiter channel
+  // would spuriously FAIL a stricter one. Ties keep the primary (first) mode.
+  const validationMode = governingValidationMode(modes);
+
   // xmp_only writes the payload into the catalog's /Metadata stream and is
   // never in page text, so its summary is gated on this read-back rather than
   // on extraction. The server uses pdf.js's getMetadata(); `readXmpPayload()`
   // is the engine's own pure-pdf-lib reader and works identically here.
-  const metadata =
-    input.injectionMode === "xmp_only"
-      ? await localMetadataCheck(outputBytes, normalizedInstruction)
-      : null;
+  const metadata = modes.includes("xmp_only")
+    ? await localMetadataCheck(outputBytes, normalizedInstruction)
+    : null;
 
   const injection: PrivateManifest["injection"] = {
-    mode: input.injectionMode,
+    mode: modes[0] as InjectionMode,
+    modes,
     pageIndex: result.pageIndex,
     pageIndexes: result.pageIndexes,
     position: input.position ?? "bottom",
@@ -249,10 +310,12 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
     metadata,
     warnings: [
       ...result.warnings,
-      ...nonExtractableWarnings(input.injectionMode, result.pageIndex),
+      // One "payload present but not extractable by this app" note per selected
+      // channel that has one (deduped by code, keeping first).
+      ...dedupeWarnings(modes.flatMap((mode) => nonExtractableWarnings(mode, result.pageIndex))),
     ],
     lint: { errors: [], warnings: [], acknowledged: input.acknowledgedWarnings ?? [] },
-    mode: input.injectionMode,
+    mode: validationMode,
   });
 
   const manifest = buildManifest({

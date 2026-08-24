@@ -82,6 +82,13 @@ export interface CreateJobInput {
   instruction: string;
   expectedSignals: ExpectedSignal[];
   injectionMode: InjectionMode;
+  /**
+   * On-device multi-channel selection. When it has more than one entry the
+   * local runner injects every listed mode into one PDF (`injectionMode` is the
+   * primary/first entry). The server path ignores it and uses `injectionMode`
+   * only — multi-channel is on-device only for now.
+   */
+  injectionModes?: InjectionMode[];
   targetPage?: TargetPage;
   position?: Position;
   x?: number;

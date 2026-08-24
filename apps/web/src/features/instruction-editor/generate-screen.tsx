@@ -118,6 +118,7 @@ export function GenerateScreen({
       instruction,
       expectedSignals: signals,
       injectionMode: settings.mode,
+      injectionModes: [settings.mode, ...(settings.additionalModes ?? [])],
       targetPage: settings.targetPage,
       position: settings.position,
       x: settings.x,
@@ -235,8 +236,14 @@ export function GenerateScreen({
             {targetPageLabel(settings, source.pageCount)}
           </div>
           <div>
-            <span className="text-muted-foreground">Injection mode: </span>
-            {MODE_LABELS[settings.mode]}
+            <span className="text-muted-foreground">
+              {(settings.additionalModes ?? []).length > 0
+                ? "Injection channels: "
+                : "Injection mode: "}
+            </span>
+            {[settings.mode, ...(settings.additionalModes ?? [])]
+              .map((mode) => MODE_LABELS[mode])
+              .join(" + ")}
           </div>
           <div>
             <span className="text-muted-foreground">Position: </span>

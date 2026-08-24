@@ -37,8 +37,10 @@ export function PrivateManifestTab({ manifest, onDownload, downloading }: Privat
         </dd>
         <dt className="text-muted-foreground">Prompt SHA-256</dt>
         <dd className="break-all font-mono text-xs">{manifest.prompt.sha256}</dd>
-        <dt className="text-muted-foreground">Injection mode</dt>
-        <dd>{manifest.injection.mode}</dd>
+        <dt className="text-muted-foreground">
+          {(manifest.injection.modes?.length ?? 0) > 1 ? "Injection channels" : "Injection mode"}
+        </dt>
+        <dd>{(manifest.injection.modes ?? [manifest.injection.mode]).join(" + ")}</dd>
         <dt className="text-muted-foreground">Target page</dt>
         <dd>{manifest.injection.pageIndex + 1}</dd>
       </dl>

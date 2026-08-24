@@ -1,5 +1,5 @@
 import type { InjectPdfInput, InjectPdfResult } from "@pdf-injection/contracts";
-import { type InjectPlatform, injectPdfWith } from "./inject-core";
+import { type InjectPlatform, injectPdfMultiWith, injectPdfWith } from "./inject-core";
 import { injectImageOnly } from "./inject-image-only-node";
 import { injectUnicodeTags } from "./inject-unicode-tags-node";
 import { embedCjkFont } from "./korean-font";
@@ -29,5 +29,14 @@ export async function injectPdf(input: InjectPdfInput): Promise<InjectPdfResult>
   return injectPdfWith(NODE_PLATFORM, input);
 }
 
+/**
+ * Multi-channel injection entry point for Node/Bun callers: applies every mode
+ * in `input.modes` to one PDF (see `injectPdfMultiWith`). Single-mode input is
+ * identical to `injectPdf`.
+ */
+export async function injectPdfModes(input: InjectPdfInput): Promise<InjectPdfResult> {
+  return injectPdfMultiWith(NODE_PLATFORM, input);
+}
+
 export type { InjectPlatform } from "./inject-core";
-export { injectPdfWith } from "./inject-core";
+export { injectPdfMultiWith, injectPdfWith } from "./inject-core";
