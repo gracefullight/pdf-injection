@@ -152,22 +152,21 @@ export async function injectFreetextAnnot(
     });
     const appearanceRef = doc.context.register(appearanceStream);
 
-    // Without an explicit /F, the annotation defaults to flags 0 — displayed,
-    // printed AND interactive. Even though the /AP /N below paints nothing
-    // (3 Tr), the annotation's /Rect stays a live hotspot: viewers show a
-    // selection cursor there and double-click enters FreeText edit mode. The
-    // NoView flag (bit 6) tells viewers not to render it on screen OR let it
-    // interact with the user (PDF 32000-1 Table 165) — so no click target
-    // exists — while Print stays on and, crucially, it is NOT Hidden (bit 2),
-    // which is the only flag poppler's pdftotext skips (same finding as the
-    // acroform_field NoView fix). Extraction survives; the annotation can't be
-    // clicked or edited.
-    const NOVIEW_FLAG = 1 << 5; // bit 6 (NoView) = 32
+    // Flags: Print only — deliberately NOT NoView (bit 6) and NOT Hidden
+    // (bit 2). **Empirical finding (2026-08-24 provider test):** both ChatGPT
+    // and Claude extract a FreeText payload ONLY by RENDERING the annotation —
+    // neither reads its `/Contents` structurally. Setting NoView (an earlier
+    // revision) therefore made the payload unreadable by BOTH providers,
+    // defeating the channel. So the annotation must stay viewable to reach a
+    // model. The on-screen click/selection footprint is instead minimised by
+    // the 1×1 /Rect above (harmless drag-handle box shrinks to a point) rather
+    // than by hiding the annotation. Contrast acroform_field, whose /V value
+    // ChatGPT reads structurally, so NoView is safe there.
     const PRINT_FLAG = 1 << 2; // bit 3 (Print) = 4
     const annotDict = doc.context.obj({
       Type: "Annot",
       Subtype: "FreeText",
-      F: NOVIEW_FLAG | PRINT_FLAG,
+      F: PRINT_FLAG,
       Rect: rect,
       Contents: PDFHexString.fromText(instruction),
       // /DA is a fixed, always-ASCII "default appearance" operator string

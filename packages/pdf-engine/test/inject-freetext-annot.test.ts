@@ -72,11 +72,11 @@ describe("injectPdf mode=freetext_annot", () => {
     expect(content).toMatch(/3 Tr/);
   });
 
-  test("sets NoView (invisible + non-interactive on screen) but NOT Hidden (poppler's pdftotext skips Hidden annotations entirely — see module doc)", async () => {
+  test("stays viewable — NOT NoView and NOT Hidden — because both providers extract FreeText only by rendering it (see module doc); footprint is minimised by the 1×1 Rect instead", async () => {
     const source = await buildSourcePdf(1);
     const result = await injectPdf({
       source,
-      instruction: "hidden flag check",
+      instruction: "flag check",
       mode: "freetext_annot",
       targetPage: "first",
       position: "bottom",
@@ -89,15 +89,15 @@ describe("injectPdf mode=freetext_annot", () => {
     let checked = false;
     for (let i = 0; i < (annots?.size() ?? 0); i++) {
       const annot = annots?.lookupMaybe(i, PDFDict);
-      const subtype = annot?.lookupMaybe(PDFName.of("Subtype"), PDFName);
-      if (subtype !== PDFName.of("FreeText")) continue;
-      const flagValue = annot?.lookupMaybe(PDFName.of("F"), PDFNumber)?.asNumber() ?? 0;
+      if (!annot) continue;
+      if (annot.lookupMaybe(PDFName.of("Subtype"), PDFName) !== PDFName.of("FreeText")) continue;
+      const flagValue = annot.lookupMaybe(PDFName.of("F"), PDFNumber)?.asNumber() ?? 0;
       const hiddenBit = Math.floor(flagValue / 2) % 2; // bit 2 = Hidden (value 2)
       const noViewBit = Math.floor(flagValue / 32) % 2; // bit 6 = NoView (value 32)
-      // NoView removes the on-screen render + interaction (no double-click),
-      // Hidden must stay off or pdftotext stops extracting the appearance.
+      // Neither Hidden nor NoView: NoView made both ChatGPT and Claude drop the
+      // payload (they read FreeText only by rendering it — 2026-08-24 finding).
       expect(hiddenBit).toBe(0);
-      expect(noViewBit).toBe(1);
+      expect(noViewBit).toBe(0);
       checked = true;
     }
     expect(checked).toBe(true);
