@@ -103,6 +103,33 @@ describe("injectPdf mode=freetext_annot", () => {
     expect(checked).toBe(true);
   });
 
+  test("clamps the annotation /Rect to 1×1 so editors that ignore NoView show only a point-sized selection", async () => {
+    const source = await buildSourcePdf(1);
+    const result = await injectPdf({
+      source,
+      instruction: "a fairly long instruction ".repeat(6),
+      mode: "freetext_annot",
+      targetPage: "first",
+      position: "bottom",
+    });
+    const doc = await PDFDocument.load(result.bytes);
+    const annots = doc.getPage(0).node.Annots();
+    const { PDFDict, PDFName, PDFArray, PDFNumber } = await import("pdf-lib");
+    let checked = false;
+    for (let i = 0; i < (annots?.size() ?? 0); i++) {
+      const annot = annots?.lookupMaybe(i, PDFDict);
+      if (!annot) continue;
+      if (annot.lookupMaybe(PDFName.of("Subtype"), PDFName) !== PDFName.of("FreeText")) continue;
+      const rect = annot.lookupMaybe(PDFName.of("Rect"), PDFArray);
+      if (!rect) continue;
+      const v = [0, 1, 2, 3].map((k) => rect.lookup(k, PDFNumber).asNumber());
+      expect(Math.abs((v[2] ?? 0) - (v[0] ?? 0))).toBe(1);
+      expect(Math.abs((v[3] ?? 0) - (v[1] ?? 0))).toBe(1);
+      checked = true;
+    }
+    expect(checked).toBe(true);
+  });
+
   test("geometry (page count, boxes, rotation) is preserved exactly", async () => {
     const source = await buildSourcePdf(4);
     const result = await injectPdf({

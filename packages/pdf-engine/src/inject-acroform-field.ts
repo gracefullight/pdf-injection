@@ -4,6 +4,7 @@ import {
   endText,
   PDFDocument,
   type PDFFont,
+  PDFName,
   StandardFonts,
   setFontAndSize,
   setTextMatrix,
@@ -147,8 +148,16 @@ export async function injectAcroFormField(
     // walk the appearance stream (they skip Hidden widgets, not NoView ones).
     // That keeps the channel extractable but genuinely invisible on screen.
     const NOVIEW_FLAG = 1 << 5; // PDF annotation flag bit 6 (NoView) = 32
+    // 1×1 /Rect: form editors that ignore NoView otherwise draw a full-width
+    // selection box with drag handles over the field. Collapse the on-page
+    // widget rect to a single point while the invisible appearance (built at
+    // full boxWidth×boxHeight above) stays in the widget's own /AP BBox — the
+    // viewer scales it into the 1×1 rect, and pdftotext still walks the
+    // appearance operators regardless of rect size.
+    const tinyRect = doc.context.obj([x, y, x + 1, y + 1]);
     for (const widget of textField.acroField.getWidgets()) {
       widget.setFlags(widget.getFlags() | NOVIEW_FLAG);
+      widget.dict.set(PDFName.of("Rect"), tinyRect);
     }
     // Overrides pdf-lib's default text-field appearance provider (which
     // would paint a visible background/border and real fill-mode glyphs)

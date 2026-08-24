@@ -119,7 +119,16 @@ export async function injectFreetextAnnot(
       x: input.x,
       y: input.y,
     });
-    const rect: [number, number, number, number] = [x, y, x + boxWidth, y + boxHeight];
+    // Clamp the on-page annotation /Rect to a 1×1 point. Annotation EDITORS
+    // (Ed workspace, Acrobat comment mode, …) deliberately ignore NoView to let
+    // users edit, and otherwise render a full-width selection box with drag
+    // handles over the whole payload region. A 1×1 /Rect collapses that
+    // selectable footprint to a single point. The instruction still lives, at
+    // full layout size, in the /AP /N appearance stream's own BBox below — which
+    // poppler's pdftotext walks by operator, independent of /Rect — so
+    // extraction is unaffected; the viewer just scales the (invisible) appearance
+    // into the 1×1 rect.
+    const rect: [number, number, number, number] = [x, y, x + 1, y + 1];
     const bbox: [number, number, number, number] = [0, 0, boxWidth, boxHeight];
 
     const contentOps = [

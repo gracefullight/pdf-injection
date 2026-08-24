@@ -149,6 +149,33 @@ describe("injectPdf mode=acroform_field", () => {
     }
   });
 
+  test("clamps the widget /Rect to 1×1 so form editors that ignore NoView show only a point-sized field", async () => {
+    const source = await buildSourcePdf(1);
+    const result = await injectPdf({
+      source,
+      instruction: "a fairly long instruction ".repeat(6),
+      mode: "acroform_field",
+      targetPage: "first",
+      position: "bottom",
+    });
+    const doc = await PDFDocument.load(result.bytes);
+    const probe = doc
+      .getForm()
+      .getFields()
+      .find((field) => field.getName().startsWith(ACROFORM_FIELD_NAME_PREFIX));
+    expect(probe).toBeDefined();
+    const { PDFName, PDFArray, PDFNumber } = await import("pdf-lib");
+    // biome-ignore lint/suspicious/noExplicitAny: reaching the low-level widget dict
+    const widgets = (probe as any).acroField.getWidgets();
+    expect(widgets.length).toBeGreaterThan(0);
+    for (const widget of widgets) {
+      const rect = widget.dict.get(PDFName.of("Rect")) as InstanceType<typeof PDFArray>;
+      const v = [0, 1, 2, 3].map((k) => rect.lookup(k, PDFNumber).asNumber());
+      expect(Math.abs((v[2] ?? 0) - (v[0] ?? 0))).toBe(1);
+      expect(Math.abs((v[3] ?? 0) - (v[1] ?? 0))).toBe(1);
+    }
+  });
+
   test("pixel-diff tier claim: rendering the widget paints nothing (changedPixelRatio 0, well within the 1e-7 threshold) — skips if @napi-rs/canvas is unavailable", async () => {
     const source = await buildSourcePdf(1);
     const result = await injectPdf({
