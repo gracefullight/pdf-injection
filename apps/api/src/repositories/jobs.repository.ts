@@ -30,11 +30,31 @@ interface JobRow {
   prompt_sha256: string;
   injection_mode: InjectionMode;
   target_page: number;
+  /** JSON array of 0-based page indexes; null on rows written before targetPage="all" existed. */
+  target_pages: string | null;
   created_at: string;
   expires_at: string;
   error_code: string | null;
   access_token_hash: string;
   set_id: string | null;
+}
+
+/**
+ * Decodes the `target_pages` JSON array, falling back to the single
+ * `target_page` for rows written before multi-page targeting existed (and for
+ * anything unparseable — a corrupt column must not take the whole read down).
+ */
+function decodeTargetPages(row: JobRow): number[] {
+  if (row.target_pages === null) return [row.target_page];
+  try {
+    const parsed: unknown = JSON.parse(row.target_pages);
+    if (Array.isArray(parsed) && parsed.length > 0 && parsed.every((n) => Number.isInteger(n))) {
+      return parsed as number[];
+    }
+  } catch {
+    // fall through to the single-page reading below
+  }
+  return [row.target_page];
 }
 
 function rowToRecord(row: JobRow): StoredJobRow {
@@ -47,6 +67,7 @@ function rowToRecord(row: JobRow): StoredJobRow {
     promptSha256: row.prompt_sha256,
     injectionMode: row.injection_mode,
     targetPage: row.target_page,
+    targetPages: decodeTargetPages(row),
     createdAt: row.created_at,
     expiresAt: row.expires_at,
     errorCode: row.error_code,
@@ -90,6 +111,20 @@ export class JobsRepository {
       this.db.exec("ALTER TABLE jobs ADD COLUMN set_id TEXT;");
     }
     this.db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_set_id ON jobs(set_id);");
+
+    // targetPage="all" injects on every page, so one INTEGER column can no
+    // longer describe a job. Same guarded ALTER TABLE pattern as set_id above;
+    // rows predating it keep target_pages NULL and read back as
+    // [target_page] (see decodeTargetPages).
+    const hasTargetPages =
+      (this.db
+        .query("SELECT 1 FROM pragma_table_info('jobs') WHERE name = 'target_pages'")
+        .get() as {
+        1: number;
+      } | null) !== null;
+    if (!hasTargetPages) {
+      this.db.exec("ALTER TABLE jobs ADD COLUMN target_pages TEXT;");
+    }
   }
 
   /** Links a job to the variant-set / student-keyed set it was created from (round-2 §1). */
@@ -112,9 +147,11 @@ export class JobsRepository {
       .query(
         `INSERT INTO jobs
           (id, status, source_filename, source_sha256, output_sha256, prompt_sha256,
-           injection_mode, target_page, created_at, expires_at, error_code, access_token_hash)
+           injection_mode, target_page, target_pages, created_at, expires_at, error_code,
+           access_token_hash)
          VALUES ($id, $status, $sourceFilename, $sourceSha256, $outputSha256, $promptSha256,
-                 $injectionMode, $targetPage, $createdAt, $expiresAt, $errorCode, $accessTokenHash)`,
+                 $injectionMode, $targetPage, $targetPages, $createdAt, $expiresAt, $errorCode,
+                 $accessTokenHash)`,
       )
       .run({
         $id: record.id,
@@ -125,6 +162,7 @@ export class JobsRepository {
         $promptSha256: record.promptSha256,
         $injectionMode: record.injectionMode,
         $targetPage: record.targetPage,
+        $targetPages: JSON.stringify(record.targetPages),
         $createdAt: record.createdAt,
         $expiresAt: record.expiresAt,
         $errorCode: record.errorCode,

@@ -10,6 +10,7 @@ import type {
   PayloadLanguage,
   Position,
   PrivateManifest,
+  TargetPage,
   ValidationReport,
 } from "@pdf-injection/contracts";
 import { parseContentDispositionFilename } from "@/lib/content-disposition";
@@ -81,7 +82,7 @@ export interface CreateJobInput {
   instruction: string;
   expectedSignals: ExpectedSignal[];
   injectionMode: InjectionMode;
-  targetPage?: number | "first" | "last";
+  targetPage?: TargetPage;
   position?: Position;
   x?: number;
   y?: number;

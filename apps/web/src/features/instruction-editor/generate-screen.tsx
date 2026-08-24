@@ -35,6 +35,7 @@ export interface GenerateScreenProps {
 function targetPageLabel(settings: InjectionSettings, pageCount: number): string {
   if (settings.targetPage === "first") return "First page (default)";
   if (settings.targetPage === "last") return "Last page";
+  if (settings.targetPage === "all") return `Every page (${pageCount})`;
   // Mirrors InjectionSettingsForm's "Middle page" shortcut, which stores the
   // computed page number rather than a distinct wire value.
   if (settings.targetPage === Math.ceil(pageCount / 2)) {

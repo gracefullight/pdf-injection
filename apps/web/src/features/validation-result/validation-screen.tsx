@@ -169,7 +169,7 @@ export function ValidationScreen({
       sourceBytesQuery.data,
       outputBytesQuery.data,
       jobQuery.data.injectionMode,
-      jobQuery.data.targetPage,
+      jobQuery.data.targetPages?.length ? jobQuery.data.targetPages : [jobQuery.data.targetPage],
       manifestQuery.data.prompt.normalizedInstruction,
     ).then((computation) => {
       if (!computation) {
@@ -252,6 +252,9 @@ export function ValidationScreen({
   if (!job) return null;
 
   const targetPageIndex = job.targetPage;
+  // `targetPages` lists every injected page (more than one only for
+  // targetPage="all"); jobs created before it existed report just the one.
+  const targetPageIndexes = job.targetPages?.length ? job.targetPages : [targetPageIndex];
   const overallReasons = summarizeOverallReasons(
     job.summary,
     reportQuery.data?.lint.acknowledged ?? [],
@@ -368,6 +371,7 @@ export function ValidationScreen({
               outputDocument={outputDocument}
               pageCount={outputDocument?.numPages ?? 0}
               targetPageIndex={targetPageIndex}
+              targetPageIndexes={targetPageIndexes}
             />
           </ErrorBoundary>
         </TabsContent>
@@ -393,6 +397,7 @@ export function ValidationScreen({
                 ([] as ClientValidationInput["extractedText"]["pages"])
               }
               targetPageIndex={targetPageIndex}
+              targetPageIndexes={targetPageIndexes}
               normalizedInstruction={manifestQuery.data?.prompt.normalizedInstruction ?? ""}
               injectionMode={job.injectionMode}
             />

@@ -144,7 +144,7 @@ for the full pipeline).
 | `instruction` | string | yes | 1..1500 printable ASCII (`\n` and `\t` allowed) when `payloadLanguage="en"`; non-ASCII allowed only with `payloadLanguage="ko"` / `"zh"` |
 | `expectedSignals` | string (JSON `ExpectedSignal[]`) | no | default `[]`. Optional for generating the PDF — the injection/validation pipeline never reads them — but they are frozen into the job's private manifest and every feature that *scores* text against them (`POST …/model-tests`, `POST …/submissions`, `POST …/robustness` with `textTransforms`) requires at least one and returns `422 VALIDATION_ERROR` for a job generated without any; they cannot be added afterwards |
 | `injectionMode` | `"white_text" \| "render_mode_3" \| "visible_positive_control" \| "xmp_only" \| "unicode_tags" \| "image_only" \| "freetext_annot" \| "acroform_field" \| "info_dict"` | yes | The last four are round-3 research/diagnostic probe conditions, not production channels — see [`README.md`](../README.md#injection-modes) |
-| `targetPage` | string: `"first"`, `"last"`, or 1-based integer | no | default `"last"`; ignored (no page content is touched) for `xmp_only`/`info_dict` |
+| `targetPage` | string: `"first"`, `"last"`, `"all"`, or 1-based integer | no | default `"last"`. `"all"` injects on every page. Ignored (no page content is touched) for `xmp_only`/`info_dict`, which write one document-level payload and report `targetPages: [0]` even under `"all"` |
 | `position` | `"top" \| "bottom" \| "custom"` | no | default `"bottom"`; ignored for `xmp_only`/`info_dict` |
 | `x`, `y` | number (pt) | when `position=custom` | ignored for `xmp_only`/`info_dict` |
 | `fontSize` | number | no | default `1`; 0.5–12 (visible control ignores and uses 9); ignored for `xmp_only`/`info_dict` |
@@ -191,6 +191,7 @@ for the full pipeline).
   "sourceFilename": "assignment.pdf",
   "injectionMode": "white_text",
   "targetPage": 4,
+  "targetPages": [4],
   "createdAt": "2026-08-22T01:00:00.000Z",
   "expiresAt": "2026-08-23T01:00:00.000Z",
   "summary": {
@@ -542,7 +543,7 @@ export type InjectionMode = "white_text" | "render_mode_3" | "visible_positive_c
   // Round-3 research/diagnostic probe conditions — not production channels:
   | "image_only" | "freetext_annot" | "acroform_field" | "info_dict";
 export type PayloadLanguage = "en" | "ko";
-export type TargetPage = number | "first" | "last";        // number is 1-based from the API, 0-based `pageIndex` internally
+export type TargetPage = number | "first" | "last" | "all";  // number is 1-based from the API, 0-based `pageIndex` internally; "all" = every page
 export type Position = "top" | "bottom" | "custom";
 export type JobStatus = "queued" | "processing" | "completed" | "failed";
 export type OverallStatus = "PASS" | "PASS_WITH_WARNINGS" | "FAIL" | "NOT_TESTED";
@@ -597,7 +598,8 @@ export interface JobRecord {
   outputSha256: string | null;
   promptSha256: string;
   injectionMode: InjectionMode;
-  targetPage: number;                       // resolved 0-based index
+  targetPage: number;                       // resolved 0-based index — the first injected page
+  targetPages: number[];                    // every injected page; one entry unless targetPage was "all"
   createdAt: string;
   expiresAt: string;
   errorCode: string | null;
@@ -633,7 +635,9 @@ export interface PrivateManifest {
   outputFile: { name: string; sha256: string; sizeBytes: number };
   prompt: { sha256: string; instruction: string; normalizedInstruction: string; language: PayloadLanguage; length: number };
   expectedSignals: ExpectedSignal[];
-  injection: { mode: InjectionMode; pageIndex: number; position: Position; fontSize: number; boundingBox: [number, number, number, number] };
+  // pageIndexes lists every injected page; it is optional because manifests written before
+  // targetPage="all" existed have no such field — read its absence as [pageIndex].
+  injection: { mode: InjectionMode; pageIndex: number; pageIndexes?: number[]; position: Position; fontSize: number; boundingBox: [number, number, number, number] };
   validation: ValidationSummary;
   toolVersions: { bun: string; pdfLib: string; pdfJs: string; qpdf: string | null; pdfInjection: string };
   createdAt: string;
@@ -672,7 +676,7 @@ export interface ValidationReport {
 
 export interface ClientValidationInput { /* see POST client-validation body above */ }
 export interface CreateJobResponse { jobId: string; accessToken: string; status: JobStatus; errorCode: string | null; lintWarnings: LintIssue[] }
-export interface JobStatusResponse { jobId: string; status: JobStatus; errorCode: string | null; sourceFilename: string; injectionMode: InjectionMode; targetPage: number; createdAt: string; expiresAt: string; summary: ValidationSummary | null; artifacts: { outputPdf: boolean; privateManifest: boolean; validationReport: boolean } }
+export interface JobStatusResponse { jobId: string; status: JobStatus; errorCode: string | null; sourceFilename: string; injectionMode: InjectionMode; targetPage: number; targetPages: number[]; createdAt: string; expiresAt: string; summary: ValidationSummary | null; artifacts: { outputPdf: boolean; privateManifest: boolean; validationReport: boolean } }
 export interface ApiError { error: { code: ApiErrorCode; message: string; details?: Record<string, unknown> } }
 ```
 

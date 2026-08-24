@@ -165,6 +165,9 @@ async function extractionFromBytes(
       bytes,
       targetInstruction: manifest.prompt.normalizedInstruction,
       targetPageIndex: manifest.injection.pageIndex,
+      // For a targetPage="all" job, "survived the transform" means every
+      // injected page still carries the payload, not just the first.
+      targetPageIndexes: manifest.injection.pageIndexes,
     });
     return {
       hiddenTextExtracted: result.targetPageMatch || result.anyPageMatch,

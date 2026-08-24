@@ -73,10 +73,17 @@ export async function getConditionPdf(
     source: sourceBytes,
     instruction: manifest.prompt.instruction,
     mode: condition,
-    // manifest.injection.pageIndex is the already-resolved 0-based index;
+    // More than one entry in pageIndexes can only come from targetPage="all",
+    // so reconstruct that — otherwise the benchmark would compare a
+    // single-page regeneration against an every-page original. Falling back:
+    // manifest.injection.pageIndex is the already-resolved 0-based index, and
     // +1 converts it back to the 1-based TargetPage injectPdf's own
-    // resolveTargetPage() expects.
-    targetPage: manifest.injection.pageIndex + 1,
+    // resolveTargetPages() expects. (A document-level mode — xmp_only /
+    // info_dict — records a single page even when it was generated with
+    // "all", since it has no page content to repeat; its sibling conditions
+    // then regenerate on that one page, matching what the original wrote.)
+    targetPage:
+      (manifest.injection.pageIndexes?.length ?? 1) > 1 ? "all" : manifest.injection.pageIndex + 1,
     position: manifest.injection.position,
     fontSize: manifest.injection.fontSize,
     payloadLanguage: manifest.prompt.language,

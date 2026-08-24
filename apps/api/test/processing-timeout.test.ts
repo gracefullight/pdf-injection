@@ -22,10 +22,12 @@ describe("POST /api/v1/jobs — PDFI_MAX_PROCESSING_MS", () => {
         outputSha256: "0".repeat(64),
         promptSha256: "0".repeat(64),
         pageIndex: 0,
+        pageIndexes: [0],
         pageGeometryBefore: [],
         pageGeometryAfter: [],
         warnings: [],
         boundingBox: [0, 0, 0, 0] as [number, number, number, number],
+        boundingBoxes: [[0, 0, 0, 0] as [number, number, number, number]],
         fontSize: 1,
       };
     });

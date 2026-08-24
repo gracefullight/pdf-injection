@@ -26,7 +26,7 @@ import {
   readInfoDictPayload,
   readStampedImagePresence,
   readUnicodeTagsPayload,
-  resolveTargetPage,
+  resolveTargetPages,
 } from "@pdf-injection/pdf-engine";
 import { lintPrompt } from "@pdf-injection/prompt-lint";
 import {
@@ -130,11 +130,12 @@ function parsePosition(raw: string | null): Position {
 function parseTargetPage(raw: string | null): TargetPage {
   if (raw === null || raw === "" || raw === "last") return "last";
   if (raw === "first") return "first";
+  if (raw === "all") return "all";
   const n = Number(raw);
   if (!Number.isInteger(n) || n < 1) {
     throw new ApiError(
       "VALIDATION_ERROR",
-      `targetPage must be "first", "last", or a positive integer, got "${raw}"`,
+      `targetPage must be "first", "last", "all", or a positive integer, got "${raw}"`,
     );
   }
   return n;
@@ -272,13 +273,14 @@ export async function createJob(
     maxPageDimensionPt: config.maxPageDimensionPt,
   });
 
-  const resolvedTargetPageIndex = (() => {
+  const resolvedTargetPageIndexes = (() => {
     try {
-      return resolveTargetPage(targetPageInput, sourceInspection.pageCount);
+      return resolveTargetPages(targetPageInput, sourceInspection.pageCount);
     } catch (err) {
       throw new ApiError("VALIDATION_ERROR", (err as Error).message);
     }
   })();
+  const resolvedTargetPageIndex = resolvedTargetPageIndexes[0] as number;
 
   // Browser FormData normalizes textarea line endings to CRLF. Canonicalize
   // before linting so the transport's `\r` bytes are not mistaken for
@@ -307,6 +309,7 @@ export async function createJob(
   const injectionInputCommon = {
     mode: injectionMode,
     pageIndex: resolvedTargetPageIndex,
+    pageIndexes: resolvedTargetPageIndexes,
     position,
     fontSize: fontSize ?? 1,
     boundingBox: [0, 0, 0, 0] as [number, number, number, number],
@@ -377,15 +380,17 @@ export async function createJob(
             );
           }
         }
+        // Every injected page is gated, not just the first: with
+        // targetPage="all" a payload that silently failed to land on page 7
+        // must not pass because page 1 is fine.
         if (injectionMode === "freetext_annot") {
-          const freetextAnnotPayload = await readFreetextAnnotPayload(
-            result.bytes,
-            result.pageIndex,
-          );
-          if (!freetextAnnotPayload.contentsPresent) {
-            throw new InjectionFailedError(
-              "freetext_annot injection reported success but no FreeText annotation payload could be read back from the output PDF",
-            );
+          for (const pageIndex of result.pageIndexes) {
+            const freetextAnnotPayload = await readFreetextAnnotPayload(result.bytes, pageIndex);
+            if (!freetextAnnotPayload.contentsPresent) {
+              throw new InjectionFailedError(
+                `freetext_annot injection reported success but no FreeText annotation payload could be read back from page ${pageIndex + 1} of the output PDF`,
+              );
+            }
           }
         }
         if (injectionMode === "acroform_field") {
@@ -397,20 +402,20 @@ export async function createJob(
           }
         }
         if (injectionMode === "image_only") {
-          const stampedImagePresence = await readStampedImagePresence(
-            result.bytes,
-            result.pageIndex,
-          );
-          if (!stampedImagePresence.imagePresent) {
-            throw new InjectionFailedError(
-              "image_only injection reported success but no stamped image XObject could be read back from the output PDF",
-            );
+          for (const pageIndex of result.pageIndexes) {
+            const stampedImagePresence = await readStampedImagePresence(result.bytes, pageIndex);
+            if (!stampedImagePresence.imagePresent) {
+              throw new InjectionFailedError(
+                `image_only injection reported success but no stamped image XObject could be read back from page ${pageIndex + 1} of the output PDF`,
+              );
+            }
           }
         }
 
         const injection: PrivateManifest["injection"] = {
           mode: injectionMode,
           pageIndex: result.pageIndex,
+          pageIndexes: result.pageIndexes,
           position,
           fontSize: result.fontSize,
           boundingBox: result.boundingBox,
@@ -447,6 +452,7 @@ export async function createJob(
           bytes: result.bytes,
           targetInstruction: normalizedInstruction,
           targetPageIndex: result.pageIndex,
+          targetPageIndexes: result.pageIndexes,
         });
 
         // Round 2 (unicode_tags): hiddenTextExtracted is expected/correct to
@@ -615,6 +621,7 @@ export async function createJob(
           promptSha256,
           injectionMode,
           targetPage: result.pageIndex,
+          targetPages: result.pageIndexes,
           createdAt: now.toISOString(),
           expiresAt: expiresAt.toISOString(),
           errorCode: null,
@@ -737,6 +744,7 @@ export async function createJob(
           promptSha256,
           injectionMode,
           targetPage: resolvedTargetPageIndex,
+          targetPages: resolvedTargetPageIndexes,
           createdAt: now.toISOString(),
           expiresAt: expiresAt.toISOString(),
           errorCode: err.code,
@@ -796,6 +804,7 @@ export async function getJobStatus(
     sourceFilename: job.sourceFilename,
     injectionMode: job.injectionMode,
     targetPage: job.targetPage,
+    targetPages: job.targetPages,
     createdAt: job.createdAt,
     expiresAt: job.expiresAt,
     summary: report?.summary ?? null,

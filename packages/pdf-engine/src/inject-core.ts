@@ -24,7 +24,7 @@ import { detectRiskFlags } from "./inspect-source";
 import { normalizePrompt } from "./normalize-prompt";
 import { snapshotPageGeometry } from "./page-geometry";
 import { type CjkPayloadLanguage, isCjkPayloadLanguage } from "./payload-language";
-import { resolveTargetPage } from "./resolve-target-page";
+import { resolveTargetPages } from "./resolve-target-page";
 
 /**
  * Everything the dispatcher needs that is NOT portable across runtimes.
@@ -161,12 +161,19 @@ export async function injectPdfWith(
   const riskFlags = detectRiskFlags(doc);
 
   const pageGeometryBefore = snapshotPageGeometry(doc);
-  const pageIndex = resolveTargetPage(input.targetPage, doc.getPageCount());
+  // targetPage="all" resolves to every page; every other value to exactly one.
+  const targetPageIndexes = resolveTargetPages(input.targetPage, doc.getPageCount());
 
   const warnings: ValidationWarning[] = [];
 
-  let boundingBox: [number, number, number, number];
-  let fontSize: number;
+  const boundingBoxes: Array<[number, number, number, number]> = [];
+  let fontSize = input.fontSize ?? 1;
+  /**
+   * The pages actually written to — equal to `targetPageIndexes` for every
+   * page-level mode, and a single entry for the two document-level modes,
+   * which have no page content to repeat.
+   */
+  let pageIndexes: number[];
 
   // Korean/Chinese (non-ASCII) payload on a drawn-text mode requires the
   // matching CJK font; ASCII text under payloadLanguage="ko"/"zh" can still
@@ -192,136 +199,163 @@ export async function injectPdfWith(
     font = await platform.embedCjkFont(payloadLanguage, doc, normalizedInstruction);
   }
 
-  if (input.mode === "xmp_only") {
-    // No page content stream is touched — no font needed regardless of language.
-    ({ boundingBox, fontSize } = await injectXmpOnly({
-      doc,
-      instruction: normalizedInstruction,
-      promptSha256,
-    }));
-  } else if (input.mode === "info_dict") {
-    // No page content stream is touched — no font needed regardless of language.
-    ({ boundingBox, fontSize } = await injectInfoDict({
-      doc,
-      instruction: normalizedInstruction,
-      promptSha256,
-    }));
-  } else if (input.mode === "freetext_annot") {
-    // Appearance draws the instruction for real under invisible render mode
-    // 3 (see injectFreetextAnnot's module doc for why) — needs a font.
-    ({ boundingBox, fontSize } = await injectFreetextAnnot({
-      doc,
-      pageIndex,
-      instruction: normalizedInstruction,
-      promptSha256,
-      position: input.position,
-      x: input.x,
-      y: input.y,
-      fontSize: input.fontSize,
-      maxWidth: input.maxWidth,
-      font,
-    }));
-  } else if (input.mode === "acroform_field") {
-    // Appearance draws the instruction for real under invisible render mode
-    // 3 (see injectAcroFormField's module doc for why) — needs a font.
-    ({ boundingBox, fontSize } = await injectAcroFormField({
-      doc,
-      pageIndex,
-      instruction: normalizedInstruction,
-      promptSha256,
-      position: input.position,
-      x: input.x,
-      y: input.y,
-      fontSize: input.fontSize,
-      maxWidth: input.maxWidth,
-      font,
-    }));
-  } else if (input.mode === "image_only") {
-    // Rasterizes via @napi-rs/canvas (never pdf-lib text APIs) + a post-save,
-    // public-pdf-lib-API image-XObject-dict tag — the injector performs its
-    // OWN internal save/reload cycle and returns the reloaded PDFDocument
-    // instance; swap the dispatcher's local `doc` to it BEFORE the
-    // dispatcher's own final save/reload/geometry-check step below (which
-    // then runs unchanged) — same contract as unicode_tags below.
-    if (!platform.injectImageOnly) {
-      throw new InjectionFailedError(
-        'injectionMode "image_only" is not available in this runtime: it rasterizes the ' +
-          "instruction through a native canvas, which only the server has. Generate this mode " +
-          "against a running API server.",
-      );
-    }
-    const result = await platform.injectImageOnly({
-      doc,
-      pageIndex,
-      instruction: normalizedInstruction,
-      promptSha256,
-      position: input.position,
-      x: input.x,
-      y: input.y,
-      fontSize: input.fontSize,
-      maxWidth: input.maxWidth,
-    });
-    doc = result.doc;
-    boundingBox = result.boundingBox;
-    fontSize = result.fontSize;
-  } else if (input.mode === "unicode_tags") {
-    // Draws via embedKoreanFont() (ASCII-complete, never shared with any
-    // visible text) + a post-save, public-pdf-lib-API /ToUnicode CMap
-    // rewrite — the injector performs its OWN internal save/reload cycle
-    // and returns the reloaded, CMap-rewritten PDFDocument instance; swap
-    // the dispatcher's local `doc` to it BEFORE the dispatcher's own final
-    // save/reload/geometry-check step below (which then runs unchanged).
-    if (!platform.injectUnicodeTags) {
-      throw new InjectionFailedError(
-        'injectionMode "unicode_tags" is not available in this runtime: it draws with the ' +
-          "bundled CJK font subset, which is only loadable on the server. Generate this mode " +
-          "against a running API server.",
-      );
-    }
-    const result = await platform.injectUnicodeTags({
-      doc,
-      pageIndex,
-      instruction: normalizedInstruction,
-      position: input.position,
-      x: input.x,
-      y: input.y,
-      fontSize: input.fontSize,
-      maxWidth: input.maxWidth,
-    });
-    doc = result.doc;
-    boundingBox = result.boundingBox;
+  // Runtime-capability gates run before any page is touched, so an
+  // unavailable mode fails without leaving the document half-injected.
+  if (input.mode === "image_only" && !platform.injectImageOnly) {
+    throw new InjectionFailedError(
+      'injectionMode "image_only" is not available in this runtime: it rasterizes the ' +
+        "instruction through a native canvas, which only the server has. Generate this mode " +
+        "against a running API server.",
+    );
+  }
+  if (input.mode === "unicode_tags" && !platform.injectUnicodeTags) {
+    throw new InjectionFailedError(
+      'injectionMode "unicode_tags" is not available in this runtime: it draws with the ' +
+        "bundled CJK font subset, which is only loadable on the server. Generate this mode " +
+        "against a running API server.",
+    );
+  }
+
+  if (input.mode === "xmp_only" || input.mode === "info_dict") {
+    // Document-level payloads: no page content stream is touched, so
+    // targetPage="all" has nothing to repeat — write the single payload and
+    // report the first resolved page. No font needed regardless of language.
+    pageIndexes = [targetPageIndexes[0] as number];
+    const result =
+      input.mode === "xmp_only"
+        ? await injectXmpOnly({ doc, instruction: normalizedInstruction, promptSha256 })
+        : await injectInfoDict({ doc, instruction: normalizedInstruction, promptSha256 });
+    boundingBoxes.push(result.boundingBox);
     fontSize = result.fontSize;
   } else {
-    // white_text / render_mode_3 / visible_positive_control — `font` was
-    // already resolved above (shared with freetext_annot/acroform_field).
-    const injectorInput = {
-      doc,
-      pageIndex,
-      instruction: normalizedInstruction,
-      position: input.position,
-      x: input.x,
-      y: input.y,
-      fontSize: input.fontSize,
-      maxWidth: input.maxWidth,
-      font,
-    };
+    // Page-level modes. With targetPage="all" the mode's injector simply runs
+    // once per page; image_only and unicode_tags each perform their own
+    // internal save/reload cycle and hand back a fresh PDFDocument, so `doc`
+    // is rebound every iteration and the next page draws into that instance.
+    // That makes "all" cost one full save/reload per page for those two modes —
+    // acceptable because page count is already bounded (LIMITS.maxPages).
+    pageIndexes = targetPageIndexes;
 
-    ({ boundingBox, fontSize } =
-      input.mode === "white_text"
-        ? await injectWhiteText(injectorInput)
-        : input.mode === "render_mode_3"
-          ? await injectRenderMode3(injectorInput)
-          : await injectVisibleControl(injectorInput));
+    for (const pageIndex of pageIndexes) {
+      if (input.mode === "freetext_annot") {
+        // Appearance draws the instruction for real under invisible render mode
+        // 3 (see injectFreetextAnnot's module doc for why) — needs a font.
+        const result = await injectFreetextAnnot({
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          promptSha256,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
+          font,
+        });
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      } else if (input.mode === "acroform_field") {
+        // Appearance draws the instruction for real under invisible render mode
+        // 3 (see injectAcroFormField's module doc for why) — needs a font.
+        const result = await injectAcroFormField({
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          promptSha256,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
+          font,
+        });
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      } else if (input.mode === "image_only") {
+        // Rasterizes via @napi-rs/canvas (never pdf-lib text APIs) + a post-save,
+        // public-pdf-lib-API image-XObject-dict tag — the injector performs its
+        // OWN internal save/reload cycle and returns the reloaded PDFDocument
+        // instance; swap the dispatcher's local `doc` to it BEFORE the
+        // dispatcher's own final save/reload/geometry-check step below (which
+        // then runs unchanged) — same contract as unicode_tags below.
+        const result = await (
+          platform.injectImageOnly as NonNullable<InjectPlatform["injectImageOnly"]>
+        )({
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          promptSha256,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
+        });
+        doc = result.doc;
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      } else if (input.mode === "unicode_tags") {
+        // Draws via embedKoreanFont() (ASCII-complete, never shared with any
+        // visible text) + a post-save, public-pdf-lib-API /ToUnicode CMap
+        // rewrite — the injector performs its OWN internal save/reload cycle
+        // and returns the reloaded, CMap-rewritten PDFDocument instance; swap
+        // the dispatcher's local `doc` to it BEFORE the dispatcher's own final
+        // save/reload/geometry-check step below (which then runs unchanged).
+        // Each iteration registers its own font on its own page, so an earlier
+        // page's already-rewritten CMap is never revisited.
+        const result = await (
+          platform.injectUnicodeTags as NonNullable<InjectPlatform["injectUnicodeTags"]>
+        )({
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
+        });
+        doc = result.doc;
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      } else {
+        // white_text / render_mode_3 / visible_positive_control — `font` was
+        // already resolved above (shared with freetext_annot/acroform_field).
+        const injectorInput = {
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
+          font,
+        };
+
+        const result =
+          input.mode === "white_text"
+            ? await injectWhiteText(injectorInput)
+            : input.mode === "render_mode_3"
+              ? await injectRenderMode3(injectorInput)
+              : await injectVisibleControl(injectorInput);
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      }
+    }
 
     if (input.mode === "white_text") {
       // Best-effort: we don't sample the page background, so we can't assert
       // BACKGROUND_NOT_WHITE either way — surface an informational
-      // accessibility warning instead (PRD §10.3 "필수 보호").
+      // accessibility warning instead (PRD §10.3 "필수 보호"). One warning for
+      // the whole job, not one per page: `pageIndex` is only meaningful when a
+      // single page was injected.
       warnings.push({
         code: "ACCESSIBILITY_HIDDEN_TEXT",
         message:
-          "White-on-white hidden text may be exposed by dark-mode viewers, screen readers, or select-all/copy. Background color was not sampled (best-effort check).",
-        pageIndex,
+          `White-on-white hidden text${pageIndexes.length > 1 ? ` (on all ${pageIndexes.length} pages)` : ""} ` +
+          "may be exposed by dark-mode viewers, screen readers, or select-all/copy. Background color was not sampled (best-effort check).",
+        ...(pageIndexes.length === 1 ? { pageIndex: pageIndexes[0] as number } : {}),
       });
     }
   }
@@ -363,11 +397,13 @@ export async function injectPdfWith(
     sourceSha256,
     outputSha256,
     promptSha256,
-    pageIndex,
+    pageIndex: pageIndexes[0] as number,
+    pageIndexes,
     pageGeometryBefore,
     pageGeometryAfter,
     warnings,
-    boundingBox,
+    boundingBox: boundingBoxes[0] as [number, number, number, number],
+    boundingBoxes,
     fontSize,
   };
 }

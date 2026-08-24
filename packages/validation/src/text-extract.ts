@@ -11,7 +11,14 @@ const STANDARD_FONT_DATA_URL = (() => {
 export interface ExtractTextInput {
   bytes: Uint8Array;
   targetInstruction: string;
+  /** The first injected page. Ignored when `targetPageIndexes` is given. */
   targetPageIndex: number;
+  /**
+   * Every injected page, for `targetPage: "all"`. When present,
+   * `targetPageMatch` means *every* one of these pages matched — a single page
+   * losing the payload must not read as a clean extraction.
+   */
+  targetPageIndexes?: number[];
 }
 
 export interface PageTextMatch {
@@ -89,8 +96,13 @@ export async function extractText(input: ExtractTextInput): Promise<ExtractTextR
     });
   }
 
-  const targetPage = pages[input.targetPageIndex];
-  const targetPageMatch = targetPage ? targetPage.exactMatch || targetPage.normalizedMatch : false;
+  const targetIndexes = input.targetPageIndexes?.length
+    ? input.targetPageIndexes
+    : [input.targetPageIndex];
+  const targetPageMatch = targetIndexes.every((index) => {
+    const page = pages[index];
+    return page ? page.exactMatch || page.normalizedMatch : false;
+  });
   const anyPageMatch = pages.some((p) => p.exactMatch || p.normalizedMatch);
 
   return {

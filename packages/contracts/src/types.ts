@@ -42,8 +42,16 @@ export type PdfTransform = "print_to_pdf" | "ocr_regeneration" | "screenshot_ocr
 export type TextTransform = "paraphrase" | "translation" | "human_edit";
 export type DistributionStrategy = "round_robin" | "seeded_hash";
 
-/** number is 1-based from the API; resolved to a 0-based pageIndex internally. */
-export type TargetPage = number | "first" | "last";
+/**
+ * number is 1-based from the API; resolved to a 0-based pageIndex internally.
+ *
+ * `"all"` injects the instruction on *every* page rather than one — it resolves
+ * to the full 0-based index list (`resolveTargetPages` in packages/pdf-engine)
+ * and the engine runs the mode's injector once per page. The two document-level
+ * modes (`xmp_only`, `info_dict`) have no page to repeat on, so they still write
+ * their single payload and report page 0 — see `injectPdfWith`.
+ */
+export type TargetPage = number | "first" | "last" | "all";
 
 export type Position = "top" | "bottom" | "custom";
 
@@ -106,7 +114,13 @@ export interface JobRecord {
   outputSha256: string | null;
   promptSha256: string;
   injectionMode: InjectionMode;
-  targetPage: number; // resolved 0-based index
+  targetPage: number; // resolved 0-based index — the first injected page
+  /**
+   * Every resolved 0-based page index the instruction was injected on. One
+   * entry for every targetPage except `"all"`, which lists the whole document.
+   * `targetPage` stays as the first entry so existing readers keep working.
+   */
+  targetPages: number[];
   createdAt: string;
   expiresAt: string;
   errorCode: string | null;
@@ -152,9 +166,17 @@ export interface PrivateManifest {
   expectedSignals: ExpectedSignal[];
   injection: {
     mode: InjectionMode;
+    /** First injected page (0-based). Equal to `pageIndexes[0]`. */
     pageIndex: number;
+    /**
+     * Every 0-based page the payload was written to. Optional: manifests
+     * written before multi-page targeting existed have no such field, and a
+     * reader must treat its absence as `[pageIndex]`.
+     */
+    pageIndexes?: number[];
     position: Position;
     fontSize: number;
+    /** Bounding box on `pageIndex`; the other pages use the same layout rules. */
     boundingBox: [number, number, number, number];
   };
   validation: ValidationSummary;
@@ -287,7 +309,10 @@ export interface JobStatusResponse {
   errorCode: string | null;
   sourceFilename: string;
   injectionMode: InjectionMode;
+  /** Resolved 0-based index of the first injected page. */
   targetPage: number;
+  /** Every resolved 0-based page index the instruction was injected on. */
+  targetPages: number[];
   createdAt: string;
   expiresAt: string;
   summary: ValidationSummary | null;
@@ -337,6 +362,20 @@ export interface InjectPdfInput {
   source: Uint8Array;
   instruction: string;
   mode: InjectionMode;
+  /**
+   * Optional multi-channel selection. When present and non-empty, the engine
+   * (`injectPdfMultiWith`) applies *every* listed mode to the same document —
+   * deduped, in order — and `mode` is treated as the first/primary entry.
+   * Absent (or a single entry) → the plain single-mode `injectPdfWith` path.
+   *
+   * The mode-specific injectors touch independent PDF structures (page content
+   * stream vs. AcroForm widget vs. FreeText annotation vs. /Info dict vs. XMP
+   * metadata), so applying them in series composes cleanly and each one's own
+   * geometry-preservation gate still holds for the combined output. A pairing
+   * like `["render_mode_3", "acroform_field"]` writes both an invisible page
+   * text object and a hidden form-field payload into one PDF.
+   */
+  modes?: InjectionMode[];
   targetPage: TargetPage;
   position: Position;
   x?: number;
@@ -353,10 +392,20 @@ export interface InjectPdfResult {
   sourceSha256: string;
   outputSha256: string;
   promptSha256: string;
+  /** First injected page (0-based). Equal to `pageIndexes[0]`. */
   pageIndex: number;
+  /**
+   * Every 0-based page the payload was written to, ascending. One entry unless
+   * `targetPage` was `"all"`; the two document-level modes (`xmp_only`,
+   * `info_dict`) always report a single entry, since they write no page content.
+   */
+  pageIndexes: number[];
   pageGeometryBefore: PageGeometry[];
   pageGeometryAfter: PageGeometry[];
   warnings: ValidationWarning[];
+  /** Bounding box on `pageIndex`. Equal to `boundingBoxes[0]`. */
   boundingBox: [number, number, number, number];
+  /** Per-page bounding boxes, aligned index-for-index with `pageIndexes`. */
+  boundingBoxes: Array<[number, number, number, number]>;
   fontSize: number;
 }

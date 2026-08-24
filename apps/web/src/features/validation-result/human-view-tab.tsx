@@ -9,6 +9,18 @@ export interface HumanViewTabProps {
   pageCount: number;
   /** 0-based target page index the hidden instruction was injected into, when known. */
   targetPageIndex?: number | null;
+  /**
+   * Every 0-based injected page — more than one only for `targetPage: "all"`.
+   * Falls back to `[targetPageIndex]` when absent.
+   */
+  targetPageIndexes?: number[] | null;
+}
+
+/** "1", "1 and 4", "1, 4 and 7" — reads as prose inside the target-page note. */
+function formatPageList(pageNumbers: number[]): string {
+  if (pageNumbers.length <= 1) return String(pageNumbers[0] ?? "");
+  const head = pageNumbers.slice(0, -1).join(", ");
+  return `${head} and ${pageNumbers[pageNumbers.length - 1]}`;
 }
 
 /** Screen 4 "Human View" tab — original vs. modified PDF, side-by-side, with page navigation. */
@@ -17,26 +29,41 @@ export function HumanViewTab({
   outputDocument,
   pageCount,
   targetPageIndex,
+  targetPageIndexes,
 }: HumanViewTabProps) {
   const [pageNumber, setPageNumber] = useState(1);
-  const targetPageNumber = typeof targetPageIndex === "number" ? targetPageIndex + 1 : null;
+  const targetPageNumbers = targetPageIndexes?.length
+    ? targetPageIndexes.map((index) => index + 1)
+    : typeof targetPageIndex === "number"
+      ? [targetPageIndex + 1]
+      : [];
+  const everyPage = pageCount > 1 && targetPageNumbers.length >= pageCount;
+  // Where "Go to page" should jump: the first injected page that isn't already
+  // on screen. With every page injected there is nowhere to jump to.
+  const nextTargetPage = everyPage
+    ? undefined
+    : targetPageNumbers.find((number) => number !== pageNumber);
 
   return (
     <div className="flex flex-col gap-4" data-testid="human-view-tab">
-      {targetPageNumber !== null && (
+      {targetPageNumbers.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <span data-testid="human-view-target-page-note">
-            The hidden instruction was injected on page {targetPageNumber}.
+            {everyPage
+              ? `The hidden instruction was injected on every page (${pageCount}).`
+              : `The hidden instruction was injected on ${
+                  targetPageNumbers.length > 1 ? "pages" : "page"
+                } ${formatPageList(targetPageNumbers)}.`}
           </span>
-          {pageNumber !== targetPageNumber && (
+          {nextTargetPage !== undefined && (
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setPageNumber(targetPageNumber)}
+              onClick={() => setPageNumber(nextTargetPage)}
               data-testid="human-view-go-to-target-page"
             >
-              Go to page {targetPageNumber}
+              Go to page {nextTargetPage}
             </Button>
           )}
         </div>

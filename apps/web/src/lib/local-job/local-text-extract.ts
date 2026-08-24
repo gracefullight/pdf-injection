@@ -20,7 +20,14 @@ function collapseWhitespace(text: string): string {
 export interface LocalExtractTextInput {
   bytes: Uint8Array;
   targetInstruction: string;
+  /** The first injected page. Ignored when `targetPageIndexes` is given. */
   targetPageIndex: number;
+  /**
+   * Every injected page, for `targetPage: "all"`. When present,
+   * `targetPageMatch` means *every* one of these pages matched — mirrors the
+   * server's `extractText()`.
+   */
+  targetPageIndexes?: number[];
 }
 
 export async function extractTextInBrowser(
@@ -49,11 +56,16 @@ export async function extractTextInBrowser(
       });
     }
 
-    const targetPage = pages[input.targetPageIndex];
+    const targetIndexes = input.targetPageIndexes?.length
+      ? input.targetPageIndexes
+      : [input.targetPageIndex];
     return {
       pdfJsVersion,
       pages,
-      targetPageMatch: targetPage ? targetPage.exactMatch || targetPage.normalizedMatch : false,
+      targetPageMatch: targetIndexes.every((index) => {
+        const page = pages[index];
+        return page ? page.exactMatch || page.normalizedMatch : false;
+      }),
       anyPageMatch: pages.some((page) => page.exactMatch || page.normalizedMatch),
     };
   } finally {

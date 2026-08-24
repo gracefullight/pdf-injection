@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { ValidationError } from "../src/errors";
-import { resolveTargetPage } from "../src/resolve-target-page";
+import { resolveTargetPage, resolveTargetPages } from "../src/resolve-target-page";
 
 describe("resolveTargetPage", () => {
   test('"first" resolves to 0-based index 0', () => {
@@ -49,5 +49,30 @@ describe("resolveTargetPage", () => {
 
   test("zero-page document throws a typed ValidationError", () => {
     expect(() => resolveTargetPage("first", 0)).toThrow(ValidationError);
+  });
+
+  test('"all" collapses to the first page for single-page callers', () => {
+    expect(resolveTargetPage("all", 5)).toBe(0);
+  });
+});
+
+describe("resolveTargetPages", () => {
+  test('"all" resolves to every 0-based page index, ascending', () => {
+    expect(resolveTargetPages("all", 5)).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  test('"all" on a single-page document resolves to [0]', () => {
+    expect(resolveTargetPages("all", 1)).toEqual([0]);
+  });
+
+  test("every non-'all' value resolves to exactly one index", () => {
+    expect(resolveTargetPages("first", 5)).toEqual([0]);
+    expect(resolveTargetPages("last", 5)).toEqual([4]);
+    expect(resolveTargetPages(3, 5)).toEqual([2]);
+  });
+
+  test("out-of-range and zero-page inputs throw the same typed ValidationError", () => {
+    expect(() => resolveTargetPages(6, 5)).toThrow(ValidationError);
+    expect(() => resolveTargetPages("all", 0)).toThrow(ValidationError);
   });
 });

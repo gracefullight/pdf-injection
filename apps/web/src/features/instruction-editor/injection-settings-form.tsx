@@ -98,6 +98,10 @@ export function InjectionSettingsForm({
     onChange({ ...settings, ...partial });
   }
 
+  // xmp_only and info_dict write a single document-level payload with no page
+  // content, so "every page" cannot repeat anything for them.
+  const documentLevelMode = settings.mode === "xmp_only" || settings.mode === "info_dict";
+
   const instructionHasNonAscii = hasNonAsciiCharacters(instruction);
   const suggestKo = instructionHasNonAscii && settings.payloadLanguage === "en";
 
@@ -293,7 +297,7 @@ export function InjectionSettingsForm({
                     ? middlePage
                     : value === "custom"
                       ? (pageCount ?? 1)
-                      : (value as "first" | "last"),
+                      : (value as "first" | "last" | "all"),
               })
             }
           >
@@ -306,9 +310,19 @@ export function InjectionSettingsForm({
                 Middle page{pageCount ? ` (${middlePage})` : ""}
               </SelectItem>
               <SelectItem value="last">Last page</SelectItem>
+              <SelectItem value="all" data-testid="target-page-option-all">
+                Every page{pageCount ? ` (${pageCount})` : ""}
+              </SelectItem>
               <SelectItem value="custom">Specific page…</SelectItem>
             </SelectContent>
           </Select>
+          {settings.targetPage === "all" && (
+            <p className="text-xs text-muted-foreground" data-testid="target-page-all-note">
+              {documentLevelMode
+                ? "This mode stores one document-level payload, so it is written once no matter how many pages the document has."
+                : `The instruction is repeated on every page${pageCount ? ` (${pageCount})` : ""}. It survives page reordering or an excerpt being submitted, but every copy is one more chance for a reader to notice it.`}
+            </p>
+          )}
           {typeof settings.targetPage === "number" && (
             <Input
               type="number"

@@ -204,6 +204,7 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
     bytes: outputBytes,
     targetInstruction: normalizedInstruction,
     targetPageIndex: result.pageIndex,
+    targetPageIndexes: result.pageIndexes,
   });
 
   // xmp_only writes the payload into the catalog's /Metadata stream and is
@@ -218,6 +219,7 @@ export async function runLocalJob(input: CreateJobInput): Promise<RunLocalJobRes
   const injection: PrivateManifest["injection"] = {
     mode: input.injectionMode,
     pageIndex: result.pageIndex,
+    pageIndexes: result.pageIndexes,
     position: input.position ?? "bottom",
     fontSize: result.fontSize,
     boundingBox: result.boundingBox,

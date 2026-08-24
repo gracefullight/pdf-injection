@@ -44,7 +44,8 @@ export function useClientValidation() {
       sourceBytes: Uint8Array,
       outputBytes: Uint8Array,
       mode: InjectionMode,
-      targetPageIndex: number,
+      /** Every injected page — more than one only for `targetPage: "all"`. */
+      targetPageIndexes: number[],
       normalizedInstruction: string,
     ): Promise<ClientValidationComputation | null> => {
       setState({ computing: true, error: null, result: null });
@@ -100,12 +101,14 @@ export function useClientValidation() {
         const anyPageMatch = extractionPages.some(
           (page) => page.exactMatch || page.normalizedMatch || page.caseInsensitiveMatch,
         );
-        const targetPageEntry = extractionPages.find((page) => page.pageIndex === targetPageIndex);
-        const targetPageMatch = targetPageEntry
-          ? targetPageEntry.exactMatch ||
-            targetPageEntry.normalizedMatch ||
-            targetPageEntry.caseInsensitiveMatch
-          : false;
+        // Every injected page must match: with targetPage="all", one page
+        // losing the payload cannot read as a clean extraction.
+        const targetPageMatch = targetPageIndexes.every((targetPageIndex) => {
+          const entry = extractionPages.find((page) => page.pageIndex === targetPageIndex);
+          return entry
+            ? entry.exactMatch || entry.normalizedMatch || entry.caseInsensitiveMatch
+            : false;
+        });
 
         const input: ClientValidationInput = {
           pdfJsVersion,

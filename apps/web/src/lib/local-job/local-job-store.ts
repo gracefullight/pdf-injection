@@ -51,6 +51,9 @@ export function localJobStatus(jobId: string): JobStatusResponse {
     // server stores `result.pageIndex` verbatim (job.service.ts) and the UI
     // adds 1 for display (human-view-tab.tsx). Do not pre-increment here.
     targetPage: job.manifest.injection.pageIndex,
+    // `pageIndexes` is optional on the manifest (absent in artifacts written
+    // before targetPage="all" existed) — fall back to the single page.
+    targetPages: job.manifest.injection.pageIndexes ?? [job.manifest.injection.pageIndex],
     createdAt: job.createdAt,
     // Local jobs hold no server-side artifacts, so nothing expires; report the
     // creation time rather than inventing a retention window.

@@ -99,6 +99,45 @@ describe("POST /api/v1/jobs - option handling", () => {
     expect(status.targetPage).toBe(2);
   });
 
+  test("targetPage=all reports every page and lands the payload on each one", async () => {
+    const { app } = testApp();
+    const file = await fixtureFile("five-page-text.pdf");
+    const createRes = await app.handle(
+      buildCreateJobRequest({
+        file,
+        instruction: "Say hello.",
+        expectedSignals: DEFAULT_SIGNALS,
+        injectionMode: "white_text",
+        targetPage: "all",
+      }),
+    );
+    const created = await createRes.json();
+    expect(created.status).toBe("completed");
+
+    const statusRes = await app.handle(
+      new Request(`http://localhost/api/v1/jobs/${created.jobId}`, {
+        headers: { "X-Job-Token": created.accessToken },
+      }),
+    );
+    const status = await statusRes.json();
+    // targetPage stays the first injected page so pre-existing readers still work.
+    expect(status.targetPage).toBe(0);
+    expect(status.targetPages).toEqual([0, 1, 2, 3, 4]);
+    // targetPageMatch means *every* target page matched, not just the first.
+    expect(status.summary.hiddenTextExtracted).toBe(true);
+
+    const reportRes = await app.handle(
+      new Request(`http://localhost/api/v1/jobs/${created.jobId}/validation-report`, {
+        headers: { "X-Job-Token": created.accessToken },
+      }),
+    );
+    const report = await reportRes.json();
+    expect(report.injection.pageIndexes).toEqual([0, 1, 2, 3, 4]);
+    for (const page of report.serverValidation.textExtraction.pages) {
+      expect(page.exactMatch || page.normalizedMatch).toBe(true);
+    }
+  });
+
   test("out-of-range targetPage -> 422 VALIDATION_ERROR", async () => {
     const { app } = testApp();
     const file = await fixtureFile("one-page-text.pdf");

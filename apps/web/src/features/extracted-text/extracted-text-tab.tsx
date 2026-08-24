@@ -8,6 +8,11 @@ export interface ExtractedTextTabProps {
   pageTexts: string[];
   matches: ClientValidationInput["extractedText"]["pages"];
   targetPageIndex: number;
+  /**
+   * Every 0-based injected page — more than one only for `targetPage: "all"`.
+   * Falls back to `[targetPageIndex]` when absent.
+   */
+  targetPageIndexes?: number[];
   normalizedInstruction: string;
   injectionMode: InjectionMode;
 }
@@ -57,11 +62,13 @@ export function ExtractedTextTab({
   pageTexts,
   matches,
   targetPageIndex,
+  targetPageIndexes,
   normalizedInstruction,
   injectionMode,
 }: ExtractedTextTabProps) {
   const [selectedPage, setSelectedPage] = useState(targetPageIndex);
 
+  const targetPages = new Set(targetPageIndexes?.length ? targetPageIndexes : [targetPageIndex]);
   const selectedMatch = matches.find((match) => match.pageIndex === selectedPage);
   const selectedText = pageTexts[selectedPage] ?? "";
   const nonExtractableNote = NON_EXTRACTABLE_MODE_NOTES[injectionMode];
@@ -112,7 +119,7 @@ export function ExtractedTextTab({
                   match
                 </Badge>
               )}
-              {index === targetPageIndex && <span className="ml-1 text-xs">(target)</span>}
+              {targetPages.has(index) && <span className="ml-1 text-xs">(target)</span>}
             </Button>
           );
         })}
@@ -131,7 +138,7 @@ export function ExtractedTextTab({
           <dd>{selectedMatch.caseInsensitiveMatch ? "yes" : "no"}</dd>
           <dt className="text-muted-foreground">Target page match</dt>
           <dd>
-            {selectedPage === targetPageIndex
+            {targetPages.has(selectedPage)
               ? selectedMatch.exactMatch || selectedMatch.normalizedMatch
                 ? "yes"
                 : "no"

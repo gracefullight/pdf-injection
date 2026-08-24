@@ -273,6 +273,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   prompt_sha256      TEXT NOT NULL,
   injection_mode     TEXT NOT NULL,
   target_page        INTEGER NOT NULL,
+  target_pages       TEXT,              -- JSON array of 0-based page indexes (targetPage="all")
   created_at         TEXT NOT NULL,
   expires_at         TEXT NOT NULL,
   error_code         TEXT,
@@ -280,6 +281,11 @@ CREATE TABLE IF NOT EXISTS jobs (
 );
 CREATE INDEX IF NOT EXISTS idx_jobs_expires_at ON jobs(expires_at);
 ```
+
+`target_pages` arrived after `target_page` and is added by a guarded `ALTER TABLE` in
+`JobsRepository.migrate()` (same pattern as `set_id`), so rows written before multi-page
+targeting keep it `NULL` and read back as `[target_page]`. `target_page` remains the first
+injected page, which is what every pre-existing reader expects.
 
 Round 2 adds four more tables, all foreign-keyed to `jobs(id) ON DELETE CASCADE` (via
 `PRAGMA foreign_keys = ON`, enabled once per connection by `runs.repository.ts`'s `migrate()`),
