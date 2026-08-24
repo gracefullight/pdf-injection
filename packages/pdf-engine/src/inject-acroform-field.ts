@@ -138,6 +138,18 @@ export async function injectAcroFormField(
       borderWidth: 0,
       font,
     });
+    // Interactive PDF viewers (Chrome/pdfium, macOS Preview, Acrobat) render a
+    // text field's `/V` value through its `/DA` (black, real fill mode) instead
+    // of the invisible `3 Tr` appearance stream below — so without this the
+    // payload shows up as visible black text on screen. Setting the widget's
+    // NoView flag (annotation flag bit 6) tells viewers not to DISPLAY the
+    // widget on screen, while Print stays on and `pdftotext`/providers still
+    // walk the appearance stream (they skip Hidden widgets, not NoView ones).
+    // That keeps the channel extractable but genuinely invisible on screen.
+    const NOVIEW_FLAG = 1 << 5; // PDF annotation flag bit 6 (NoView) = 32
+    for (const widget of textField.acroField.getWidgets()) {
+      widget.setFlags(widget.getFlags() | NOVIEW_FLAG);
+    }
     // Overrides pdf-lib's default text-field appearance provider (which
     // would paint a visible background/border and real fill-mode glyphs)
     // with a custom one drawing the SAME wrapped lines under `3 Tr`

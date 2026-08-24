@@ -119,6 +119,36 @@ describe("injectPdf mode=acroform_field", () => {
     expect(result.pageGeometryBefore).toEqual(result.pageGeometryAfter);
   });
 
+  test("the widget carries the NoView flag (invisible on screen in interactive viewers) but not Hidden (still print + extractable)", async () => {
+    const source = await buildSourcePdf(1);
+    const result = await injectPdf({
+      source,
+      instruction: "acroform must be invisible on screen",
+      mode: "acroform_field",
+      targetPage: "first",
+      position: "bottom",
+    });
+
+    const doc = await PDFDocument.load(result.bytes);
+    const form = doc.getForm();
+    const probe = form
+      .getFields()
+      .find((field) => field.getName().startsWith(ACROFORM_FIELD_NAME_PREFIX));
+    expect(probe).toBeDefined();
+
+    // Interactive viewers render a field's /V via its /DA (visible), ignoring
+    // the invisible 3 Tr appearance stream — NoView is what keeps it off-screen.
+    // biome-ignore lint/suspicious/noExplicitAny: reaching the low-level widget flags
+    const widgets = (probe as any).acroField.getWidgets();
+    expect(widgets.length).toBeGreaterThan(0);
+    for (const widget of widgets) {
+      const flags = widget.getFlags();
+      expect(flags & (1 << 5)).toBe(1 << 5); // NoView set
+      expect(flags & (1 << 1)).toBe(0); // Hidden NOT set (pdftotext skips Hidden)
+      expect(flags & (1 << 2)).toBe(1 << 2); // Print still set
+    }
+  });
+
   test("pixel-diff tier claim: rendering the widget paints nothing (changedPixelRatio 0, well within the 1e-7 threshold) — skips if @napi-rs/canvas is unavailable", async () => {
     const source = await buildSourcePdf(1);
     const result = await injectPdf({
