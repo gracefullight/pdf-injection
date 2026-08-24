@@ -72,7 +72,7 @@ describe("injectPdf mode=freetext_annot", () => {
     expect(content).toMatch(/3 Tr/);
   });
 
-  test("does NOT set the Hidden annotation flag (poppler's pdftotext skips Hidden annotations entirely — see module doc)", async () => {
+  test("sets NoView (invisible + non-interactive on screen) but NOT Hidden (poppler's pdftotext skips Hidden annotations entirely — see module doc)", async () => {
     const source = await buildSourcePdf(1);
     const result = await injectPdf({
       source,
@@ -91,9 +91,13 @@ describe("injectPdf mode=freetext_annot", () => {
       const annot = annots?.lookupMaybe(i, PDFDict);
       const subtype = annot?.lookupMaybe(PDFName.of("Subtype"), PDFName);
       if (subtype !== PDFName.of("FreeText")) continue;
-      const flags = annot?.lookupMaybe(PDFName.of("F"), PDFNumber);
-      const hiddenBit = Math.floor((flags?.asNumber() ?? 0) / 2) % 2; // bit 2 = Hidden (avoid bitwise ops)
+      const flagValue = annot?.lookupMaybe(PDFName.of("F"), PDFNumber)?.asNumber() ?? 0;
+      const hiddenBit = Math.floor(flagValue / 2) % 2; // bit 2 = Hidden (value 2)
+      const noViewBit = Math.floor(flagValue / 32) % 2; // bit 6 = NoView (value 32)
+      // NoView removes the on-screen render + interaction (no double-click),
+      // Hidden must stay off or pdftotext stops extracting the appearance.
       expect(hiddenBit).toBe(0);
+      expect(noViewBit).toBe(1);
       checked = true;
     }
     expect(checked).toBe(true);
