@@ -8,6 +8,12 @@ on:
       - "apps/web/**"
       - "packages/contracts/**"
       - "packages/prompt-lint/**"
+      # The on-device (local) mode bundles the injection engine and the
+      # validation/report builder into the web app, so changes there must
+      # redeploy Pages too — otherwise an engine-only fix (e.g. acroform NoView)
+      # never reaches the deployed site.
+      - "packages/pdf-engine/**"
+      - "packages/validation/**"
       - "package.json"
       - "bun.lock"
       - "tsconfig.base.json"
