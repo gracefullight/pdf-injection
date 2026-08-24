@@ -22,6 +22,7 @@ import {
   normalizePrompt,
   PdfEngineError,
   readAcroFormFieldPayload,
+  readActualTextPayload,
   readFreetextAnnotPayload,
   readInfoDictPayload,
   readStampedImagePresence,
@@ -94,6 +95,7 @@ const INJECTION_MODES: InjectionMode[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 const POSITIONS: Position[] = ["top", "bottom", "custom"];
 const PAYLOAD_LANGUAGES: PayloadLanguage[] = ["en", "ko", "zh"];
@@ -411,6 +413,20 @@ export async function createJob(
             }
           }
         }
+        if (injectionMode === "actual_text") {
+          for (const pageIndex of result.pageIndexes) {
+            const actualTextPayload = await readActualTextPayload(result.bytes, pageIndex);
+            if (
+              !actualTextPayload.payloadPresent ||
+              !actualTextPayload.actualTexts.includes(normalizedInstruction) ||
+              !actualTextPayload.promptSha256Values.includes(result.promptSha256)
+            ) {
+              throw new InjectionFailedError(
+                `actual_text injection reported success but its /ActualText payload could not be read back from page ${pageIndex + 1} of the output PDF`,
+              );
+            }
+          }
+        }
 
         const injection: PrivateManifest["injection"] = {
           mode: injectionMode,
@@ -545,6 +561,21 @@ export async function createJob(
                   pageIndex: result.pageIndex,
                 },
               ];
+            case "actual_text":
+              return textExtraction.targetPageMatch
+                ? []
+                : [
+                    {
+                      code: "ACTUAL_TEXT_NOT_EXTRACTED",
+                      message:
+                        "The instruction is present in a marked-content span's /ActualText " +
+                        "property (verified by a decoded content-stream read-back), while the " +
+                        "span's only glyph content is a fixed invisible decoy. This project's " +
+                        "PDF.js extraction did not substitute /ActualText. Provider-side " +
+                        "visibility is the outcome measured by the Model Test.",
+                      pageIndex: result.pageIndex,
+                    },
+                  ];
             default:
               return [];
           }

@@ -58,6 +58,7 @@ describe("isBrowserSupportedMode", () => {
     expect([...(BROWSER_SUPPORTED_MODES as readonly string[])].sort()).toEqual(
       [
         "acroform_field",
+        "actual_text",
         "freetext_annot",
         "image_only",
         "info_dict",

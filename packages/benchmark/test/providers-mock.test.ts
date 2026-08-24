@@ -95,6 +95,18 @@ async function buildImageOnlyPdf(): Promise<Uint8Array> {
   return result.bytes;
 }
 
+async function buildActualTextPdf(): Promise<Uint8Array> {
+  const source = await buildSourcePdf();
+  const result = await injectPdf({
+    source,
+    instruction: INSTRUCTION,
+    mode: "actual_text",
+    targetPage: "first",
+    position: "top",
+  });
+  return result.bytes;
+}
+
 describe("createMockAdapter", () => {
   test("isConfigured() is always true", () => {
     expect(createMockAdapter().isConfigured()).toBe(true);
@@ -177,6 +189,13 @@ describe("createMockAdapter", () => {
       prompt: "prompt B6",
     });
     expect((originalAnswer.raw as { instructionFound: boolean }).instructionFound).toBe(false);
+  });
+
+  test("detects the instruction via marked-content /ActualText and marks instructionFound", async () => {
+    const pdfBytes = await buildActualTextPdf();
+    const adapter = createMockAdapter({ context: { hiddenInstruction: INSTRUCTION } });
+    const answer = await adapter.askWithPdf({ pdfBytes, prompt: "prompt B7" });
+    expect((answer.raw as { instructionFound: boolean }).instructionFound).toBe(true);
   });
 
   test("does not find the instruction in an untouched (original) source PDF", async () => {

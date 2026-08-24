@@ -17,7 +17,7 @@ const OLLAMA_UNAVAILABLE = { available: false, baseUrl: "http://localhost:11434"
 const OLLAMA_AVAILABLE = { available: true, baseUrl: "http://localhost:11434" };
 
 describe("ALL_BENCHMARK_CONDITIONS", () => {
-  it("includes original plus all nine injection modes, including the four round-3 probes", () => {
+  it("includes original plus all ten injection modes", () => {
     expect(ALL_BENCHMARK_CONDITIONS).toEqual([
       "original",
       "white_text",
@@ -29,6 +29,7 @@ describe("ALL_BENCHMARK_CONDITIONS", () => {
       "freetext_annot",
       "acroform_field",
       "info_dict",
+      "actual_text",
     ]);
   });
 });

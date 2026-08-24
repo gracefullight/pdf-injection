@@ -8,6 +8,7 @@ describe("model test condition labels", () => {
       "freetext_annot",
       "acroform_field",
       "info_dict",
+      "actual_text",
     ] as const) {
       expect(CONDITION_LABELS[condition]).not.toMatch(/research probe|diagnostic|round[- ]?3/i);
     }

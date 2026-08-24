@@ -5,6 +5,7 @@ export * from "./compare-geometry";
 export * from "./errors";
 export * from "./hb-subset";
 export * from "./inject-acroform-field";
+export * from "./inject-actual-text";
 export * from "./inject-browser";
 export * from "./inject-core";
 export * from "./inject-freetext-annot";

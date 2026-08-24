@@ -173,10 +173,10 @@ describe("fixture matrix: unicode_tags injection + tag-encoded extraction (never
 });
 
 // Round 3 probe conditions (research/diagnostic, not production channels):
-// info_dict / freetext_annot / acroform_field. All three route the payload through a channel
+// info_dict / freetext_annot / acroform_field / actual_text. All four route the payload through a channel
 // this app's pdfjs-based extractText() never inspects — the classic /Info dict (info_dict) or an
-// annotation/widget's own /AP /N appearance stream (freetext_annot/acroform_field), never the
-// page's own content stream — so, like unicode_tags above, extraction is a STRUCTURAL guarantee
+// annotation/widget's own /AP /N appearance stream (freetext_annot/acroform_field), or marked
+// content's /ActualText replacement value (actual_text) — so, like unicode_tags above, extraction is a STRUCTURAL guarantee
 // (deterministically false), not render_mode_3's merely-recorded uncertainty.
 //
 // Important nuance (see packages/pdf-engine's backend result memory for the full empirical
@@ -192,8 +192,8 @@ describe("fixture matrix: unicode_tags injection + tag-encoded extraction (never
 // packages/pdf-engine/test/inject-{info-dict,freetext-annot,acroform-field}.test.ts), not this
 // integration-level file's — mirrors the unicode_tags block's identical division of
 // responsibility above.
-describe("fixture matrix: info_dict / freetext_annot / acroform_field injection + deterministic-false extraction (never pdfjs-extractable)", () => {
-  const PROBE_MODES = ["info_dict", "freetext_annot", "acroform_field"] as const;
+describe("fixture matrix: structural probe injection + deterministic-false PDF.js extraction", () => {
+  const PROBE_MODES = ["info_dict", "freetext_annot", "acroform_field", "actual_text"] as const;
 
   for (const fixtureName of GOOD_FIXTURES) {
     for (const mode of PROBE_MODES) {
@@ -214,8 +214,8 @@ describe("fixture matrix: info_dict / freetext_annot / acroform_field injection 
         expect(reloaded.getPageCount()).toBe(originalPageCount);
         expect(result.pageGeometryBefore).toEqual(result.pageGeometryAfter);
 
-        // Deterministically false — none of these three channels is ever visited by
-        // extractText()'s page-content-only getTextContent() walk (see block comment above).
+        // Deterministically false — PDF.js skips the private structures and does not
+        // substitute /ActualText (see block comment above).
         const extraction = await extractText({
           bytes: result.bytes,
           targetInstruction: TEST_INSTRUCTION,

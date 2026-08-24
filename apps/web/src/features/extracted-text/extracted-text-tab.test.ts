@@ -2,9 +2,16 @@ import { describe, expect, it } from "bun:test";
 import { NON_EXTRACTABLE_MODE_NOTES } from "@/features/extracted-text/extracted-text-tab";
 
 describe("NON_EXTRACTABLE_MODE_NOTES", () => {
-  it("has an explanatory notice for unicode_tags and all four round-3 probe modes", () => {
+  it("has an explanatory notice for unicode_tags and the non-PDF.js-extractable probes", () => {
     expect(Object.keys(NON_EXTRACTABLE_MODE_NOTES).sort()).toEqual(
-      ["unicode_tags", "image_only", "freetext_annot", "acroform_field", "info_dict"].sort(),
+      [
+        "unicode_tags",
+        "image_only",
+        "freetext_annot",
+        "acroform_field",
+        "info_dict",
+        "actual_text",
+      ].sort(),
     );
   });
 
@@ -34,7 +41,12 @@ describe("NON_EXTRACTABLE_MODE_NOTES", () => {
     expect(NON_EXTRACTABLE_MODE_NOTES.info_dict).toContain("metadata-aware reader");
   });
 
-  it("none of the four round-3 probe notes claim the payload reaches a model", () => {
+  it("actual_text's note distinguishes the semantic payload from the decoy text layer", () => {
+    expect(NON_EXTRACTABLE_MODE_NOTES.actual_text).toContain("/ActualText");
+    expect(NON_EXTRACTABLE_MODE_NOTES.actual_text).toContain("decoy");
+  });
+
+  it("none of the round-3 probe notes claim the payload reaches a model", () => {
     for (const mode of ["image_only", "freetext_annot", "acroform_field", "info_dict"] as const) {
       expect(NON_EXTRACTABLE_MODE_NOTES[mode]?.toLowerCase()).not.toContain("the model");
     }

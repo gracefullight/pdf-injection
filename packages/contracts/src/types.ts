@@ -16,7 +16,9 @@ export type InjectionMode =
   | "image_only"
   | "freetext_annot"
   | "acroform_field"
-  | "info_dict";
+  | "info_dict"
+  /** Accessibility-semantics probe: payload in marked content's `/ActualText`. */
+  | "actual_text";
 
 /**
  * Payload language for the hidden instruction. `"en"` is printable-ASCII only

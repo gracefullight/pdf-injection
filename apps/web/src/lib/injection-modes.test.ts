@@ -7,7 +7,12 @@ describe("RESEARCH_PROBE_MODES / isResearchProbeMode", () => {
     // acroform_field came from the same probe round but reached the model 5/5
     // (injection-anatomy.ts), so badging it "Experimental" understated the
     // result — it is deliberately not in this list.
-    expect(RESEARCH_PROBE_MODES).toEqual(["image_only", "freetext_annot", "info_dict"]);
+    expect(RESEARCH_PROBE_MODES).toEqual([
+      "image_only",
+      "freetext_annot",
+      "info_dict",
+      "actual_text",
+    ]);
     expect(isResearchProbeMode("acroform_field")).toBe(false);
   });
 
@@ -22,6 +27,7 @@ describe("RESEARCH_PROBE_MODES / isResearchProbeMode", () => {
       "freetext_annot",
       "acroform_field",
       "info_dict",
+      "actual_text",
     ];
     for (const mode of allModes) {
       expect(isResearchProbeMode(mode)).toBe(

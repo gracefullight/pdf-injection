@@ -22,6 +22,7 @@ export const ALL_BENCHMARK_CONDITIONS: BenchmarkCondition[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 export const MIN_REPEATS = 1;

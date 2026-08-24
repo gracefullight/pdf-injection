@@ -27,6 +27,7 @@ const INJECTABLE_CONDITIONS: InjectionMode[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 function isInjectionMode(condition: BenchmarkCondition): condition is InjectionMode {

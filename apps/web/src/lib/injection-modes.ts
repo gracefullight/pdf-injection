@@ -3,8 +3,8 @@ import type { InjectionMode } from "@pdf-injection/contracts";
 /**
  * Round-3 research/diagnostic probe conditions (see
  * `.agents/state/memories/result-backend-probe-core.md`): channels that did **not**
- * reach the model (0/5 in the probe run) and are deterministically not extractable
- * by this app's own PDF.js-based extraction pipeline. They carry the "Experimental"
+ * reach the model (0/5 in the probe run), plus newly added unmeasured probes.
+ * They are not presented as proven channels and carry the "Experimental"
  * badge so they are never presented as working hiding techniques.
  *
  * `acroform_field` is deliberately NOT in this list even though it came from the
@@ -21,6 +21,7 @@ export const RESEARCH_PROBE_MODES: readonly InjectionMode[] = [
   "image_only",
   "freetext_annot",
   "info_dict",
+  "actual_text",
 ];
 
 export function isResearchProbeMode(mode: InjectionMode): boolean {

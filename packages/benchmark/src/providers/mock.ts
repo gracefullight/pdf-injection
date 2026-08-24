@@ -2,6 +2,7 @@ import type { ExpectedSignal } from "@pdf-injection/contracts";
 import {
   normalizePrompt,
   readAcroFormFieldPayload,
+  readActualTextPayload,
   readFreetextAnnotPayload,
   readInfoDictPayload,
   readStampedImagePresence,
@@ -186,6 +187,17 @@ export function createMockAdapter(input: CreateMockAdapterInput = {}): ProviderA
       acroFormField.value != null &&
       collapseWhitespace(acroFormField.value).toLowerCase() ===
         collapseWhitespace(hiddenInstruction).toLowerCase()
+    ) {
+      return true;
+    }
+
+    const actualText = await readActualTextPayload(pdfBytes, targetPageIndex);
+    if (
+      actualText.actualTexts.some(
+        (value) =>
+          collapseWhitespace(value).toLowerCase() ===
+          collapseWhitespace(hiddenInstruction).toLowerCase(),
+      )
     ) {
       return true;
     }

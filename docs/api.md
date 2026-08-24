@@ -294,12 +294,13 @@ literal `"all"` — `repeats` (≤ `PDFI_MODEL_TEST_MAX_REPEATS`, default 10), `
 defaults to the PRD §21.3 prompt), `acknowledgeExternalTransfer`). One condition PDF is generated
 per requested `BenchmarkCondition` (`original`, `white_text`, `render_mode_3`,
 `visible_positive_control`, `xmp_only`, `unicode_tags`, plus the four round-3 probe conditions
-`image_only`, `freetext_annot`, `acroform_field`, `info_dict` — 10 total, `ALL_CONDITIONS` in
+`image_only`, `freetext_annot`, `acroform_field`, `info_dict`, plus the `actual_text`
+accessibility-semantics probe — 11 total, `ALL_CONDITIONS` in
 `packages/benchmark/src/config.ts`) and cached for reuse across repeats/providers. A
-`conditions: "all"` run now costs ~1.67× what it did before round 3 (10 conditions vs. the
+`conditions: "all"` run now costs ~1.83× what it did before round 3 (11 conditions vs. the
 previous 6).
 
-- **Response 202** (`CreateRunResponse`): `{ "runId": "uuid", "status": "queued", "totalCalls": 10 }`
+- **Response 202** (`CreateRunResponse`): `{ "runId": "uuid", "status": "queued", "totalCalls": 11 }`
 - **Errors**: 403 (`JOB_FORBIDDEN`/`EXTERNAL_PROVIDERS_DISABLED`), 404 (`JOB_NOT_FOUND`), 422
   (`VALIDATION_ERROR`/`PROVIDER_NOT_CONFIGURED`), 504 (`PROCESSING_TIMEOUT`). Answers are scored
   against the job's `expectedSignals`, so a job generated without any is rejected with
@@ -701,6 +702,7 @@ threshold(image_only) = Infinity — deliberately visible, like visible_positive
 threshold(freetext_annot) = 1e-7 (0.00001%) — the annotation's own appearance draws under invisible render mode 3; nothing is painted on the page
 threshold(acroform_field) = 1e-7 (0.00001%) — same as freetext_annot, for the widget's own appearance
 threshold(info_dict) = 1e-7 (0.00001%) — no page content is touched, like xmp_only
+threshold(actual_text) = 1e-7 (0.00001%) — decoy glyphs use invisible render mode 3
 
 Note: xmp_only never draws page text, so hiddenTextExtracted is not part of its FAIL condition —
 metadataPayloadPresent (checkMetadataPayload() against the output's XMP stream) is the equivalent
@@ -728,6 +730,12 @@ INJECTION_FAILED, same as unicode_tags; the normal (present-but-unextractable) c
 one warning code per mode (IMAGE_ONLY_NOT_TEXT_EXTRACTABLE / FREETEXT_ANNOT_NOT_EXTRACTABLE /
 ACROFORM_FIELD_NOT_EXTRACTABLE / INFO_DICT_NOT_EXTRACTABLE). See
 [`docs/validation.md`](validation.md#round-3-probe-modes-verification-independent-of-pdfjs).
+
+Note: `actual_text` is also recorded rather than required for `FAIL`. Its instruction is stored in
+a marked-content `/ActualText` property while the invisible page glyphs contain only a fixed decoy.
+`readActualTextPayload()` is the post-injection correctness gate. The current PDF.js path returns
+the decoy; poppler `pdftotext` substitutes the semantic value. Provider behavior remains a Model
+Test outcome.
 ```
 
 ## Notes

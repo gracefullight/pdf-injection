@@ -15,6 +15,7 @@ import {
   PromptEncodingFailedError,
 } from "./errors";
 import { injectAcroFormField } from "./inject-acroform-field";
+import { injectActualText } from "./inject-actual-text";
 import { injectFreetextAnnot } from "./inject-freetext-annot";
 import { injectInfoDict } from "./inject-info-dict";
 import { injectRenderMode3 } from "./inject-render-mode-3";
@@ -269,6 +270,20 @@ export async function injectPdfWith(
           fontSize: input.fontSize,
           maxWidth: input.maxWidth,
           font,
+        });
+        boundingBoxes.push(result.boundingBox);
+        fontSize = result.fontSize;
+      } else if (input.mode === "actual_text") {
+        const result = await injectActualText({
+          doc,
+          pageIndex,
+          instruction: normalizedInstruction,
+          promptSha256,
+          position: input.position,
+          x: input.x,
+          y: input.y,
+          fontSize: input.fontSize,
+          maxWidth: input.maxWidth,
         });
         boundingBoxes.push(result.boundingBox);
         fontSize = result.fontSize;

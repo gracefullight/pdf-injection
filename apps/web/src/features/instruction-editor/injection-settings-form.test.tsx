@@ -9,8 +9,8 @@ import { DEFAULT_INJECTION_SETTINGS } from "@/features/instruction-editor/instru
 import { isResearchProbeMode, RESEARCH_PROBE_MODES } from "@/lib/injection-modes";
 
 /**
- * All nine `InjectionMode` values: the five pre-existing production/positive-control channels
- * plus the four round-3 research/diagnostic probes wired in this task. `Record<InjectionMode, string>`
+ * All ten `InjectionMode` values, including the `actual_text` accessibility probe.
+ * `Record<InjectionMode, string>`
  * already forces `MODE_DESCRIPTIONS` to be exhaustive at compile time — this test is the runtime
  * companion, asserting the exact set (catches an accidental extra/renamed key that the compiler
  * wouldn't).
@@ -25,10 +25,11 @@ const ALL_INJECTION_MODES: InjectionMode[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 describe("MODE_DESCRIPTIONS", () => {
-  it("has a description for all nine injection modes", () => {
+  it("has a description for all ten injection modes", () => {
     expect(Object.keys(MODE_DESCRIPTIONS).sort()).toEqual([...ALL_INJECTION_MODES].sort());
   });
 
@@ -52,7 +53,7 @@ describe("MODE_DESCRIPTIONS", () => {
     expect(MODE_DESCRIPTIONS.info_dict).toContain("PDF metadata instead of page text");
   });
 
-  it("none of the four round-3 probe descriptions claim the payload reaches a model", () => {
+  it("none of the research probe descriptions claim the payload reaches a model", () => {
     for (const mode of RESEARCH_PROBE_MODES) {
       expect(MODE_DESCRIPTIONS[mode].toLowerCase()).not.toContain("the model");
     }
@@ -92,7 +93,12 @@ describe("isResearchProbeMode", () => {
   it("is true for exactly the probe conditions that did not reach the model", () => {
     // acroform_field is excluded on purpose: it reached the model 5/5, so it is
     // a proven channel rather than an experimental probe (injection-modes.ts).
-    expect(RESEARCH_PROBE_MODES).toEqual(["image_only", "freetext_annot", "info_dict"]);
+    expect(RESEARCH_PROBE_MODES).toEqual([
+      "image_only",
+      "freetext_annot",
+      "info_dict",
+      "actual_text",
+    ]);
     expect(isResearchProbeMode("acroform_field")).toBe(false);
     for (const mode of RESEARCH_PROBE_MODES) {
       expect(isResearchProbeMode(mode)).toBe(true);
@@ -106,6 +112,7 @@ describe("isResearchProbeMode", () => {
       "visible_positive_control",
       "xmp_only",
       "unicode_tags",
+      "acroform_field",
     ];
     for (const mode of nonProbeModes) {
       expect(isResearchProbeMode(mode)).toBe(false);

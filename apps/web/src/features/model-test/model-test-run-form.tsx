@@ -53,6 +53,7 @@ export const CONDITION_LABELS: Record<BenchmarkCondition, string> = {
   freetext_annot: "FreeText annotation",
   acroform_field: "AcroForm field",
   info_dict: "PDF metadata",
+  actual_text: "ActualText semantics (research)",
 };
 
 export function ModelTestRunForm({ features, onRun, submitting, error }: ModelTestRunFormProps) {

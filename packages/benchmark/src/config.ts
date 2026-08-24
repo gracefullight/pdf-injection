@@ -38,6 +38,7 @@ export const ALL_CONDITIONS: BenchmarkCondition[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 const PROVIDER_NAMES: ProviderName[] = ["anthropic", "openai", "mock", "ollama"];

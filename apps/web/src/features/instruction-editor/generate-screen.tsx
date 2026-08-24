@@ -57,6 +57,7 @@ const MODE_LABELS: Record<InjectionSettings["mode"], string> = {
   freetext_annot: "FreeText annotation",
   acroform_field: "AcroForm field",
   info_dict: "Info dictionary",
+  actual_text: "ActualText semantics (research)",
 };
 const POSITION_LABELS: Record<string, string> = {
   top: "Top margin (default)",

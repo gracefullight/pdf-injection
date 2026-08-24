@@ -115,7 +115,7 @@ describe("isModelTestRequest", () => {
     expect(
       isModelTestRequest({
         providers: [{ name: "mock" }],
-        conditions: ["image_only", "freetext_annot", "acroform_field", "info_dict"],
+        conditions: ["image_only", "freetext_annot", "acroform_field", "info_dict", "actual_text"],
         repeats: 1,
         acknowledgeExternalTransfer: false,
       }),

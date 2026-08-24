@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { PdfStructureMap } from "@/features/instruction-editor/pdf-structure-map";
 import { ANATOMY_PROVENANCE, INJECTION_ANATOMY } from "@/lib/injection-anatomy";
 
-/** All nine `InjectionMode` values — see injection-settings-form.test.ts for the same list. */
+/** All ten `InjectionMode` values — see injection-settings-form.test.ts for the same list. */
 const ALL_INJECTION_MODES: InjectionMode[] = [
   "white_text",
   "render_mode_3",
@@ -15,10 +15,11 @@ const ALL_INJECTION_MODES: InjectionMode[] = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 describe("INJECTION_ANATOMY completeness", () => {
-  it("has anatomy data for all nine injection modes (Record<InjectionMode, …> enforces this at compile time too)", () => {
+  it("has anatomy data for all ten injection modes (Record<InjectionMode, …> enforces this at compile time too)", () => {
     expect(Object.keys(INJECTION_ANATOMY).sort()).toEqual([...ALL_INJECTION_MODES].sort());
   });
 
@@ -30,7 +31,7 @@ describe("INJECTION_ANATOMY completeness", () => {
 });
 
 describe("PdfStructureMap", () => {
-  it("renders a structure location for all nine modes", () => {
+  it("renders a structure location for all ten modes", () => {
     for (const mode of ALL_INJECTION_MODES) {
       const html = renderToStaticMarkup(<PdfStructureMap mode={mode} />);
       expect(html).toContain('data-testid="pdf-structure-map-location"');
@@ -56,7 +57,7 @@ describe("PdfStructureMap", () => {
     for (const mode of ALL_INJECTION_MODES) {
       const html = renderToStaticMarkup(<PdfStructureMap mode={mode} />);
       expect(html).toContain('data-testid="pdf-structure-map-provenance"');
-      expect(html).toContain(ANATOMY_PROVENANCE);
+      expect(html).toContain(INJECTION_ANATOMY[mode].provenance ?? ANATOMY_PROVENANCE);
     }
   });
 
