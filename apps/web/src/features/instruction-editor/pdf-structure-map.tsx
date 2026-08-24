@@ -37,6 +37,7 @@ const REGION_ORDER: readonly AnatomyRegion[] = ["header", "body", "xref", "trail
 const REACH_BADGE_VARIANT: Record<ReachVerdict, BadgeProps["variant"]> = {
   reached: "success",
   not_reached: "secondary",
+  not_tested: "warning",
 };
 
 const EXTRACTOR_BADGE_VARIANT: Record<ExtractorLevel, BadgeProps["variant"]> = {
@@ -54,6 +55,7 @@ const DETECTOR_BADGE_VARIANT: Record<DetectorVerdict, BadgeProps["variant"]> = {
 const REACH_LABEL: Record<ReachVerdict, string> = {
   reached: "reached",
   not_reached: "blocked",
+  not_tested: "untested",
 };
 
 const EXTRACTOR_LABEL: Record<ExtractorLevel, string> = {
@@ -350,7 +352,7 @@ export function PdfStructureMap({ mode, className }: PdfStructureMapProps) {
             data-testid="pdf-structure-map-provenance"
             className="font-mono text-[10.5px] text-muted-foreground"
           >
-            {ANATOMY_PROVENANCE}
+            {anatomy.provenance ?? ANATOMY_PROVENANCE}
           </p>
         </CardContent>
       </Card>

@@ -8,7 +8,7 @@
 > rewritten, reordered or softened.
 >
 > It is kept as the historical baseline, not as a description of the current build. The
-> implementation has since gone beyond it — nine injection modes instead of three, Korean and
+> implementation has since gone beyond it — ten injection modes instead of three, Korean and
 > Chinese payloads, an on-device browser mode — so where this document and the code disagree, the
 > code and [`README.md`](../README.md) are current and this file records what was originally
 > specified. Claims about prior work are stated here as the PRD stated them; see

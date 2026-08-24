@@ -58,7 +58,7 @@ pipeline **on-device** instead of failing at "Generate": inspect → inject → 
 check → text extraction → validation report + private manifest, all in the tab, with the source
 PDF never leaving the machine.
 
-**All nine injection modes and all three payload languages work locally.** The two capabilities
+**All ten injection modes and all three payload languages work locally.** The two capabilities
 that used to be server-only are provided by the browser itself:
 
 - `image_only` rasterizes through the browser's own canvas (`OffscreenCanvas`, falling back to a
@@ -79,7 +79,7 @@ Node built-in reaches the browser entry's module graph).
 
 | | On-device | Needs a server |
 |---|---|---|
-| Injection modes | all nine | — |
+| Injection modes | all ten | — |
 | Payload language | `en`, `ko`, `zh` | — |
 | Distribution | single job, variant (A/B/…) sets, student-keyed sets — including the distribution/mapping CSVs and the ZIP archive | — |
 | Validation | round-trip, geometry, PDF.js text extraction, render + pixel diff, XMP read-back | qpdf structural check |
@@ -347,6 +347,7 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 | `freetext_annot` | Draws the instruction as real invisible (`3 Tr`) text inside a FreeText annotation's own `/AP /N` appearance stream — never the page's content stream. `/Contents` is also set structurally, though it isn't what extracts the text (see caveats) | **Round-3 research/diagnostic probe — not a production channel** | Present in the output (verified via a public-`pdf-lib`-API read-back of the appearance stream), but invisible to this app's own PDF.js-based `extractText()`, which never walks an annotation's appearance stream. Measured directly against this project's own injector output with poppler `pdftotext`/`pdfinfo` v26.08.0: **surfaced** by `pdftotext` (poppler extracts a widget/annotation's text by walking its appearance-stream operators — render mode doesn't matter to that walk), **not present** in `pdfinfo` metadata |
 | `acroform_field` | Same technique as `freetext_annot`, inside a brand-new AcroForm text-field widget's own appearance stream (pdf-lib's public `PDFForm`/`PDFTextField.updateAppearances()` escape hatch). Never mutates a pre-existing field, even on a source PDF that already has an AcroForm | **Round-3 research/diagnostic probe — not a production channel** | Same measured result as `freetext_annot`: surfaced by `pdftotext`, not present in `pdfinfo` metadata, invisible to this app's own PDF.js-based extraction |
 | `info_dict` | Writes the instruction into the classic `/Info` dictionary's `Subject` and `Keywords` fields only — no page content stream is touched. The original `/Info /Title` is preserved | **Round-3 research/diagnostic probe — not a production channel** | Not found in page text by any of this project's tested extractors (`pdfjs-dist`, and — measured directly — poppler's `pdftotext`); surfaced by metadata reads instead (poppler's `pdfinfo`, e.g. pypdf's `reader.metadata`) |
+| `actual_text` | Writes a fixed harmless decoy as invisible (`3 Tr`) page text and stores the real instruction only in the marked-content span's `/ActualText` accessibility property | **Research/diagnostic probe — not a production channel** | Structural presence is verified by decoding the page content stream. This project's PDF.js extraction ignores `/ActualText` and returns the decoy, while poppler `pdftotext` substitutes `/ActualText` and returns the instruction. Whether a provider does the same is measured by Model Test; no provider result is assumed |
 
 All four round-3 probe modes (`image_only`, `freetext_annot`, `acroform_field`, `info_dict`) are
 **deterministically not extractable** by this project's own PDF.js-based `extractText()` —
@@ -359,7 +360,13 @@ Whether a given LLM provider's own ingestion actually surfaces any of these four
 exactly what the Model Test benchmark measures; that measurement is separate from, and not
 settled by, this local PDF.js view.
 
-Eight of the nine modes accept `payloadLanguage: "en" | "ko" | "zh"` (default `"en"`);
+`actual_text` has the same local `hiddenTextExtracted: false` outcome, but for a different reason:
+PDF.js reads the span's ordinary decoy glyphs and does not substitute its `/ActualText` value.
+`readActualTextPayload()` independently verifies that the semantic payload and prompt hash exist;
+poppler `pdftotext` does substitute the value. This makes it an extractor-family probe rather than
+a claim that all PDF readers or models expose accessibility text.
+
+Nine of the ten modes accept `payloadLanguage: "en" | "ko" | "zh"` (default `"en"`);
 `unicode_tags` is `"en"`-only (`"ko"`/`"zh"` are rejected with `PROMPT_ENCODING_FAILED`, since the
 Unicode Tag block has no defined mapping outside the ASCII range). `"en"` requires the instruction
 to be printable ASCII (`PROMPT_ENCODING_FAILED` otherwise, for every mode). `"ko"` embeds a Korean
@@ -389,6 +396,8 @@ metadata-only. `image_only` also accepts `"ko"`, but rasterizes via `@napi-rs/ca
 test suite does not exercise non-ASCII text for this mode, so Korean glyph rendering quality
 depends on whatever fonts are available to the native canvas module on the deployment machine and
 is unverified here.
+`actual_text` also accepts Korean/Chinese without a CJK font: `/ActualText` is a Unicode PDF string,
+while its only glyph content is the fixed ASCII decoy.
 
 ## Validation and the PDF.js disclaimer
 

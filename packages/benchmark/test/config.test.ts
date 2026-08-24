@@ -33,16 +33,17 @@ describe("parseExperimentConfig", () => {
     expect(parsed.conditions).toBe("all");
   });
 
-  test("accepts the 4 round-3 probe conditions (image_only, freetext_annot, acroform_field, info_dict)", () => {
+  test("accepts the research probe conditions, including actual_text", () => {
     const parsed = parseExperimentConfig({
       ...VALID_CONFIG,
-      conditions: ["image_only", "freetext_annot", "acroform_field", "info_dict"],
+      conditions: ["image_only", "freetext_annot", "acroform_field", "info_dict", "actual_text"],
     });
     expect(parsed.conditions).toEqual([
       "image_only",
       "freetext_annot",
       "acroform_field",
       "info_dict",
+      "actual_text",
     ]);
   });
 
@@ -146,13 +147,14 @@ describe("resolveConditions", () => {
     expect(resolveConditions(["original", "xmp_only"])).toEqual(["original", "xmp_only"]);
   });
 
-  test('resolves "all" to include unicode_tags, 6 legacy conditions plus the 4 round-3 probe conditions (10 total)', () => {
+  test('resolves "all" to include all eleven benchmark conditions', () => {
     expect(ALL_CONDITIONS).toContain("unicode_tags");
     expect(ALL_CONDITIONS).toContain("image_only");
     expect(ALL_CONDITIONS).toContain("freetext_annot");
     expect(ALL_CONDITIONS).toContain("acroform_field");
     expect(ALL_CONDITIONS).toContain("info_dict");
-    expect(ALL_CONDITIONS).toHaveLength(10);
+    expect(ALL_CONDITIONS).toContain("actual_text");
+    expect(ALL_CONDITIONS).toHaveLength(11);
   });
 
   test("resolves an explicit array containing unicode_tags unchanged", () => {

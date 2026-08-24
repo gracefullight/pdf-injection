@@ -9,7 +9,7 @@ import { injectUnicodeTags } from "./inject-unicode-tags";
  * The browser platform for the injection dispatcher — used by `apps/web`'s
  * local (server-free) mode, where the whole pipeline runs on-device.
  *
- * Every one of the nine modes and all three payload languages work here; the
+ * Every injection mode and all three payload languages work here; the
  * platform differs from the Node one only in *where the two heavy assets come
  * from*, because a browser has no disk:
  *
@@ -68,6 +68,7 @@ export const BROWSER_SUPPORTED_MODES = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ] as const satisfies ReadonlyArray<InjectPdfInput["mode"]>;
 
 /** True when `mode` can be generated without a server. */

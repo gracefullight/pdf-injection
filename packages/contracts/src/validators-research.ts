@@ -129,6 +129,7 @@ export const BenchmarkConditionSchema = Type.Union([
   Type.Literal("freetext_annot"),
   Type.Literal("acroform_field"),
   Type.Literal("info_dict"),
+  Type.Literal("actual_text"),
 ]);
 
 export const ModelTestRequestSchema = Type.Object({

@@ -57,7 +57,8 @@
               "image_only",
               "freetext_annot",
               "acroform_field",
-              "info_dict"
+              "info_dict",
+              "actual_text"
             ]
           }
         }

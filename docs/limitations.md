@@ -126,7 +126,8 @@ contract (nothing is painted) but has its own, more specific extraction story:
   PDF-parsing/ingestion pipeline surfaces Unicode Tag characters (e.g. when a student copies page
   text into a chat) is an open empirical question that the Model Test benchmark measures —
   `unicode_tags` is a selectable benchmark condition alongside `original`/`white_text`/
-  `render_mode_3`/`visible_positive_control`/`xmp_only` and the four round-3 probe conditions
+  `render_mode_3`/`visible_positive_control`/`xmp_only`, the four round-3 probe conditions, and
+  `actual_text`
   (see [below](#image_only--freetext_annot--acroform_field--info_dict-caveats-round-3-probes)).
   This app's own PDF.js-based parser view is known in advance to never see the payload,
   regardless of what any provider does.
@@ -210,7 +211,7 @@ detectability framing.
 ## On-device (local) mode
 
 When no API server is reachable, `apps/web` runs the pipeline in the browser (see the README's
-[On-device mode](../README.md#on-device-mode-no-server) section). All nine injection modes and all
+[On-device mode](../README.md#on-device-mode-no-server) section). All ten injection modes and all
 three payload languages are available there — `image_only` rasterizes through the browser's canvas,
 and CJK payloads fetch the bundled font plus `hb-subset.wasm` and run the same HarfBuzz→pdf-lib
 subset as the server. Constraints specific to local mode:
@@ -237,7 +238,8 @@ subset as the server. Constraints specific to local mode:
 - The hidden instruction must be **printable ASCII** (plus `\n`) when `payloadLanguage="en"`
   (the default) — anything else is rejected with `PROMPT_ENCODING_FAILED` (see
   `packages/prompt-lint`'s `NON_PRINTABLE_ASCII_RE` / `CONTROL_CHAR_RE` checks). This ASCII gate
-  applies uniformly across **all nine** injection modes, including `xmp_only`/`info_dict` (which
+  applies uniformly across **all ten** injection modes, including `xmp_only`/`info_dict`/
+  `actual_text` (which
   never draw glyphs and so have no font-rendering reason to require ASCII) — kept uniform for
   predictability rather than carving out a mode-specific exception. `unicode_tags` goes further: it
   rejects

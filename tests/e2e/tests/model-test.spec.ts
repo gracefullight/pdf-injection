@@ -15,9 +15,7 @@ import {
 // Mirrors apps/web's ALL_BENCHMARK_CONDITIONS (model-test-helpers.ts) / packages/benchmark's
 // ALL_CONDITIONS (config.ts) — kept as a local literal (not imported) since this spec exercises
 // the UI's default "all conditions checked" state, not the library constant directly. Grew from 6
-// to 10 when the 4 round-3 research/diagnostic probe conditions (image_only/freetext_annot/
-// acroform_field/info_dict) were added and wired into the Model Test condition checklist's
-// default-checked state.
+// to 11 after the four round-3 probes and the `actual_text` accessibility probe were added.
 const CONDITIONS = [
   "original",
   "white_text",
@@ -29,6 +27,7 @@ const CONDITIONS = [
   "freetext_annot",
   "acroform_field",
   "info_dict",
+  "actual_text",
 ];
 
 test.beforeAll(async () => {
@@ -85,7 +84,7 @@ test("model test: mock provider, all conditions, repeats 2, aggregates + gate + 
     "start Ollama to use local models",
   );
 
-  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 10
+  // Defaults already match what's needed: provider "mock" checked (ollama unavailable), all 11
   // conditions checked (ALL_BENCHMARK_CONDITIONS) — only repeats needs bumping to 2, and
   // image_only needs explicitly unchecking when this server has no @napi-rs/canvas (see the
   // canvasAvailable comment above).

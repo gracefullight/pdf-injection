@@ -151,12 +151,22 @@ describe("computeOverall", () => {
     expect(diffThreshold("info_dict")).toBe(1e-7);
   });
 
+  test("actual_text threshold is 1e-7", () => {
+    expect(diffThreshold("actual_text")).toBe(1e-7);
+  });
+
   test("image_only never fails on pixel ratio (threshold Infinity)", () => {
     const result = computeOverall(baseParts({ changedPixelRatio: 0.5 }), "image_only");
     expect(result).toBe("PASS"); // hiddenTextExtracted defaults to true in baseParts, so no warnings either
   });
 
-  for (const mode of ["image_only", "freetext_annot", "acroform_field", "info_dict"] as const) {
+  for (const mode of [
+    "image_only",
+    "freetext_annot",
+    "acroform_field",
+    "info_dict",
+    "actual_text",
+  ] as const) {
     test(`PASS_WITH_WARNINGS (not FAIL) when mode is ${mode} and hiddenTextExtracted is false`, () => {
       const result = computeOverall(baseParts({ hiddenTextExtracted: false }), mode);
       expect(result).toBe("PASS_WITH_WARNINGS");

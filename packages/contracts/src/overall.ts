@@ -16,6 +16,7 @@ import type { InjectionMode, OverallStatus, QpdfStatus } from "./types";
  *   threshold(acroform_field) = 1e-7 (widget appearance is a genuinely
  *     empty operator stream — nothing painted)
  *   threshold(info_dict) = 1e-7 (page content untouched, like xmp_only)
+ *   threshold(actual_text) = 1e-7 (decoy glyphs use invisible render mode 3)
  */
 export function diffThreshold(mode: InjectionMode): number {
   switch (mode) {
@@ -36,6 +37,8 @@ export function diffThreshold(mode: InjectionMode): number {
     case "acroform_field":
       return 1e-7;
     case "info_dict":
+      return 1e-7;
+    case "actual_text":
       return 1e-7;
   }
 }
@@ -106,7 +109,8 @@ export function computeOverall(parts: OverallStatusParts, mode: InjectionMode): 
       mode === "image_only" ||
       mode === "freetext_annot" ||
       mode === "acroform_field" ||
-      mode === "info_dict") &&
+      mode === "info_dict" ||
+      mode === "actual_text") &&
       !parts.hiddenTextExtracted);
 
   if (hasWarnings) return "PASS_WITH_WARNINGS";

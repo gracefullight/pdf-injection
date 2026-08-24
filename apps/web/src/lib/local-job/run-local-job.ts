@@ -35,7 +35,7 @@ import { pdfJsVersion } from "@/lib/pdfjs";
  * substitution is text extraction, which goes through the app's browser pdf.js
  * worker instead of the Node-only legacy build (see `local-text-extract.ts`).
  *
- * All nine injection modes and all three payload languages work here: the
+ * All ten injection modes and all three payload languages work here: the
  * browser rasterizes `image_only` with its own canvas, and the CJK fonts and
  * HarfBuzz subsetter are fetched on demand (`cjk-font-assets.ts`) rather than
  * read from disk.
@@ -127,6 +127,17 @@ function nonExtractableWarnings(
             "The instruction is present in the output PDF's /Info dictionary " +
             "(Subject/Keywords) but is invisible to this project's PDF.js-based text " +
             "extraction, which never inspects document metadata.",
+          pageIndex,
+        },
+      ];
+    case "actual_text":
+      return [
+        {
+          code: "ACTUAL_TEXT_NOT_EXTRACTED",
+          message:
+            "The instruction is present in a marked-content span's /ActualText property, " +
+            "while its ordinary invisible glyph content is a fixed decoy. This project's " +
+            "PDF.js extraction does not substitute /ActualText.",
           pageIndex,
         },
       ];

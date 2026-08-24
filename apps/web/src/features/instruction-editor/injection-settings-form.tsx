@@ -71,6 +71,8 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   freetext_annot: "Invisible text stored in a PDF annotation rather than page text.",
   acroform_field: "Invisible text stored in a PDF form field rather than page text.",
   info_dict: "Stores the instruction in PDF metadata instead of page text.",
+  actual_text:
+    "Accessibility semantics probe: the instruction is stored in /ActualText while the invisible glyph content is a fixed harmless decoy.",
 };
 
 /** Concise labels for the additional-channels checkbox group (the mode <Select> above carries the long descriptions). */
@@ -84,6 +86,7 @@ const MODE_SHORT_LABELS: Record<InjectionMode, string> = {
   freetext_annot: "FreeText annotation",
   acroform_field: "AcroForm field",
   info_dict: "Info dictionary",
+  actual_text: "ActualText semantics",
 };
 
 /** Order of the additional-channel checkboxes — mirrors the mode <Select>. */
@@ -97,6 +100,7 @@ const ADDITIONAL_MODE_ORDER: InjectionMode[] = [
   "image_only",
   "freetext_annot",
   "info_dict",
+  "actual_text",
 ];
 
 export function InjectionSettingsForm({
@@ -212,6 +216,9 @@ export function InjectionSettingsForm({
             </SelectItem>
             <SelectItem value="info_dict" data-testid="injection-mode-option-info-dict">
               Info dictionary
+            </SelectItem>
+            <SelectItem value="actual_text" data-testid="injection-mode-option-actual-text">
+              ActualText semantics (research)
             </SelectItem>
           </SelectContent>
         </Select>

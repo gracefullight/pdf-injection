@@ -3,6 +3,7 @@ export * from "./compare-geometry";
 export * from "./errors";
 export * from "./inject";
 export * from "./inject-acroform-field";
+export * from "./inject-actual-text";
 export * from "./inject-freetext-annot";
 // The Node wrappers own the `injectImageOnly` / `injectUnicodeTags` names for
 // existing callers; the runtime-agnostic cores are exported under their

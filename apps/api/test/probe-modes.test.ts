@@ -4,20 +4,27 @@ import { jobArtifactExists } from "../src/lib/job-artifacts";
 import { buildCreateJobRequest, DEFAULT_SIGNALS, fixtureFile, testApp } from "./helpers";
 
 // Round-3 research/diagnostic probe conditions — image_only, freetext_annot,
-// acroform_field, info_dict (see .agents/state/memories/result-backend-probe-core.md).
-// All four are structurally analogous to the round-2 xmp_only/unicode_tags
+// acroform_field, info_dict, plus the later actual_text accessibility probe.
+// All five are structurally analogous to the round-2 xmp_only/unicode_tags
 // precedent: injectPdf() reports success, a dedicated public-pdf-lib-API
 // reader proves the payload actually landed in the output PDF (the
 // post-injection sanity gate in job.service.ts), and this project's
 // pdfjs-dist-based extractText() is expected/correct to never see the
 // payload (surfaced as a PASS_WITH_WARNINGS-eligible warning, never FAIL).
-const PROBE_MODES = ["info_dict", "freetext_annot", "acroform_field", "image_only"] as const;
+const PROBE_MODES = [
+  "info_dict",
+  "freetext_annot",
+  "acroform_field",
+  "image_only",
+  "actual_text",
+] as const;
 
 const WARNING_CODE_BY_MODE: Record<(typeof PROBE_MODES)[number], string> = {
   info_dict: "INFO_DICT_NOT_EXTRACTABLE",
   freetext_annot: "FREETEXT_ANNOT_NOT_EXTRACTABLE",
   acroform_field: "ACROFORM_FIELD_NOT_EXTRACTABLE",
   image_only: "IMAGE_ONLY_NOT_TEXT_EXTRACTABLE",
+  actual_text: "ACTUAL_TEXT_NOT_EXTRACTED",
 };
 
 // Each mode's warning message explains a different reason extractText()
@@ -28,6 +35,7 @@ const WARNING_MESSAGE_PATTERN_BY_MODE: Record<(typeof PROBE_MODES)[number], RegE
   freetext_annot: /invisible/i,
   acroform_field: /invisible/i,
   image_only: /vision path/i,
+  actual_text: /ActualText/i,
 };
 
 describe.each(PROBE_MODES.map((mode) => [mode] as const))(
@@ -136,17 +144,24 @@ describe.each(PROBE_MODES.map((mode) => [mode] as const))(
         freetext_annot: "readFreetextAnnotPayload",
         acroform_field: "readAcroFormFieldPayload",
         image_only: "readStampedImagePresence",
+        actual_text: "readActualTextPayload",
       }[mode] as
         | "readInfoDictPayload"
         | "readFreetextAnnotPayload"
         | "readAcroFormFieldPayload"
-        | "readStampedImagePresence";
+        | "readStampedImagePresence"
+        | "readActualTextPayload";
 
       const absentPayload = {
         readInfoDictPayload: { title: null, subject: null, keywords: null },
         readFreetextAnnotPayload: { contentsPresent: false, contents: null, promptSha256: null },
         readAcroFormFieldPayload: { fieldPresent: false, fieldName: null, value: null },
         readStampedImagePresence: { imagePresent: false, promptSha256: null },
+        readActualTextPayload: {
+          payloadPresent: false,
+          actualTexts: [],
+          promptSha256Values: [],
+        },
       }[readerName];
 
       const spy = spyOn(pdfEngine, readerName).mockResolvedValue(absentPayload as never);

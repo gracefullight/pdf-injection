@@ -40,6 +40,10 @@ export const NON_EXTRACTABLE_MODE_NOTES: Partial<Record<InjectionMode, string>> 
   info_dict:
     "The instruction is stored in PDF metadata, not in page text, so it will not appear in this " +
     "tab. A metadata-aware reader can still find it.",
+  actual_text:
+    "The instruction is stored as marked-content /ActualText while the ordinary text layer " +
+    "contains only a fixed decoy. This PDF.js version shows the decoy and does not substitute " +
+    "/ActualText; the Model Test checks whether a provider behaves differently.",
 };
 
 function highlight(text: string, needle: string) {
