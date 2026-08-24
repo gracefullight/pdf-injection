@@ -49,7 +49,7 @@ function targetPageLabel(settings: InjectionSettings, pageCount: number): string
 // the professor just picked (r11 review M-03).
 const MODE_LABELS: Record<InjectionSettings["mode"], string> = {
   white_text: "White text (default)",
-  render_mode_3: "Render mode 3 (non-rendering)",
+  render_mode_3: "Render mode 3 (invisible, selectable)",
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only (research control)",
   unicode_tags: "Unicode tags (research)",

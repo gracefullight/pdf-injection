@@ -61,7 +61,7 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
   white_text:
     "White-on-white text: likely readable by text extraction, but visible if the background isn't white.",
   render_mode_3:
-    "Non-rendering text (PDF Tr 3): never painted, regardless of background — but still selectable and copy-pasteable, and some parsers may drop it.",
+    "Invisible text (PDF Tr 3): never painted, regardless of background — but it is still real text, so it stays selectable, copy-pasteable and extractable (drag-select reveals it); some parsers may drop it.",
   visible_positive_control:
     "Visible control condition: the instruction is shown to readers; research use only, not for distribution.",
   xmp_only: "Research control: payload only in XMP metadata; not a production mode.",
@@ -76,7 +76,7 @@ export const MODE_DESCRIPTIONS: Record<InjectionMode, string> = {
 /** Concise labels for the additional-channels checkbox group (the mode <Select> above carries the long descriptions). */
 const MODE_SHORT_LABELS: Record<InjectionMode, string> = {
   white_text: "White text",
-  render_mode_3: "Render mode 3 (non-rendering)",
+  render_mode_3: "Render mode 3 (invisible, selectable)",
   visible_positive_control: "Visible positive control",
   xmp_only: "XMP metadata only",
   unicode_tags: "Unicode tags",
@@ -182,7 +182,7 @@ export function InjectionSettingsForm({
               {reachesModelInvisibly("white_text") && <ReachesModelIndicator />}
             </SelectItem>
             <SelectItem value="render_mode_3">
-              Render mode 3 (non-rendering)
+              Render mode 3 (invisible, selectable)
               {reachesModelInvisibly("render_mode_3") && <ReachesModelIndicator />}
             </SelectItem>
             <SelectItem value="acroform_field" data-testid="injection-mode-option-acroform-field">
