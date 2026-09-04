@@ -1,5 +1,5 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
-import { Check } from "lucide-react";
+import { Check, FileCode2, Layers } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { GenerateScreen } from "@/features/instruction-editor/generate-screen";
@@ -10,6 +10,7 @@ import {
 } from "@/features/instruction-editor/instruction-types";
 import { pruneAcknowledgedWarnings } from "@/features/instruction-editor/prune-acknowledged-warnings";
 import { ProviderSettingsDialog } from "@/features/provider-settings/provider-settings-dialog";
+import { RasterizerScreen } from "@/features/rasterizer/rasterizer-screen";
 import { UploadScreen } from "@/features/upload/upload-screen";
 import type { UploadedSource } from "@/features/upload/upload-types";
 import { ValidationScreen } from "@/features/validation-result/validation-screen";
@@ -90,6 +91,7 @@ export function App() {
   );
   const restoredDraft = initialDraft(hasActiveJobOrSet);
 
+  const [appMode, setAppMode] = useState<"injection" | "rasterizer">("injection");
   const [step, setStep] = useState<WizardStep>(() => (hasActiveJobOrSet ? 4 : 1));
   const [source, setSource] = useState<UploadedSource | null>(null);
   const [instruction, setInstruction] = useState(() => restoredDraft?.instruction ?? "");
@@ -266,166 +268,224 @@ export function App() {
         <ProviderSettingsDialog />
       </header>
 
-      <div data-testid="wizard-stepper">
-        {/* Compact single-line indicator below `sm` — the full step list never wraps cleanly at
-            375px (r11 review H-01: `document.scrollWidth` exceeded the viewport on every screen,
-            causing horizontal scroll app-wide). */}
-        <div className="flex items-center justify-between gap-2 sm:hidden">
-          <p className="text-sm font-medium text-foreground" role="status" aria-label="Progress">
-            Step {step} of 4 · {STEP_LABELS[step]}
-          </p>
-          {step > 1 && canNavigateBackToStep((step - 1) as WizardStep, step, source !== null) && (
-            <button
-              type="button"
-              onClick={() => goToStep((step - 1) as WizardStep)}
-              className="shrink-0 rounded-md px-2 py-1 text-sm font-medium text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              data-testid="wizard-back-step"
-            >
-              ← {STEP_LABELS[(step - 1) as WizardStep]}
-            </button>
+      {/* Top-Level Mode Navigation */}
+      <nav className="flex items-center gap-2 border-b pb-3" aria-label="Main Navigation">
+        <button
+          type="button"
+          onClick={() => setAppMode("injection")}
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+            appMode === "injection"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
           )}
-        </div>
-        <ol className="hidden items-center gap-2 sm:flex" aria-label="Progress">
-          {([1, 2, 3, 4] as WizardStep[]).map((s, index) => {
-            // Earlier steps are clickable to go back (Upload needs no source;
-            // Instruction/Generate do). The current and later steps are not.
-            const navigable = canNavigateBackToStep(s, step, source !== null);
-            const circle = (
-              <span
-                className={cn(
-                  "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
-                  s === step
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : s < step
-                      ? "border-primary bg-accent text-accent-foreground"
-                      : "border-border text-muted-foreground",
-                )}
-                aria-current={s === step ? "step" : undefined}
+          data-testid="nav-injection-mode"
+        >
+          <FileCode2 className="size-4" />
+          <span>Injection Studio</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAppMode("rasterizer")}
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+            appMode === "rasterizer"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
+          )}
+          data-testid="nav-rasterizer-mode"
+        >
+          <Layers className="size-4" />
+          <span>PDF Rasterizer</span>
+          <span
+            className={cn(
+              "rounded px-1.5 py-0.5 text-xs font-normal",
+              appMode === "rasterizer"
+                ? "bg-primary-foreground/20 text-primary-foreground"
+                : "bg-muted-foreground/15 text-muted-foreground",
+            )}
+          >
+            Sanitizer
+          </span>
+        </button>
+      </nav>
+
+      {appMode === "rasterizer" ? (
+        <main>
+          <ErrorBoundary label="PDF Rasterizer">
+            <RasterizerScreen />
+          </ErrorBoundary>
+        </main>
+      ) : (
+        <>
+          <div data-testid="wizard-stepper">
+            {/* Compact single-line indicator below `sm` — the full step list never wraps cleanly at
+                375px (r11 review H-01: `document.scrollWidth` exceeded the viewport on every screen,
+                causing horizontal scroll app-wide). */}
+            <div className="flex items-center justify-between gap-2 sm:hidden">
+              <p
+                className="text-sm font-medium text-foreground"
+                role="status"
+                aria-label="Progress"
               >
-                {s < step ? <Check className="size-4" /> : s}
-              </span>
-            );
-            const label = (
-              <span
-                className={cn(
-                  "truncate text-sm",
-                  s === step ? "font-semibold text-foreground" : "text-muted-foreground",
-                )}
-              >
-                {STEP_LABELS[s]}
-              </span>
-            );
-            return (
-              <li key={s} className="flex min-w-0 flex-1 items-center gap-2">
-                {navigable ? (
+                Step {step} of 4 · {STEP_LABELS[step]}
+              </p>
+              {step > 1 &&
+                canNavigateBackToStep((step - 1) as WizardStep, step, source !== null) && (
                   <button
                     type="button"
-                    onClick={() => goToStep(s)}
-                    className="-mx-1 flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    aria-label={`Go back to step ${s}: ${STEP_LABELS[s]}`}
-                    data-testid={`wizard-step-${s}`}
+                    onClick={() => goToStep((step - 1) as WizardStep)}
+                    className="shrink-0 rounded-md px-2 py-1 text-sm font-medium text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    data-testid="wizard-back-step"
                   >
-                    {circle}
-                    {label}
+                    ← {STEP_LABELS[(step - 1) as WizardStep]}
                   </button>
-                ) : (
-                  <div className="flex min-w-0 items-center gap-2">
-                    {circle}
-                    {label}
-                  </div>
                 )}
-                {index < 3 && (
-                  <span className="mx-1 h-px min-w-4 flex-1 bg-border" aria-hidden="true" />
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
+            </div>
+            <ol className="hidden items-center gap-2 sm:flex" aria-label="Progress">
+              {([1, 2, 3, 4] as WizardStep[]).map((s, index) => {
+                // Earlier steps are clickable to go back (Upload needs no source;
+                // Instruction/Generate do). The current and later steps are not.
+                const navigable = canNavigateBackToStep(s, step, source !== null);
+                const circle = (
+                  <span
+                    className={cn(
+                      "flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold",
+                      s === step
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : s < step
+                          ? "border-primary bg-accent text-accent-foreground"
+                          : "border-border text-muted-foreground",
+                    )}
+                    aria-current={s === step ? "step" : undefined}
+                  >
+                    {s < step ? <Check className="size-4" /> : s}
+                  </span>
+                );
+                const label = (
+                  <span
+                    className={cn(
+                      "truncate text-sm",
+                      s === step ? "font-semibold text-foreground" : "text-muted-foreground",
+                    )}
+                  >
+                    {STEP_LABELS[s]}
+                  </span>
+                );
+                return (
+                  <li key={s} className="flex min-w-0 flex-1 items-center gap-2">
+                    {navigable ? (
+                      <button
+                        type="button"
+                        onClick={() => goToStep(s)}
+                        className="-mx-1 flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label={`Go back to step ${s}: ${STEP_LABELS[s]}`}
+                        data-testid={`wizard-step-${s}`}
+                      >
+                        {circle}
+                        {label}
+                      </button>
+                    ) : (
+                      <div className="flex min-w-0 items-center gap-2">
+                        {circle}
+                        {label}
+                      </div>
+                    )}
+                    {index < 3 && (
+                      <span className="mx-1 h-px min-w-4 flex-1 bg-border" aria-hidden="true" />
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
 
-      <main>
-        <ErrorBoundary label="this screen" key={step}>
-          {step === 1 && (
-            <UploadScreen
-              source={source}
-              onSourceReady={setSource}
-              onContinue={() => setStep(2)}
-              draftRestored={draftRestored && !source}
-              onClearDraft={handleClearDraft}
-              onClearSource={() => setSource(null)}
-            />
-          )}
+          <main>
+            <ErrorBoundary label="this screen" key={step}>
+              {step === 1 && (
+                <UploadScreen
+                  source={source}
+                  onSourceReady={setSource}
+                  onContinue={() => setStep(2)}
+                  draftRestored={draftRestored && !source}
+                  onClearDraft={handleClearDraft}
+                  onClearSource={() => setSource(null)}
+                />
+              )}
 
-          {step === 2 && source && (
-            <InstructionScreen
-              instruction={instruction}
-              onInstructionChange={handleInstructionChange}
-              signals={signals}
-              onSignalsChange={handleSignalsChange}
-              settings={settings}
-              onSettingsChange={setSettings}
-              acknowledgedWarnings={acknowledgedWarnings}
-              onAcknowledgedWarningsChange={setAcknowledgedWarnings}
-              pageCount={source.pageCount}
-              onBack={() => setStep(1)}
-              onContinue={() => setStep(3)}
-              distributionMode={distributionMode}
-              onDistributionModeChange={setDistributionMode}
-              variantDrafts={variantDrafts}
-              onVariantDraftsChange={setVariantDrafts}
-              studentKeyedDraft={studentKeyedDraft}
-              onStudentKeyedDraftChange={setStudentKeyedDraft}
-            />
-          )}
+              {step === 2 && source && (
+                <InstructionScreen
+                  instruction={instruction}
+                  onInstructionChange={handleInstructionChange}
+                  signals={signals}
+                  onSignalsChange={handleSignalsChange}
+                  settings={settings}
+                  onSettingsChange={setSettings}
+                  acknowledgedWarnings={acknowledgedWarnings}
+                  onAcknowledgedWarningsChange={setAcknowledgedWarnings}
+                  pageCount={source.pageCount}
+                  onBack={() => setStep(1)}
+                  onContinue={() => setStep(3)}
+                  distributionMode={distributionMode}
+                  onDistributionModeChange={setDistributionMode}
+                  variantDrafts={variantDrafts}
+                  onVariantDraftsChange={setVariantDrafts}
+                  studentKeyedDraft={studentKeyedDraft}
+                  onStudentKeyedDraftChange={setStudentKeyedDraft}
+                />
+              )}
 
-          {step === 3 && source && (
-            <GenerateScreen
-              source={source}
-              instruction={instruction}
-              signals={signals}
-              settings={settings}
-              acknowledgedWarnings={acknowledgedWarnings}
-              onBack={() => setStep(2)}
-              onGenerated={handleGenerated}
-              distributionMode={distributionMode}
-              variantDrafts={variantDrafts}
-              studentKeyedDraft={studentKeyedDraft}
-              onVariantSetGenerated={handleVariantSetGenerated}
-              onStudentKeyedSetGenerated={handleStudentKeyedSetGenerated}
-            />
-          )}
+              {step === 3 && source && (
+                <GenerateScreen
+                  source={source}
+                  instruction={instruction}
+                  signals={signals}
+                  settings={settings}
+                  acknowledgedWarnings={acknowledgedWarnings}
+                  onBack={() => setStep(2)}
+                  onGenerated={handleGenerated}
+                  distributionMode={distributionMode}
+                  variantDrafts={variantDrafts}
+                  studentKeyedDraft={studentKeyedDraft}
+                  onVariantSetGenerated={handleVariantSetGenerated}
+                  onStudentKeyedSetGenerated={handleStudentKeyedSetGenerated}
+                />
+              )}
 
-          {step === 4 && job && (
-            <ValidationScreen
-              jobId={job.jobId}
-              accessToken={job.accessToken}
-              sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
-              onDeleted={resetFlow}
-              onStartOver={resetFlow}
-            />
-          )}
+              {step === 4 && job && (
+                <ValidationScreen
+                  jobId={job.jobId}
+                  accessToken={job.accessToken}
+                  sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
+                  onDeleted={resetFlow}
+                  onStartOver={resetFlow}
+                />
+              )}
 
-          {step === 4 && variantSet && (
-            <VariantSetResultScreen
-              variantSetId={variantSet.id}
-              accessToken={variantSet.accessToken}
-              sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
-              onDeleted={resetFlow}
-              onStartOver={resetFlow}
-            />
-          )}
+              {step === 4 && variantSet && (
+                <VariantSetResultScreen
+                  variantSetId={variantSet.id}
+                  accessToken={variantSet.accessToken}
+                  sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
+                  onDeleted={resetFlow}
+                  onStartOver={resetFlow}
+                />
+              )}
 
-          {step === 4 && studentKeyedSet && (
-            <StudentKeyedSetResultScreen
-              setId={studentKeyedSet.id}
-              accessToken={studentKeyedSet.accessToken}
-              sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
-              onDeleted={resetFlow}
-              onStartOver={resetFlow}
-            />
-          )}
-        </ErrorBoundary>
-      </main>
+              {step === 4 && studentKeyedSet && (
+                <StudentKeyedSetResultScreen
+                  setId={studentKeyedSet.id}
+                  accessToken={studentKeyedSet.accessToken}
+                  sourceStem={(source?.file.name ?? "assignment.pdf").replace(/\.pdf$/i, "")}
+                  onDeleted={resetFlow}
+                  onStartOver={resetFlow}
+                />
+              )}
+            </ErrorBoundary>
+          </main>
+        </>
+      )}
     </div>
   );
 }
