@@ -28,6 +28,7 @@
     "@pdf-injection/contracts": "workspace:*",
     "@pdf-injection/pdf-engine": "workspace:*",
     "@pdf-injection/prompt-lint": "workspace:*",
+    "@pdf-injection/raster-guard": "workspace:*",
     "@pdf-injection/validation": "workspace:*",
     "bun-types": "^1.4.0",
     "pdf-lib": "^1.17.1",

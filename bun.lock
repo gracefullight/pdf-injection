@@ -9,6 +9,7 @@
         "@pdf-injection/contracts": "workspace:*",
         "@pdf-injection/pdf-engine": "workspace:*",
         "@pdf-injection/prompt-lint": "workspace:*",
+        "@pdf-injection/raster-guard": "workspace:*",
         "@pdf-injection/validation": "workspace:*",
         "bun-types": "^1.4.0",
         "pdf-lib": "^1.17.1",
@@ -44,7 +45,9 @@
         "@ai-sdk/openai": "4.0.46",
         "@elysiajs/eden": "^1.4.9",
         "@pdf-injection/contracts": "workspace:*",
+        "@pdf-injection/detector": "workspace:*",
         "@pdf-injection/prompt-lint": "workspace:*",
+        "@pdf-injection/raster-guard": "workspace:*",
         "@radix-ui/react-checkbox": "^1.1.4",
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-label": "^2.1.2",
@@ -61,6 +64,7 @@
         "clsx": "^2.1.1",
         "fflate": "^0.8.2",
         "lucide-react": "^0.474.0",
+        "pdf-lib": "^1.17.1",
         "pdfjs-dist": "^4.10.38",
         "pixelmatch": "^7.1.0",
         "react": "^19.0.0",
@@ -139,6 +143,18 @@
       "version": "0.1.0",
       "dependencies": {
         "@pdf-injection/contracts": "workspace:*",
+      },
+      "devDependencies": {
+        "bun-types": "^1.4.0",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/raster-guard": {
+      "name": "@pdf-injection/raster-guard",
+      "version": "0.1.0",
+      "dependencies": {
+        "@pdf-injection/contracts": "workspace:*",
+        "@pdf-injection/prompt-lint": "workspace:*",
       },
       "devDependencies": {
         "bun-types": "^1.4.0",
@@ -368,6 +384,8 @@
     "@pdf-injection/pdf-engine": ["@pdf-injection/pdf-engine@workspace:packages/pdf-engine"],
 
     "@pdf-injection/prompt-lint": ["@pdf-injection/prompt-lint@workspace:packages/prompt-lint"],
+
+    "@pdf-injection/raster-guard": ["@pdf-injection/raster-guard@workspace:packages/raster-guard"],
 
     "@pdf-injection/robustness": ["@pdf-injection/robustness@workspace:packages/robustness"],
 

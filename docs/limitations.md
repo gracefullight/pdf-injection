@@ -208,6 +208,57 @@ detectability framing.
   measurement is separate from, and not settled by, anything on this page or by the deterministic
   local-extraction facts above.
 
+## Raster Guard caveats (post-rasterization pixel channel)
+
+Raster Guard (`packages/raster-guard` + `apps/web/src/features/raster-guard`, see
+[`docs/raster-guard.md`](raster-guard.md)) paints its notice into the page bitmap rather than
+writing any PDF object. That inverts several of the trade-offs above and introduces its own:
+
+- **Not a hiding channel, and never described as one.** The notice is printed on the page. The
+  `covert` tier lowers human salience only, and the UI states that it also lowers predicted coverage
+  to marginal on some pipelines. Any framing of this feature as undetectable is wrong.
+- **Every coverage figure is a prediction, not a measurement.** `PROVIDER_PROFILES` encodes each
+  vendor's *documented* image handling (re-checked 2026-09-05 against the primary docs; Anthropic's
+  28x28-patch rule is ported from their published reference implementation and pinned against their
+  own worked example), but the legibility floors (cap height in provider pixels, WCAG contrast
+  ratio) are engineering rules of thumb, not vendor figures. No provider matrix has been run against
+  guarded PDFs — the round-3 measurements in `research/results/` cover the PDF-object modes only.
+- **The raster resolution is an upper bound, not the resolution the model sees.** Anthropic
+  documents that PDF pages are "rasterized to images server-side at dimensions you don't control",
+  and Google scales pages to its own ceiling. A vendor that rasterizes below the chosen scale
+  discards detail before any resize this project models.
+- **Claude's resolution tier changes the answer.** The profile assumes the high-resolution tier
+  (Claude 4.7 and later: 2576px, 4784 visual tokens). A standard-tier model is held to 1568px and
+  1568 tokens and sees roughly 1.7x less detail on the same page.
+- **Gemini's profile is the least certain of the three.** Its documented 3072px page raster implies
+  generous detail, but Google also documents a flat 258 tokens per page and states there is "no
+  performance improvement for pages at higher resolution". Those two facts are hard to reconcile,
+  and the optimistic geometry may overstate what the model resolves.
+- **It is not invisible to every detector — only to one family.** The extraction-vs-render detectors
+  (PhantomLint, and the HCD/VDA pair in production resume screening) are structurally blind to it
+  because a guarded PDF has no extraction side. Pixel-domain scanners are not: SnapGuard's
+  contrast-polarity reversal over near-white regions is built to surface exactly this kind of
+  low-contrast rendered text. See [`docs/raster-guard.md`](raster-guard.md#4-what-detects-it).
+- **Vendors change ingestion behaviour without notice.** When they do, every prediction shifts at
+  once. That is why the profiles live in one small table.
+- **Trivially removable by anyone willing to edit the image**: crop the margin, paint over the band,
+  or retype the document. It raises effort and removes an "I didn't know" defense; it is not a lock.
+- **A model may read the notice and decline to act on it.** One successful live check is a single
+  observation, and `checkNoticeResponse()`'s headlines are written so they cannot be quoted as a
+  rate.
+- **The output is image-only**, so text selection, screen-reader access and searchability are gone —
+  the same accessibility cost the PDF Rasterizer already carries (see the accessibility caveat in
+  [`docs/ethics-and-privacy.md`](ethics-and-privacy.md#accessibility-caveat)). A guarded PDF should
+  never be a student's only copy of an assessment.
+- **File size grows substantially**, since every page becomes a bitmap.
+- **Rungs can be skipped on a crowded page.** When no content-free band fits the notice, the planner
+  falls back to a three-line compact form and, failing that, records a `no_free_band` warning and
+  skips that rung for that page. The result screen shows those warnings rather than silently
+  producing a page with no notice on it.
+- **Live checks send the document to a third party.** They are manual, per-provider, and use a key
+  the user supplies in this tab; nothing is sent without pressing the button. The keys are held in
+  `sessionStorage`, which page scripts can read — use project-scoped keys and revoke them after use.
+
 ## On-device (local) mode
 
 When no API server is reachable, `apps/web` runs the pipeline in the browser (see the README's

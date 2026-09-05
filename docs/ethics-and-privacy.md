@@ -145,6 +145,29 @@ pipeline records `ACCESSIBILITY_HIDDEN_TEXT`-style warnings (surfaced in
 `ValidationReport.serverValidation.warnings`) so this trade-off is visible in every report, not
 just documented here.
 
+### Raster Guard is a different accessibility trade, not a smaller one
+
+Raster Guard's notice is painted into the page image, so a screen reader will not read the
+instruction aloud — but only because it can no longer read *anything* on the page. A guarded PDF is
+image-only: no text selection, no screen-reader access, no search. That is a strictly worse baseline
+for a disabled student than the original document, and it applies to the whole assessment, not just
+to the notice.
+
+Two requirements follow, and neither is optional:
+
+1. **A guarded PDF must never be a student's only copy of an assessment.** Keep the original
+   available, and supply it on request without requiring a student to explain why.
+2. **Say the notice is there.** It is legible on the page, and students should be told the practice
+   is in use before it is used. A notice that redirects a student to their subject coordinator only
+   works as intended when that coordinator knows it exists.
+
+The notice text itself is subject to the same governance requirements as any hidden instruction on
+this page: `packages/raster-guard`'s `lintNotice()` runs the same `packages/prompt-lint` gate, so
+fabricated-citation, grading-distortion and jailbreak phrasing are rejected in a painted notice
+exactly as they are in an injected one. The live-check result reports which canaries appeared in a
+model's reply and nothing about any student — see requirement 9 above, and
+[`docs/raster-guard.md`](raster-guard.md#5-ethics).
+
 ## Submissions research mode (Phase 4) — no real student data
 
 `POST /api/v1/jobs/:jobId/submissions` and its sibling routes (`GET .../submissions`,

@@ -1,5 +1,5 @@
 import type { ExpectedSignal } from "@pdf-injection/contracts";
-import { Check, FileCode2, Layers } from "lucide-react";
+import { Check, FileCode2, Layers, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { GenerateScreen } from "@/features/instruction-editor/generate-screen";
@@ -10,6 +10,7 @@ import {
 } from "@/features/instruction-editor/instruction-types";
 import { pruneAcknowledgedWarnings } from "@/features/instruction-editor/prune-acknowledged-warnings";
 import { ProviderSettingsDialog } from "@/features/provider-settings/provider-settings-dialog";
+import { RasterGuardScreen } from "@/features/raster-guard/raster-guard-screen";
 import { RasterizerScreen } from "@/features/rasterizer/rasterizer-screen";
 import { UploadScreen } from "@/features/upload/upload-screen";
 import type { UploadedSource } from "@/features/upload/upload-types";
@@ -42,6 +43,38 @@ const STEP_LABELS: Record<WizardStep, string> = {
   3: "Generate",
   4: "Validate",
 };
+
+/** The three top-level surfaces: author a PDF-object payload, strip one, or paint one into the pixels. */
+type AppMode = "injection" | "rasterizer" | "raster-guard";
+
+const APP_MODES: {
+  id: AppMode;
+  label: string;
+  tag?: string;
+  testId: string;
+  icon: typeof FileCode2;
+}[] = [
+  {
+    id: "injection",
+    label: "Injection Studio",
+    testId: "nav-injection-mode",
+    icon: FileCode2,
+  },
+  {
+    id: "raster-guard",
+    label: "Raster Guard",
+    tag: "Integrity notice",
+    testId: "nav-raster-guard-mode",
+    icon: ShieldCheck,
+  },
+  {
+    id: "rasterizer",
+    label: "PDF Rasterizer",
+    tag: "Sanitizer",
+    testId: "nav-rasterizer-mode",
+    icon: Layers,
+  },
+];
 
 interface JobCredentials {
   jobId: string;
@@ -91,7 +124,7 @@ export function App() {
   );
   const restoredDraft = initialDraft(hasActiveJobOrSet);
 
-  const [appMode, setAppMode] = useState<"injection" | "rasterizer">("injection");
+  const [appMode, setAppMode] = useState<AppMode>("injection");
   const [step, setStep] = useState<WizardStep>(() => (hasActiveJobOrSet ? 4 : 1));
   const [source, setSource] = useState<UploadedSource | null>(null);
   const [instruction, setInstruction] = useState(() => restoredDraft?.instruction ?? "");
@@ -269,52 +302,53 @@ export function App() {
       </header>
 
       {/* Top-Level Mode Navigation */}
-      <nav className="flex items-center gap-2 border-b pb-3" aria-label="Main Navigation">
-        <button
-          type="button"
-          onClick={() => setAppMode("injection")}
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
-            appMode === "injection"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          )}
-          data-testid="nav-injection-mode"
-        >
-          <FileCode2 className="size-4" />
-          <span>Injection Studio</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setAppMode("rasterizer")}
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
-            appMode === "rasterizer"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          )}
-          data-testid="nav-rasterizer-mode"
-        >
-          <Layers className="size-4" />
-          <span>PDF Rasterizer</span>
-          <span
-            className={cn(
-              "rounded px-1.5 py-0.5 text-xs font-normal",
-              appMode === "rasterizer"
-                ? "bg-primary-foreground/20 text-primary-foreground"
-                : "bg-muted-foreground/15 text-muted-foreground",
-            )}
-          >
-            Sanitizer
-          </span>
-        </button>
+      <nav className="flex flex-wrap items-center gap-2 border-b pb-3" aria-label="Main Navigation">
+        {APP_MODES.map((mode) => {
+          const Icon = mode.icon;
+          const active = appMode === mode.id;
+          return (
+            <button
+              key={mode.id}
+              type="button"
+              onClick={() => setAppMode(mode.id)}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+              aria-current={active ? "page" : undefined}
+              data-testid={mode.testId}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              <span>{mode.label}</span>
+              {mode.tag && (
+                <span
+                  className={cn(
+                    "rounded px-1.5 py-0.5 text-xs font-normal",
+                    active
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-muted-foreground/15 text-muted-foreground",
+                  )}
+                >
+                  {mode.tag}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
       {appMode === "rasterizer" ? (
         <main>
           <ErrorBoundary label="PDF Rasterizer">
             <RasterizerScreen />
+          </ErrorBoundary>
+        </main>
+      ) : appMode === "raster-guard" ? (
+        <main>
+          <ErrorBoundary label="Raster Guard">
+            <RasterGuardScreen />
           </ErrorBoundary>
         </main>
       ) : (

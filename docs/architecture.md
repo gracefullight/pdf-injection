@@ -64,7 +64,8 @@ and [`docs/ethics-and-privacy.md`](ethics-and-privacy.md).
 | `packages/benchmark` | Phase 3 provider adapters (`packages/benchmark/src/providers/anthropic.ts`, `packages/benchmark/src/providers/openai.ts`, `packages/benchmark/src/providers/mock.ts` — all structurally the same `ProviderAdapter` interface), `runMatrix()` (provider x condition x repeat orchestration with bounded concurrency and retry), `disclosure.ts`/`refusal.ts` (heuristic detection on raw responses), `export.ts` (JSON/CSV export). Used by `apps/api`'s model-tests service |
 | `packages/robustness` | Phase 5 transform adapters: `print-to-pdf.ts` / `ocr-text-layer.ts` (rasterize + rebuild, with/without an OCR'd invisible text layer), `text-transforms.ts` (`paraphrase`/`human_edit` deterministic local fallbacks, `translation` provider-only), `survival.ts` (before/after signal-match evidence via `packages/detector`), `capabilities.ts` (live probes for `@napi-rs/canvas`/`tesseract.js` availability, resolved through `pdfjs-dist`'s own module root — see `native-canvas.ts`) |
 | `apps/api` | Elysia app: router → service → repository, across 7 route files (`health`, `jobs`, `model-tests`, `robustness`, `variant-sets`, `student-keyed-sets`, `submissions`). `job.service.ts` runs the full pipeline (inspect → lint → inject → round-trip validate → text-extract → qpdf → report → manifest → persist) synchronously inside `POST /api/v1/jobs`, bounded by `PDFI_MAX_PROCESSING_MS`; model-test/robustness runs execute asynchronously via `apps/api/src/lib/background-runner.ts`. `jobs.repository.ts`, `runs.repository.ts`, `variant-sets.repository.ts`, `submissions.repository.ts` are the sole `bun:sqlite` access points (see [SQLite schema](#sqlite-schema) below) |
-| `apps/web` | React UI across four core screens (Upload / Instruction / Generate / Validation) plus the Model Test / Robustness / Submissions / Variants tabs and screens; computes PDF.js render + `pixelmatch` diff + client-side text extraction in the browser and posts the results back via `POST /jobs/:jobId/client-validation`; calls round-1 JSON endpoints through an Eden Treaty client and §1-4 endpoints through a typed-fetch layer (see below) |
+| `packages/raster-guard` | The post-rasterization pixel channel's pure logic, browser-safe and dependency-light: `NOTICE_TEMPLATES` + `renderNotice()`/`renderCompactNotice()`/`renderWatermark()` (policy-notice authoring), `findFreeBands()`/`blockRectInBand()`/`occupiedBoxesFromTextItems()` (content-free placement), `PROVIDER_PROFILES` + `providerPxPerPoint()`/`assessInstance()`/`assessPlan()`/`minimumLegibleFontSizePt()` (the per-provider legibility model), `buildGuardPlan()` (the scale ladder), `deriveNoticeSignals()` (canaries, reusing `generateStudentKey()` from contracts) and `lintNotice()` (wrapping `packages/prompt-lint`). Writes no PDF — it only decides what to paint and predicts whether each assistant can still read it. See [`docs/raster-guard.md`](raster-guard.md) |
+| `apps/web` | React UI across four core screens (Upload / Instruction / Generate / Validation) plus the Model Test / Robustness / Submissions / Variants tabs and screens, and two standalone top-level surfaces — the PDF Rasterizer (sanitizer) and Raster Guard (pixel channel, `features/raster-guard/`: `buildGuardedPdf()` renders each page, paints the plan onto the bitmap via `stampInstances.ts`, and rebuilds an image-only PDF; `simulate-provider-view.ts` resamples a page to a provider's own geometry for the 1:1 preview; `vision-clients.ts` calls Anthropic/Google directly from the tab and `evaluate-response.ts` scores the reply with `packages/detector`'s `matchSignals()`); computes PDF.js render + `pixelmatch` diff + client-side text extraction in the browser and posts the results back via `POST /jobs/:jobId/client-validation`; calls round-1 JSON endpoints through an Eden Treaty client and §1-4 endpoints through a typed-fetch layer (see below) |
 
 ## Eden Treaty type sharing
 
@@ -225,6 +226,26 @@ cheating detected"). The analysis is persisted to the `submissions` table (`anal
 returned; `GET .../submissions` recomputes `calibrationSummary`/`statistics` across the full
 current set on every read (not cached), so deleting a submission immediately changes future
 calibration.
+
+### Data flow: Raster Guard (client-only, no API)
+
+Raster Guard never calls `apps/api`. The whole pipeline runs in the tab, and the only network
+requests it can make are the optional live checks, which go straight from the browser to the vendor
+with the user's own key.
+
+1. The browser reads the source PDF and, per page, renders it with PDF.js at the chosen raster scale.
+2. Content boxes come from two sources merged into one `occupied` list: PDF.js `getTextContent()`
+   items (`readPageLayout()`) and a pixel ink scan of the rendered page (`inkBoxesFromImageData()`),
+   the latter catching figures, vector art and fully scanned pages that carry no text items at all.
+3. `buildGuardPlan()` (`packages/raster-guard`) picks a content-free band per rung and sizes each
+   rung from the target providers' legibility floors — planning runs per page inside the render loop,
+   since every input to it is page-local.
+4. The plan is painted onto the same canvas (`stampPageInstances()`), which is then encoded and
+   embedded with `pdf-lib` as the page's only content. The output is an image-only PDF, verified
+   text-free by re-extracting with PDF.js.
+5. `assessPlan()` turns the painted plan into a per-provider prediction, `renderProviderView()`
+   resamples page 1 to each provider's own geometry for the 1:1 preview, and the live check scores a
+   real reply against the plan's `ExpectedSignal[]` using `packages/detector`.
 
 ## Storage layout
 

@@ -94,6 +94,41 @@ Mode is chosen automatically (local when `GET /health` fails) and can be forced 
 storage — the private manifest contains the hidden instruction in plain text — so download the
 output PDF, manifest and report before reloading.
 
+## Raster Guard — the pixel channel (separate menu)
+
+The web app has three top-level surfaces. **Injection Studio** authors a hidden instruction as a PDF
+object. **PDF Rasterizer** strips such objects from a document. **Raster Guard** does neither: it
+rasterizes the document and then paints an academic integrity notice *into the page bitmap*, so the
+payload is pixels rather than an object.
+
+That ordering is the point. Every PDF-object channel in this repo dies to rasterization, which is
+also the defense this repo itself ships. A notice painted after rasterization survives it, and a
+guarded PDF has no extractable text for a hidden-text detector to compare against — while remaining
+plainly visible to any person who looks at the page, which is what keeps the practice auditable.
+
+What the feature does beyond stamping text on a page:
+
+- **Sizes the type from each assistant's documented ingestion geometry.** ChatGPT, Claude and Gemini
+  resample an uploaded page differently, and the notice is sized from the harshest pipeline in the
+  target set rather than from how it looks on screen.
+- **Paints a ladder, not one stamp.** A footer sized for the harshest pipeline, small margin text for
+  the ones that preserve detail, and a large faint watermark that survives any downscale because it
+  lives in the image's low-frequency band.
+- **Places the notice where the document is empty**, using both PDF.js text boxes and a pixel ink
+  scan, so it never overlaps content and works on fully scanned pages too.
+- **Asks rather than commands.** The templates state a policy fact about the document and make a
+  request an aligned assistant is already inclined to honour, instead of adversarial phrasing that
+  modern instruction-hierarchy defenses classify as an injection attempt.
+- **Verifies in three layers**: a predicted cap height and contrast ratio per assistant, a 1:1
+  preview of the page resampled the way that assistant would receive it, and an optional live check
+  that uploads the guarded PDF with your own API key and scores the reply against the notice's
+  canaries.
+
+Coverage figures in the UI are predictions from published ingestion behaviour until a live check is
+run, and the interface says so on every screen that shows one. See
+[`docs/raster-guard.md`](docs/raster-guard.md) for the design, the arithmetic, and a section-by-
+section statement of which claims are structural, which are unmeasured, and which are not novel.
+
 ## Quick start
 
 Requires [Bun](https://bun.sh) `>= 1.3.14`.
@@ -308,6 +343,9 @@ same origin to `apps/api`, so behavior is unchanged from a plain relative `fetch
 │   ├── validation/           # sha256Hex, extractText (pdfjs-dist), checkMetadataPayload (xmp_only),
 │   │                         # qpdfCheck, report builder
 │   ├── prompt-lint/          # lintPrompt() — instruction/signal errors and warnings
+│   ├── raster-guard/         # Post-rasterization pixel channel: notice templates, free-band placement,
+│   │                         # the per-provider legibility model (ingestion geometry -> cap height /
+│   │                         # contrast), the scale-ladder planner, and notice canaries
 │   ├── detector/             # Deterministic ExpectedSignal matchers (exact/regex/methodology/
 │   │                         # ordered-terms/section-order) + Phase 4 scoring/calibration/statistics
 │   │                         # (Fisher's exact test, Holm-Bonferroni correction) and the §23.2 smoke-test
@@ -468,4 +506,5 @@ string in its `warning` field. See [`docs/ethics-and-privacy.md`](docs/ethics-an
 - [`docs/research-protocol.md`](docs/research-protocol.md) — running the PRD §21/§23.2 model-benchmark and robustness experiments end to end
 - [`docs/ethics-and-privacy.md`](docs/ethics-and-privacy.md) — governance requirements, manifest handling, IRB note
 - [`docs/limitations.md`](docs/limitations.md) — non-goals, experimental-mode caveats, remaining unimplemented pieces
+- [`docs/raster-guard.md`](docs/raster-guard.md) — the post-rasterization pixel channel: why it exists, the provider legibility model, and an honest novelty assessment
 - [`docs/related-work.md`](docs/related-work.md) — nearest published/preprint work, peer-review status of every cited claim, and the detectability finding

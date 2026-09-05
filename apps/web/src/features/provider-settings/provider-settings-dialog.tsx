@@ -19,6 +19,46 @@ import {
   saveBrowserProviderSettings,
 } from "@/lib/browser-provider-settings";
 
+/**
+ * One row per vendor. OpenAI drives the Model Test tab; all three drive Raster
+ * Guard's live check, which uploads a guarded PDF straight from this tab.
+ */
+const VENDOR_FIELDS: {
+  id: string;
+  label: string;
+  keyField: "openAiApiKey" | "anthropicApiKey" | "googleApiKey";
+  modelField: "openAiModel" | "anthropicModel" | "googleModel";
+  keyPlaceholder: string;
+  modelHint: string;
+}[] = [
+  {
+    id: "openai",
+    label: "OpenAI (ChatGPT)",
+    keyField: "openAiApiKey",
+    modelField: "openAiModel",
+    keyPlaceholder: "sk-…",
+    modelHint: "Used by the Model Test tab and by Raster Guard's live check.",
+  },
+  {
+    id: "anthropic",
+    label: "Anthropic (Claude)",
+    keyField: "anthropicApiKey",
+    modelField: "anthropicModel",
+    keyPlaceholder: "sk-ant-…",
+    modelHint:
+      "Raster Guard live check only. Browser calls need a key allowed for direct browser access.",
+  },
+  {
+    id: "google",
+    label: "Google (Gemini)",
+    keyField: "googleApiKey",
+    modelField: "googleModel",
+    keyPlaceholder: "AIza…",
+    modelHint:
+      "Raster Guard live check only. Edit the model name if your key targets a different one.",
+  },
+];
+
 export function ProviderSettingsDialog() {
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState(loadBrowserProviderSettings);
@@ -33,9 +73,14 @@ export function ProviderSettingsDialog() {
     setOpen(false);
   }
 
-  function handleClearKey() {
+  function handleClearKeys() {
     clearBrowserProviderKey();
-    setSettings((current) => ({ ...current, openAiApiKey: "" }));
+    setSettings((current) => ({
+      ...current,
+      openAiApiKey: "",
+      anthropicApiKey: "",
+      googleApiKey: "",
+    }));
   }
 
   return (
@@ -46,11 +91,11 @@ export function ProviderSettingsDialog() {
           Settings
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Model provider settings</DialogTitle>
           <DialogDescription>
-            Use your own OpenAI project key for direct browser-to-OpenAI model tests.
+            Use your own vendor keys for direct browser-to-provider tests. Keys stay in this tab.
           </DialogDescription>
         </DialogHeader>
 
@@ -76,35 +121,43 @@ export function ProviderSettingsDialog() {
           </AlertDescription>
         </Alert>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="openai-api-key">OpenAI API key</Label>
-          <Input
-            id="openai-api-key"
-            type="password"
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="sk-…"
-            value={settings.openAiApiKey}
-            onChange={(event) =>
-              setSettings((current) => ({ ...current, openAiApiKey: event.target.value }))
-            }
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="openai-model">OpenAI model</Label>
-          <Input
-            id="openai-model"
-            value={settings.openAiModel}
-            onChange={(event) =>
-              setSettings((current) => ({ ...current, openAiModel: event.target.value }))
-            }
-          />
-        </div>
+        {VENDOR_FIELDS.map((vendor) => (
+          <div key={vendor.id} className="flex flex-col gap-3 rounded-md border border-border p-3">
+            <p className="text-sm font-medium text-foreground">{vendor.label}</p>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor={`${vendor.id}-api-key`}>API key</Label>
+              <Input
+                id={`${vendor.id}-api-key`}
+                type="password"
+                autoComplete="off"
+                spellCheck={false}
+                placeholder={vendor.keyPlaceholder}
+                value={settings[vendor.keyField]}
+                onChange={(event) =>
+                  setSettings((current) => ({ ...current, [vendor.keyField]: event.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor={`${vendor.id}-model`}>Model</Label>
+              <Input
+                id={`${vendor.id}-model`}
+                value={settings[vendor.modelField]}
+                onChange={(event) =>
+                  setSettings((current) => ({
+                    ...current,
+                    [vendor.modelField]: event.target.value,
+                  }))
+                }
+              />
+              <p className="text-xs text-muted-foreground">{vendor.modelHint}</p>
+            </div>
+          </div>
+        ))}
 
         <DialogFooter>
-          <Button type="button" variant="ghost" onClick={handleClearKey}>
-            Clear key
+          <Button type="button" variant="ghost" onClick={handleClearKeys}>
+            Clear all keys
           </Button>
           <Button type="button" onClick={handleSave} disabled={!settings.openAiModel.trim()}>
             Save settings

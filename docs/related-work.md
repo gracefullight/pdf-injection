@@ -199,6 +199,63 @@ measured finding, and should be read with that caveat every time it is cited.
   provider's ingestion has a vision path, not whether a hidden channel evades detection, and it is
   not positioned as a stealthier alternative to `white_text`/`render_mode_3`.
 
+## 5b. Raster Guard: where the pixel channel sits relative to this literature
+
+Round 4 added [Raster Guard](raster-guard.md), which paints its notice into the page bitmap after
+rasterizing the document. It changes this page's picture in one specific way and leaves the rest
+untouched.
+
+**What is structurally true.** Every channel in [§3](#3-what-is-already-covered-by-prior-work)'s
+inventory — CrackedPDFs' 14 families and the EG01-EG25 extraction-gap taxonomy alike — is a
+*document-object* channel: each one works by making a text extractor and a renderer disagree.
+Rasterization removes the text extractor from the path, so it removes all of them at once. A payload
+applied after rasterization is not in that inventory because it is not the same kind of object.
+
+The same holds for the deployed detectors, which is the part worth checking before repeating any
+claim here. Zhang et al. (2026) measured hidden prompt injection across 196,682 de-identified
+resumes (roughly 1% carried one) using two detectors now running in hireEZ production: **HCD**,
+whose rule stage inspects each *text element extracted from the PDF* (font size under about 4pt,
+RGB colour distance to the sampled background under 15, rendered pixel-intensity standard deviation
+under 3.0, ink density under 1.5%; estimated precision 86.1%), and **VDA**, which flags text
+"present in the extraction but absent from the rendered images" (estimated precision 92.7%). Both,
+like PhantomLint's metamorphic check, are built on an extraction-vs-render discrepancy, and a
+guarded PDF gives neither an extraction side to work with.
+
+**That is not a claim of undetectability, and this page must never be cited as one.** A pixel-domain
+scanner finds the notice immediately, because the notice is printed on the page in plain sight.
+**SnapGuard** (Du et al., 2026, preprint, submitted to ACM Multimedia '26) is exactly that scanner:
+it thresholds grayscale intensity at 240 to mask near-white regions "where low-contrast text may be
+difficult to recover", then applies contrast-polarity reversal to surface it before extraction. The
+subtle tier's watermark composites to roughly `#dbdbdb` on white, inside the band that technique
+exists to amplify.
+
+**What is not novel.** Rasterized-image payloads as such. This project's own `image_only` probe mode
+already stamped one, and scored 0/5 against `gpt-5.6-luna` (see
+[§ Round-3 probe modes](#round-3-probe-modes-detectability-expectation-not-a-measured-result)).
+
+**What was not found in the three nearest neighbours**, stated with this page's usual caveat that
+"not found" is not "verified absent" and that no systematic search was run for this feature:
+
+1. **Sizing a payload from published per-provider ingestion geometry.** Adjacent to, and arguably an
+   application of, Semantic Integrity Failures' conclusion that exposure is driven mainly by the
+   ingestion stack — position it that way, never as an independent discovery. The *inverse* is
+   established prior art: Trail of Bits' image-scaling attacks (2025), building on the 2020 USENIX
+   image-scaling work, and the Chameleon follow-up hide a payload that only materialises after the
+   vendor's downscale. Raster Guard deliberately does not do this (see
+   [`raster-guard.md`](raster-guard.md#3-honest-positioning-against-prior-work)).
+2. **Preferring low-frequency (large, faint) over high-frequency (small, dark) payload placement.**
+   Standard signal processing applied to this problem; novel as a design choice here, not as a
+   result.
+3. **Policy-framed rather than adversarially-framed instruction text.** The hypothesis that this
+   outperforms imperative phrasing under instruction-hierarchy defenses is **unmeasured by this
+   project** and must not be repeated as a finding.
+
+**What has not been measured at all.** No provider matrix has been run against guarded PDFs. Every
+coverage number the Raster Guard UI shows is a prediction from vendor documentation. Before any
+Raster Guard result is cited anywhere, run the six-condition protocol in
+[`research-protocol.md`](research-protocol.md) against guarded outputs and report the numbers, not
+the prediction.
+
 ## 6. How to keep this page honest
 
 Before this page, or any derived material, claims novelty for anything about this project, do all
@@ -217,6 +274,15 @@ of the following:
 - [ ] Re-run the six-condition measurement in [§5](#5-detectability-finding-and-what-it-implies) if
       the provider, model id, or PDF fixture changes — a single-document, single-provider result
       does not generalize, and this page should say so every time it is cited.
+- [ ] Never restate Raster Guard's structural detectability property as "undetectable". The correct
+      statement is narrow: the extraction-vs-render family (PhantomLint, HCD, VDA) has nothing to
+      compare on a text-free PDF, while a pixel-domain scanner (SnapGuard, or any contrast-normalising
+      OCR stack) reads the notice immediately.
+- [ ] Re-check whether SnapGuard and the Zhang et al. resume-screening measurement have moved from
+      preprint to a refereed venue, and whether HCD/VDA have been extended to scan rendered pixels —
+      that extension would remove the structural blindness this page relies on.
+- [ ] Never cite a Raster Guard coverage figure as a measurement. Until a provider matrix is run
+      against guarded PDFs, every one of them is a prediction from vendor documentation.
 - [ ] Never restate "PhantomLint detects our two channels" as "our channels are always caught" —
       state the exact numbers (100% recall, 0.092% FPR on ICML 2025 papers) and the exact scope
       (white text, render mode 3) every time.
@@ -226,6 +292,8 @@ of the following:
 - [`README.md`](../README.md#what-this-is-not) — product framing and what this project is not
 - [`docs/ethics-and-privacy.md`](ethics-and-privacy.md) — governance rules, manifest handling
 - [`docs/limitations.md`](limitations.md) — per-mode caveats, including `unicode_tags`' Cf-category
-  filtering
+  filtering and the Raster Guard caveats
+- [`docs/raster-guard.md`](raster-guard.md) — the post-rasterization pixel channel and its own
+  novelty assessment
 - [`docs/research-protocol.md`](research-protocol.md) — how to reproduce or extend the six-condition
   measurement cited in [§5](#5-detectability-finding-and-what-it-implies)
