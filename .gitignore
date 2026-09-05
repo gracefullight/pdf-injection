@@ -8,6 +8,7 @@ docs/plans/
 .qwen/tmp/
 
 # pdf-injection
+.DS_Store
 node_modules/
 .pdf-injection-data/
 test-results/
