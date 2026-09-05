@@ -24,3 +24,7 @@ coverage/
 
 # oma docs generated artifacts
 docs/generated/
+
+# OS / scratch
+.DS_Store
+tmp/
