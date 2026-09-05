@@ -1,0 +1,161 @@
+{"kind":"deck","id":"pr/7xxq6d","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"September 2026","textShapes":4}
+{"kind":"textbox","id":"sh/547294r6","slide":1,"text":"September 2026","textPreview":"September 2026","textChars":14,"textLines":1,"bbox":[930,40,308,36]}
+{"kind":"shape","id":"sh/k3yl0zql","slide":1,"name":"cover-accent","bbox":[42,236,18,260]}
+{"kind":"textbox","id":"sh/7qp4be9c","slide":1,"text":"AI-Resistant PDFs\nfor Academic Assessment","textPreview":"AI-Resistant PDFs | for Academic Assessment","textChars":41,"textLines":2,"bbox":[88,215,1100,150]}
+{"kind":"textbox","id":"sh/65g3298r","slide":1,"text":"Bo Zhao · Eunkwang Shin","textPreview":"Bo Zhao · Eunkwang Shin","textChars":23,"textLines":1,"bbox":[88,380,930,60]}
+{"kind":"textbox","id":"sh/ts7md4r2","slide":1,"text":"PDF semantics, cross-model measurements, and the OCR watermarking frontier","textPreview":"PDF semantics, cross-model measurements, and the OCR watermarking frontier","textChars":74,"textLines":1,"bbox":[88,575,1010,44]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"[Sources]\n- User-provided title and author names\n- /Users/gracefullight/workspace/pdf-injection/docs/prd.md"}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"How an invisible PDF instruction reaches an AI model","textShapes":11}
+{"kind":"textbox","id":"sh/9072xkry","slide":2,"text":"How an invisible PDF instruction reaches an AI model","textPreview":"How an invisible PDF instruction reaches an AI model","textChars":52,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/ozy1ofad","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"shape","id":"sh/b29kza94","slide":2,"name":"render-frame","bbox":[58,174,392,425]}
+{"kind":"textbox","id":"sh/x4r21kru","slide":2,"text":"1  Human view","textPreview":"1  Human view","textChars":13,"textLines":1,"bbox":[76,610,356,26]}
+{"kind":"shape","id":"sh/w3i1sfa9","slide":2,"name":"view-arrow","bbox":[475,355,94,42]}
+{"kind":"shape","id":"sh/r65knqtk","slide":2,"name":"semantic-frame","bbox":[594,174,628,425]}
+{"kind":"textbox","id":"sh/q5wjelsz","slide":2,"text":"2  AI ingestion path","textPreview":"2  AI ingestion path","textChars":20,"textLines":1,"bbox":[626,205,540,36]}
+{"kind":"textbox","id":"sh/ove9o7yd","slide":2,"text":"TEXT OBJECTS","textPreview":"TEXT OBJECTS","textChars":12,"textLines":1,"bbox":[626,270,230,28]}
+{"kind":"textbox","id":"sh/9wnqhczy","slide":2,"text":"EXTRACTOR","textPreview":"EXTRACTOR","textChars":9,"textLines":1,"bbox":[626,322,250,28]}
+{"kind":"textbox","id":"sh/mtwrmxg7","slide":2,"text":"MODEL CONTEXT","textPreview":"MODEL CONTEXT","textChars":13,"textLines":1,"bbox":[626,408,180,28]}
+{"kind":"textbox","id":"sh/nu58f2hs","slide":2,"text":"Page text, forms, annotations","textPreview":"Page text, forms, annotations","textChars":29,"textLines":1,"bbox":[886,266,290,34]}
+{"kind":"textbox","id":"sh/wjy9sry9","slide":2,"text":"Decides which objects survive","textPreview":"Decides which objects survive","textChars":29,"textLines":1,"bbox":[886,318,290,34]}
+{"kind":"textbox","id":"sh/xk7qlczu","slide":2,"text":"Extracted text enters the prompt","textPreview":"Extracted text enters the prompt","textChars":32,"textLines":1,"bbox":[886,404,290,34]}
+{"kind":"shape","id":"sh/0vq1o36x","slide":2,"bbox":[626,382,550,0]}
+{"kind":"textbox","id":"sh/bip8jmho","slide":2,"text":"The model does not read the page like a human; it receives the extractor’s representation.","textPreview":"The model does not read the page like a human; it receives the extractor’s representation.","textChars":90,"textLines":1,"bbox":[626,493,550,76]}
+{"kind":"image","id":"im/u9sf65cv","slide":2,"name":"","bbox":[104.86,190,298.27,386]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/docs/prd.md\n- /Users/gracefullight/workspace/pdf-injection/docs/related-work.md"}
+{"kind":"slide","id":"sl/ofy9wn61","slide":3,"title":"PDF structure exposes multiple semantic surfaces","textShapes":24}
+{"kind":"textbox","id":"sh/cza94vmx","slide":3,"text":"PDF structure exposes multiple semantic surfaces","textPreview":"PDF structure exposes multiple semantic surfaces","textChars":48,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/d0jax03i","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/298ryl4v","slide":3,"text":"Byte container","textPreview":"Byte container","textChars":14,"textLines":1,"bbox":[42,170,352,32]}
+{"kind":"shape","id":"sh/3id43qdg","slide":3,"bbox":[42,212,352,0]}
+{"kind":"textbox","id":"sh/obq90bml","slide":3,"text":"Object graph","textPreview":"Object graph","textChars":12,"textLines":1,"bbox":[446,170,352,32]}
+{"kind":"shape","id":"sh/hgvm1gvq","slide":3,"bbox":[446,212,352,0]}
+{"kind":"textbox","id":"sh/m5cra54z","slide":3,"text":"Model-facing views","textPreview":"Model-facing views","textChars":18,"textLines":1,"bbox":[850,170,388,32]}
+{"kind":"shape","id":"sh/ved4zqdk","slide":3,"bbox":[850,212,388,0]}
+{"kind":"shape","id":"sh/n2l4fq98","slide":3,"bbox":[42,232,352,54]}
+{"kind":"textbox","id":"sh/m1c3mlsn","slide":3,"text":"%PDF header","textPreview":"%PDF header","textChars":11,"textLines":1,"bbox":[60,244,316,34]}
+{"kind":"shape","id":"sh/943mhgre","slide":3,"bbox":[42,300,352,155]}
+{"kind":"textbox","id":"sh/83ulovat","slide":3,"text":"Body objects","textPreview":"Body objects","textChars":12,"textLines":1,"bbox":[60,312,316,135]}
+{"kind":"shape","id":"sh/v6l4jq94","slide":3,"bbox":[42,468,352,55]}
+{"kind":"textbox","id":"sh/a5c3ql8z","slide":3,"text":"xref / xref stream","textPreview":"xref / xref stream","textChars":18,"textLines":1,"bbox":[60,480,316,35]}
+{"kind":"shape","id":"sh/x8nml0ra","slide":3,"bbox":[42,536,352,55]}
+{"kind":"textbox","id":"sh/w7ulsvqp","slide":3,"text":"Trailer + startxref","textPreview":"Trailer + startxref","textChars":19,"textLines":1,"bbox":[60,548,316,35]}
+{"kind":"shape","id":"sh/lw3q9ofy","slide":3,"bbox":[620,270,0,55]}
+{"kind":"shape","id":"sh/kvupg3ed","slide":3,"bbox":[620,349,0,48]}
+{"kind":"shape","id":"sh/fyhovuxo","slide":3,"bbox":[493,397,255,0]}
+{"kind":"shape","id":"sh/ex872pg3","slide":3,"bbox":[493,397,0,62]}
+{"kind":"shape","id":"sh/fuhcnq50","slide":3,"bbox":[620,397,0,62]}
+{"kind":"shape","id":"sh/et8vel4f","slide":3,"bbox":[748,397,0,62]}
+{"kind":"shape","id":"sh/1wzup0nq","slide":3,"bbox":[720,256,80,0]}
+{"kind":"shape","id":"sh/0vqdgvml","slide":3,"bbox":[800,256,0,330]}
+{"kind":"shape","id":"sh/r6xcjq5o","slide":3,"bbox":[674,586,126,0]}
+{"kind":"shape","id":"sh/tgry9ofu","slide":3,"bbox":[520,232,200,48]}
+{"kind":"textbox","id":"sh/a9kfadwn","slide":3,"text":"Catalog","textPreview":"Catalog","textChars":7,"textLines":1,"bbox":[528,239,184,34]}
+{"kind":"shape","id":"sh/batgjixs","slide":3,"bbox":[520,320,200,48]}
+{"kind":"textbox","id":"sh/l4fi9cza","slide":3,"text":"Pages","textPreview":"Pages","textChars":5,"textLines":1,"bbox":[528,327,184,34]}
+{"kind":"shape","id":"sh/k3m1g7yp","slide":3,"bbox":[520,382,200,48]}
+{"kind":"textbox","id":"sh/z2d07mh4","slide":3,"text":"Page","textPreview":"Page","textChars":4,"textLines":1,"bbox":[528,389,184,34]}
+{"kind":"shape","id":"sh/y14jehgj","slide":3,"bbox":[446,459,110,52]}
+{"kind":"textbox","id":"sh/x0vi5czy","slide":3,"text":"/Contents","textPreview":"/Contents","textChars":9,"textLines":1,"bbox":[454,466,94,38]}
+{"kind":"shape","id":"sh/czmhc7id","slide":3,"bbox":[565,459,110,52]}
+{"kind":"textbox","id":"sh/byd032h8","slide":3,"text":"/Resources","textPreview":"/Resources","textChars":10,"textLines":1,"bbox":[573,466,94,38]}
+{"kind":"shape","id":"sh/ax4zax0n","slide":3,"bbox":[684,459,110,52]}
+{"kind":"textbox","id":"sh/hwzihwzi","slide":3,"text":"/Annots","textPreview":"/Annots","textChars":7,"textLines":1,"bbox":[692,466,94,38]}
+{"kind":"shape","id":"sh/wv61obyx","slide":3,"bbox":[548,540,126,66]}
+{"kind":"textbox","id":"sh/4nuhs7uh","slide":3,"text":"Catalog-level\n/AcroForm\n/Metadata","textPreview":"Catalog-level | /AcroForm | /Metadata","textChars":33,"textLines":3,"bbox":[556,547,110,52]}
+{"kind":"shape","id":"sh/po3ilcvm","slide":3,"bbox":[850,232,388,76]}
+{"kind":"textbox","id":"sh/21szqxcb","slide":3,"text":"Rendered pixels","textPreview":"Rendered pixels","textChars":15,"textLines":1,"bbox":[868,244,352,26]}
+{"kind":"textbox","id":"sh/32l0j2dw","slide":3,"text":"What a human sees","textPreview":"What a human sees","textChars":17,"textLines":1,"bbox":[868,273,352,22]}
+{"kind":"shape","id":"sh/cruhwrud","slide":3,"bbox":[850,326,388,76]}
+{"kind":"textbox","id":"sh/ds3ipcvy","slide":3,"text":"Extracted text","textPreview":"Extracted text","textChars":14,"textLines":1,"bbox":[868,338,352,26]}
+{"kind":"textbox","id":"sh/qpczuhc7","slide":3,"text":"Contents, forms, annotations","textPreview":"Contents, forms, annotations","textChars":28,"textLines":1,"bbox":[868,367,352,22]}
+{"kind":"shape","id":"sh/rql0nmds","slide":3,"bbox":[850,420,388,76]}
+{"kind":"textbox","id":"sh/0ve10ru9","slide":3,"text":"Document metadata","textPreview":"Document metadata","textChars":17,"textLines":1,"bbox":[868,432,352,26]}
+{"kind":"textbox","id":"sh/1wnitwvu","slide":3,"text":"XMP and Info dictionaries","textPreview":"XMP and Info dictionaries","textChars":25,"textLines":1,"bbox":[868,461,352,22]}
+{"kind":"shape","id":"sh/v29cfu18","slide":3,"bbox":[850,514,388,76]}
+{"kind":"textbox","id":"sh/a10b6p03","slide":3,"text":"Accessibility semantics","textPreview":"Accessibility semantics","textChars":23,"textLines":1,"bbox":[868,526,352,26]}
+{"kind":"textbox","id":"sh/xoruhkje","slide":3,"text":"/ActualText and tags","textPreview":"/ActualText and tags","textChars":20,"textLines":1,"bbox":[868,555,352,22]}
+{"kind":"notes","id":"nt/ofy9wn61","slide":3,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/docs/prd.md\n- ISO 32000 PDF object model as summarized in the project review"}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":4,"title":"Where can a parseable instruction live inside a PDF?","textShapes":4}
+{"kind":"textbox","id":"sh/1cj2d8b6","slide":4,"text":"Where can a parseable instruction live inside a PDF?","textPreview":"Where can a parseable instruction live inside a PDF?","textChars":52,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/0ba143al","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/rm1k7yt4","slide":4,"text":"O = readable in at least one tested ingestion path. X = not exposed by a text-only parser.","textPreview":"O = readable in at least one tested ingestion path. X = not exposed by a text-only parser.","textChars":90,"textLines":1,"bbox":[42,150,1160,48]}
+{"kind":"shape","id":"sh/doj29oba","slide":4,"bbox":[42,604,1196,48]}
+{"kind":"textbox","id":"sh/sna103ap","slide":4,"text":"Content streams are the default path; annotations and forms depend on the provider, while images require OCR.","textPreview":"Content streams are the default path; annotations and forms depend on the provider, while images require OCR.","textChars":109,"textLines":1,"bbox":[66,617,1148,24]}
+{"kind":"table","id":"tb/vylcj6do","slide":4,"name":"","rows":6,"cols":4,"preview":"Surface | PDF location | Readable? | Why","bbox":[42,220,1196,365]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":4,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/docs/prd.md\n- User-provided correction: FreeText and AcroForm were readable in at least one tested path"}
+{"kind":"slide","id":"sl/i107q5of","slide":5,"title":"Four working mechanisms use different PDF semantics","textShapes":11}
+{"kind":"textbox","id":"sh/dgbulwnm","slide":5,"text":"Four working mechanisms use different PDF semantics","textPreview":"Four working mechanisms use different PDF semantics","textChars":51,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/cf2tcr61","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/z2tcnm5s","slide":5,"text":"All four were readable in the current ChatGPT run, but not for the same reason.","textPreview":"All four were readable in the current ChatGPT run, but not for the same reason.","textChars":79,"textLines":1,"bbox":[42,150,1160,32]}
+{"kind":"textbox","id":"sh/yhkbe1o7","slide":5,"text":"WHITE TEXT","textPreview":"WHITE TEXT","textChars":10,"textLines":1,"bbox":[42,235,520,34]}
+{"kind":"textbox","id":"sh/n6dcr65o","slide":5,"text":"Normal text painted white; invisible on a white page, but still extracted from /Contents.","textPreview":"Normal text painted white; invisible on a white page, but still extracted from /Contents.","textChars":89,"textLines":1,"bbox":[42,279,520,88]}
+{"kind":"textbox","id":"sh/w32dkbuh","slide":5,"text":"RENDER MODE 3","textPreview":"RENDER MODE 3","textChars":13,"textLines":1,"bbox":[650,235,520,34]}
+{"kind":"textbox","id":"sh/v2twb6dw","slide":5,"text":"Text uses 3 Tr: glyphs are never painted, while the text remains in /Contents.","textPreview":"Text uses 3 Tr: glyphs are never painted, while the text remains in /Contents.","textChars":78,"textLines":1,"bbox":[650,279,520,88]}
+{"kind":"textbox","id":"sh/58vehgvy","slide":5,"text":"ACROFORM","textPreview":"ACROFORM","textChars":8,"textLines":1,"bbox":[42,420,520,34]}
+{"kind":"textbox","id":"sh/sb6xsvu9","slide":5,"text":"The instruction sits in a field value or widget appearance; form-aware ingestion exposes it.","textPreview":"The instruction sits in a field value or widget appearance; form-aware ingestion exposes it.","textChars":92,"textLines":1,"bbox":[42,464,520,88]}
+{"kind":"textbox","id":"sh/fid07u98","slide":5,"text":"FREETEXT ANNOTATION","textPreview":"FREETEXT ANNOTATION","textChars":19,"textLines":1,"bbox":[650,420,520,34]}
+{"kind":"textbox","id":"sh/gjmhgzqt","slide":5,"text":"The instruction sits in an annotation appearance stream; annotation-aware ingestion exposes it.","textPreview":"The instruction sits in an annotation appearance stream; annotation-aware ingestion exposes it.","textChars":95,"textLines":1,"bbox":[650,464,520,88]}
+{"kind":"notes","id":"nt/i107q5of","slide":5,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/docs/prd.md\n- User-provided correction: FreeText annotation also worked in the current ChatGPT test"}
+{"kind":"slide","id":"sl/x8f69ofe","slide":6,"title":"Content-stream methods transfer most consistently across models","textShapes":4}
+{"kind":"textbox","id":"sh/yhg7epsj","slide":6,"text":"Content-stream methods transfer most consistently across models","textPreview":"Content-stream methods transfer most consistently across models","textChars":63,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/zi98nu94","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/87ipkzal","slide":6,"text":"Measured project results. O = read; X = not read.","textPreview":"Measured project results. O = read; X = not read.","textChars":49,"textLines":1,"bbox":[42,150,1160,34]}
+{"kind":"shape","id":"sh/ml07i9sv","slide":6,"bbox":[42,588,1196,64]}
+{"kind":"textbox","id":"sh/7m98ru9g","slide":6,"text":"All three read page-content methods; annotation and form semantics are provider-dependent.","textPreview":"All three read page-content methods; annotation and form semantics are provider-dependent.","textChars":90,"textLines":1,"bbox":[66,603,1148,35]}
+{"kind":"table","id":"tb/obu5sjut","slide":6,"name":"","rows":4,"cols":4,"preview":"Mechanism | ChatGPT | Claude | Gemini","bbox":[42,220,1196,330]}
+{"kind":"notes","id":"nt/x8f69ofe","slide":6,"text":"[Sources]\n- User-provided measured results for ChatGPT, Claude, and Gemini\n- /Users/gracefullight/workspace/pdf-injection/docs/research-protocol.md"}
+{"kind":"slide","id":"sl/gnmp4jqx","slide":7,"title":"The next target is OCR-triggered, image-borne watermarking","textShapes":12}
+{"kind":"textbox","id":"sh/cb2tkvap","slide":7,"text":"The next target is OCR-triggered, image-borne watermarking","textPreview":"The next target is OCR-triggered, image-borne watermarking","textChars":58,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/dcbud0ra","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/ydkbm5sv","slide":7,"text":"Most systems read content streams first; an image-only PDF moves the experiment onto the OCR / vision path.","textPreview":"Most systems read content streams first; an image-only PDF moves the experiment onto the OCR / vision path.","textChars":107,"textLines":1,"bbox":[42,150,1160,34]}
+{"kind":"shape","id":"sh/zedcfa9g","slide":7,"bbox":[212,347,80,32]}
+{"kind":"shape","id":"sh/mxc7mts7","slide":7,"bbox":[460,276,0,245]}
+{"kind":"shape","id":"sh/7yl8vy9s","slide":7,"bbox":[460,276,86,0]}
+{"kind":"shape","id":"sh/sfy907ah","slide":7,"bbox":[460,354,86,0]}
+{"kind":"shape","id":"sh/tg7q9sr2","slide":7,"bbox":[460,432,86,0]}
+{"kind":"shape","id":"sh/na9sz6tk","slide":7,"bbox":[460,510,86,0]}
+{"kind":"shape","id":"sh/a9ojq5kz","slide":7,"bbox":[816,347,78,32]}
+{"kind":"shape","id":"sh/xcz2l03q","slide":7,"bbox":[1052,347,70,32]}
+{"kind":"shape","id":"sh/cbq1sv25","slide":7,"bbox":[42,300,170,126]}
+{"kind":"textbox","id":"sh/n6x0fqlo","slide":7,"text":"Image-only\nPDF","textPreview":"Image-only | PDF","textChars":14,"textLines":2,"bbox":[60,325,134,76]}
+{"kind":"shape","id":"sh/25ojml43","slide":7,"bbox":[292,236,168,300]}
+{"kind":"textbox","id":"sh/p8fih03e","slide":7,"text":"CV / OCR\nstrategy","textPreview":"CV / OCR | strategy","textChars":17,"textLines":2,"bbox":[310,338,132,82]}
+{"kind":"shape","id":"sh/o761ov2t","slide":7,"bbox":[546,234,270,56]}
+{"kind":"textbox","id":"sh/f2d0b6lc","slide":7,"text":"Rasterized canary","textPreview":"Rasterized canary","textChars":17,"textLines":1,"bbox":[562,246,238,30]}
+{"kind":"shape","id":"sh/eh4jil4r","slide":7,"bbox":[546,312,270,56]}
+{"kind":"textbox","id":"sh/id4ju1oz","slide":7,"text":"Per-copy visual key","textPreview":"Per-copy visual key","textChars":19,"textLines":1,"bbox":[562,324,238,30]}
+{"kind":"shape","id":"sh/jedkn654","slide":7,"bbox":[546,390,270,56]}
+{"kind":"textbox","id":"sh/4fm1wb6p","slide":7,"text":"Page-edge watermark","textPreview":"Page-edge watermark","textChars":19,"textLines":1,"bbox":[562,402,238,30]}
+{"kind":"shape","id":"sh/50v2pgna","slide":7,"bbox":[546,468,270,56]}
+{"kind":"textbox","id":"sh/q143ylov","slide":7,"text":"Visible control","textPreview":"Visible control","textChars":15,"textLines":1,"bbox":[562,480,238,30]}
+{"kind":"shape","id":"sh/r2dkrq5g","slide":7,"bbox":[894,298,158,128]}
+{"kind":"textbox","id":"sh/s3ml0v61","slide":7,"text":"OCR-enabled\nmodel","textPreview":"OCR-enabled | model","textChars":17,"textLines":2,"bbox":[914,328,118,66]}
+{"kind":"shape","id":"sh/d4f2t0nm","slide":7,"bbox":[1122,298,116,128]}
+{"kind":"textbox","id":"sh/e5o32lor","slide":7,"text":"OCR\ntext","textPreview":"OCR | text","textChars":8,"textLines":2,"bbox":[1137,331,86,60]}
+{"kind":"shape","id":"sh/f6xkvq5c","slide":7,"bbox":[292,574,946,66]}
+{"kind":"textbox","id":"sh/p0zmlk7u","slide":7,"text":"Place CV at the ingestion boundary: rasterize / OCR before the provider adapter, then log confidence and extracted text.","textPreview":"Place CV at the ingestion boundary: rasterize / OCR before the provider adapter, then log confidence and extracted text.","textChars":120,"textLines":1,"bbox":[318,590,894,34]}
+{"kind":"notes","id":"nt/gnmp4jqx","slide":7,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/.agents/results/architecture/architecture-recommendation-cv-ingestion-boundary.md\n- /Users/gracefullight/workspace/pdf-injection/packages/robustness/src/ocr.ts"}
+{"kind":"slide","id":"sl/fu1gfa1s","slide":8,"title":"A matched OCR experiment is the next milestone","textShapes":13}
+{"kind":"textbox","id":"sh/18byd4zy","slide":8,"text":"A matched OCR experiment is the next milestone","textPreview":"A matched OCR experiment is the next milestone","textChars":46,"textLines":1,"bbox":[42,70,1160,86]}
+{"kind":"textbox","id":"sh/g72x4zyd","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1184,665,54,22]}
+{"kind":"textbox","id":"sh/ri9g7uhw","slide":8,"text":"Compare identical image-only PDFs across providers before expanding the watermark family.","textPreview":"Compare identical image-only PDFs across providers before expanding the watermark family.","textChars":89,"textLines":1,"bbox":[42,150,1160,34]}
+{"kind":"shape","id":"sh/w3ed8r6x","slide":8,"bbox":[70,330,1130,0]}
+{"kind":"shape","id":"sh/tkby9kzm","slide":8,"bbox":[65,322,16,16]}
+{"kind":"textbox","id":"sh/sjix0zy1","slide":8,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[72,265,60,30]}
+{"kind":"textbox","id":"sh/je9g3ahk","slide":8,"text":"Build matched image-only controls","textPreview":"Build matched image-only controls","textChars":33,"textLines":1,"bbox":[72,370,324,58]}
+{"kind":"textbox","id":"sh/id0fu50z","slide":8,"text":"Original, visible control, and raster canary versions of the same assignment.","textPreview":"Original, visible control, and raster canary versions of the same assignment.","textChars":77,"textLines":1,"bbox":[72,444,324,112]}
+{"kind":"shape","id":"sh/o7ydoret","slide":8,"bbox":[437,322,16,16]}
+{"kind":"textbox","id":"sh/98rehwve","slide":8,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[444,265,60,30]}
+{"kind":"textbox","id":"sh/m5gvmhwn","slide":8,"text":"Capture the ingestion trace","textPreview":"Capture the ingestion trace","textChars":27,"textLines":1,"bbox":[444,370,324,58]}
+{"kind":"textbox","id":"sh/n6pwfmd8","slide":8,"text":"Record whether OCR triggered, plus extracted text, hash, and confidence.","textPreview":"Record whether OCR triggered, plus extracted text, hash, and confidence.","textChars":72,"textLines":1,"bbox":[444,444,324,112]}
+{"kind":"shape","id":"sh/0jydkreh","slide":8,"bbox":[809,322,16,16]}
+{"kind":"textbox","id":"sh/1k7edwv2","slide":8,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[816,265,60,30]}
+{"kind":"textbox","id":"sh/ehgvihwr","slide":8,"text":"Compare providers and watermark types","textPreview":"Compare providers and watermark types","textChars":37,"textLines":1,"bbox":[816,370,324,58]}
+{"kind":"textbox","id":"sh/zipwbmdc","slide":8,"text":"Run ChatGPT, Claude, and Gemini on text-parser and OCR-enabled paths.","textPreview":"Run ChatGPT, Claude, and Gemini on text-parser and OCR-enabled paths.","textChars":69,"textLines":1,"bbox":[816,444,324,112]}
+{"kind":"shape","id":"sh/kfixwbe1","slide":8,"bbox":[42,590,1196,66]}
+{"kind":"textbox","id":"sh/lgbepgvm","slide":8,"text":"Research question: which visual watermarks survive OCR and enter model context?","textPreview":"Research question: which visual watermarks survive OCR and enter model context?","textChars":79,"textLines":1,"bbox":[70,607,1140,33]}
+{"kind":"notes","id":"nt/fu1gfa1s","slide":8,"text":"[Sources]\n- /Users/gracefullight/workspace/pdf-injection/docs/research-protocol.md\n- User-provided direction: image-only PDFs and OCR-triggered watermark tests as the next goal"}
