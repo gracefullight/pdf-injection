@@ -82,11 +82,6 @@
       }
     }
   },
-  "model": {
-    "generationConfig": {
-      "timeout": 300000
-    }
-  },
   "privacy": {
     "usageStatisticsEnabled": false
   }
