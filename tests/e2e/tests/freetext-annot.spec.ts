@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import {
+  DOD_INSTRUCTION,
   DOWNLOAD_DIR,
   deleteJobAndConfirm,
   fillInstructionAndSignals,
@@ -37,7 +38,7 @@ test("freetext_annot mode: generate, PASS_WITH_WARNINGS, warning surfaces, extra
   const modeOption = page.getByTestId("injection-mode-option-freetext-annot");
   await expect(modeOption).toBeVisible();
   await modeOption.click();
-  await expect(page.getByTestId("injection-mode-description")).toContainText("FreeText");
+  await expect(page.getByTestId("injection-mode-description")).toContainText("PDF annotation");
   await expect(page.getByTestId("injection-mode-freetext-annot-caveat")).toBeVisible();
   await expect(page.getByTestId("injection-mode-research-probe-badge")).toBeVisible();
 
@@ -57,6 +58,20 @@ test("freetext_annot mode: generate, PASS_WITH_WARNINGS, warning surfaces, extra
   console.log(`[freetext_annot] overall-explanation: ${explanationText}`);
   expect(explanationText).toContain("hidden text not extracted server-side");
 
+  await page.getByTestId("tab-human-view").click();
+  const goToTargetPage = page.getByTestId("human-view-go-to-target-page");
+  if ((await goToTargetPage.count()) > 0) await goToTargetPage.click();
+  const outputPreview = page.getByTestId("human-view-output-canvas");
+  const annotation = outputPreview.locator(".annotationLayer .freeTextAnnotation");
+  await expect(annotation).toBeVisible();
+  await expect(annotation).toHaveCSS("cursor", "pointer");
+  // Dispatch without Playwright's implicit pre-click hover, which would momentarily open the
+  // PDF.js popup and make a subsequent pointer click toggle it closed on some runs.
+  await annotation.dispatchEvent("click");
+  const annotationPopup = outputPreview.locator(".annotationLayer .popupAnnotation .popup");
+  await expect(annotationPopup).toBeVisible();
+  await expect(annotationPopup).toContainText(DOD_INSTRUCTION);
+
   await page.screenshot({
     path: path.join(ROUND2_SCREENSHOT_DIR, "freetext-annot-validation-screen.png"),
     fullPage: true,
@@ -67,7 +82,7 @@ test("freetext_annot mode: generate, PASS_WITH_WARNINGS, warning surfaces, extra
   const note = page.getByTestId("extracted-text-non-extractable-note-freetext-annot");
   await expect(note).toBeVisible();
   await expect(note).toContainText("FreeText annotation");
-  await expect(note).toContainText("pdftotext");
+  await expect(note).toContainText("some PDF readers");
 
   await page.getByTestId("tab-model-test").click();
   await expect(page.getByTestId("model-test-tab")).toBeVisible();

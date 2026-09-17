@@ -69,6 +69,177 @@
   }
 }
 
+/* PDF.js creates these descendants at runtime, so their geometry cannot be expressed on the
+ * React component with Tailwind utilities. Keep this subset scoped to the preview surface. */
+.pdf-page-surface {
+  position: relative;
+  overflow: visible;
+  line-height: 1;
+}
+
+.pdf-page-surface > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-page-surface > .textLayer {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: clip;
+  color: transparent;
+  line-height: 1;
+  text-align: initial;
+  text-size-adjust: none;
+  transform-origin: 0 0;
+  forced-color-adjust: none;
+}
+
+.pdf-page-surface > .textLayer :is(span, br) {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0 0;
+}
+
+.pdf-page-surface > .textLayer span[role="img"] {
+  cursor: default;
+  user-select: none;
+}
+
+.pdf-page-surface > .textLayer ::selection {
+  background: color-mix(in srgb, var(--color-accent-foreground), transparent 70%);
+}
+
+.pdf-page-surface > .textLayer br::selection {
+  background: transparent;
+}
+
+.pdf-page-surface > .textLayer .endOfContent {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  inset: 100% 0 0;
+  cursor: default;
+  user-select: none;
+}
+
+.pdf-page-surface > .textLayer.selecting .endOfContent {
+  top: 0;
+}
+
+.pdf-page-surface > .annotationLayer {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+
+.pdf-page-surface > .annotationLayer section {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  text-align: initial;
+  transform-origin: 0 0;
+}
+
+.pdf-page-surface > .textLayer.selecting ~ .annotationLayer section {
+  pointer-events: none;
+}
+
+.pdf-page-surface > .annotationLayer :is(.textAnnotation, .freeTextAnnotation) {
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  cursor: pointer;
+  border: 1px solid var(--color-warning-foreground);
+  border-radius: 0.125rem;
+  background: var(--color-warning);
+}
+
+.pdf-page-surface > .annotationLayer .textAnnotation img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.pdf-page-surface > .annotationLayer .annotationTextContent {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: transparent;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pdf-page-surface > .annotationLayer .popupAnnotation {
+  position: absolute;
+  width: max-content;
+  max-width: min(45%, 22rem);
+  height: auto;
+  font-size: calc(9px * var(--scale-factor));
+  pointer-events: none;
+}
+
+.pdf-page-surface > .annotationLayer .popup {
+  padding: calc(6px * var(--scale-factor));
+  color: var(--color-foreground);
+  font: message-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  pointer-events: auto;
+  border: 1px solid var(--color-warning-foreground);
+  border-radius: calc(2px * var(--scale-factor));
+  background: var(--color-warning);
+  box-shadow: 0 calc(2px * var(--scale-factor)) calc(5px * var(--scale-factor))
+    color-mix(in srgb, var(--color-foreground), transparent 55%);
+}
+
+.pdf-page-surface > .annotationLayer .popupAnnotation.focused .popup {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.pdf-page-surface > .annotationLayer .popup > .header {
+  display: inline-block;
+}
+
+.pdf-page-surface > .annotationLayer .popup > .header h1 {
+  display: inline;
+}
+
+.pdf-page-surface > .annotationLayer .popup > .header .popupDate {
+  display: inline-block;
+  width: fit-content;
+  margin-left: calc(5px * var(--scale-factor));
+}
+
+.pdf-page-surface > .annotationLayer .popupContent {
+  padding-top: calc(2px * var(--scale-factor));
+  margin-top: calc(2px * var(--scale-factor));
+  border-top: 1px solid var(--color-warning-foreground);
+}
+
+.pdf-page-surface > .annotationLayer .richText > * {
+  font-size: calc(9px * var(--scale-factor));
+  white-space: pre-wrap;
+}
+
+.pdf-page-surface > .annotationLayer .popupTriggerArea {
+  cursor: pointer;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

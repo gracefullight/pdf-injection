@@ -66,7 +66,7 @@ function LazyPdfPage({ document, pageNumber, scrollRoot }: LazyPdfPageProps) {
   }
 
   return (
-    <div className="w-full max-w-2xl shrink-0 overflow-hidden rounded border border-border">
+    <div className="w-full max-w-2xl shrink-0 overflow-visible rounded border border-border">
       <PdfPageCanvas
         document={document}
         pageNumber={pageNumber}
