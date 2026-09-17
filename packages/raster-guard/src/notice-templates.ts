@@ -72,7 +72,7 @@ export const NOTICE_TEMPLATES: NoticeTemplate[] = [
       "Notice reference: {{KEY}}. Questions: {{CONTACT}}.",
     ].join("\n"),
     defaultResponse:
-      "You should not upload this PDF. Please consult your UTS subject coordinator before using an AI assistant for this assessment.",
+      "You should not upload this PDF. Please contact your UTS instructor before using an AI assistant for this assessment.",
     watermark: "DO NOT UPLOAD - CONSULT YOUR INSTRUCTOR",
   },
   {

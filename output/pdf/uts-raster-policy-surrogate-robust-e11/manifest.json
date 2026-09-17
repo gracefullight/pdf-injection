@@ -1,0 +1,43 @@
+{
+  "status": "research_prototype",
+  "document": {
+    "pages": 1,
+    "width_px": 448,
+    "height_px": 560,
+    "raster_only": true,
+    "extractable_characters": 0,
+    "notice_contrast_bytes": 8
+  },
+  "perturbation": {
+    "anchor": "tmp/pdfs/raster-factorial-large-formal-001/images/p0-t08.png",
+    "max_channel_change_bytes": 11,
+    "changed_channels": 607889,
+    "total_channels": 752640,
+    "changed_protected_channels": 0,
+    "psnr_db": 42.14352764905961,
+    "selection": "decoder-in-the-loop candidate p016; PDF-gradient top-k fraction 0.003; one-byte step"
+  },
+  "sha256": {
+    "pdf": "1c2b494841fcd4ae3cc530f7152f7d83b2329779a2dc6050e879e409980395fc",
+    "source_png": "8e401ebade6f09dd93062a34ab721e54f7c018766ba3d1984c7366278a5ec2ea",
+    "render_72dpi_png": "c65a30acdbbab8a35ed8b03c2d7f97c1b8e311dae5a4ed4816b1fb6f6b88a526"
+  },
+  "local_surrogate_evaluation": {
+    "model": "Qwen2.5-VL-3B-Instruct 4-bit",
+    "canonical_prompt": {
+      "identity": "R2",
+      "reportlab_pdf_72dpi": "R2",
+      "gaussian_blur_0_5": "R2"
+    },
+    "twelve_prompt_counts": {
+      "identity": {"R0": 9, "R1": 0, "R2": 3, "RX": 0},
+      "reportlab_pdf_72dpi": {"R0": 8, "R1": 0, "R2": 3, "RX": 1}
+    }
+  },
+  "limitations": [
+    "Not validated on hosted GPT, Claude, or Gemini models.",
+    "Fails under several JPEG, resize, inversion, margin, contrast, and PIL-PDF transforms.",
+    "The low-contrast notice remains readable and the background texture can be visible.",
+    "This result does not establish universal model control or an invisible watermark."
+  ]
+}

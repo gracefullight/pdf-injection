@@ -1,0 +1,39 @@
+{
+  "source": "research/datasets/se-assignment-architecture-quality-plan.pdf",
+  "notice": "research/fixtures/uts-assessment-integrity-notice.txt",
+  "dpi": 180,
+  "font": "/System/Library/Fonts/Supplemental/Arial.ttf",
+  "method": "low-contrast raster text placed in an existing blank page region",
+  "artifacts": [
+    {
+      "alpha": 0.09375,
+      "filename": "uts-notice-blank-page-p4-contrast-0094.pdf",
+      "preview": "preview-0094.png",
+      "sha256": "1588d3b7d6034c9dc2567f9ac40d03519fb05572b2da2a11386356894362b08e",
+      "max_channel_delta": 24,
+      "changed_pixel_ratio": 0.027691910112001072,
+      "page": 4,
+      "stamp_box_pixels": [
+        105,
+        288,
+        1384,
+        923
+      ]
+    },
+    {
+      "alpha": 0.125,
+      "filename": "uts-notice-blank-page-p4-contrast-0125.pdf",
+      "preview": "preview-0125.png",
+      "sha256": "0132ead9e86348c2d41265562207b5ab29362a7affc52455f561a6cf5ef2b02c",
+      "max_channel_delta": 32,
+      "changed_pixel_ratio": 0.028348506625786248,
+      "page": 4,
+      "stamp_box_pixels": [
+        105,
+        288,
+        1384,
+        923
+      ]
+    }
+  ]
+}

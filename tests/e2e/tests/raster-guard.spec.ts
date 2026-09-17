@@ -37,7 +37,7 @@ test("raster guard: notice is painted into the page image, coverage is reported,
   const notice = page.getByTestId("notice-preview");
   await expect(notice).toContainText("ACADEMIC INTEGRITY NOTICE");
   await expect(notice).toContainText("You should not upload this PDF");
-  await expect(notice).toContainText("subject coordinator");
+  await expect(notice).toContainText("UTS instructor");
   // Every placeholder must be filled — a stray {{SLOT}} would be painted verbatim.
   await expect(notice).not.toContainText("{{");
 

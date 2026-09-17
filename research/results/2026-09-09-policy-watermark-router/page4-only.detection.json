@@ -1,0 +1,16 @@
+{
+  "policy_id": "uts-ai-prohibited-v1",
+  "score": 7.217960389527045,
+  "threshold": 1.5,
+  "detected": true,
+  "pages": [
+    {
+      "page": 1,
+      "score": 7.217960389527045,
+      "positive_mean": 7.658794183275828,
+      "negative_mean": 0.44083379374878245,
+      "eligible_positive_pixels": 1558678,
+      "eligible_negative_pixels": 1565615
+    }
+  ]
+}

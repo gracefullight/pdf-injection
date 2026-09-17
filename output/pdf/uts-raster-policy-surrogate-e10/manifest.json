@@ -1,0 +1,13 @@
+{
+  "source": "output/pdf/uts-raster-policy-surrogate-e10.png",
+  "source_sha256": "104fdc812b04701e7e948b7673032beb9b6e9d20c764c4912b320f5de82e820f",
+  "size": [
+    448,
+    560
+  ],
+  "pdf": "output/pdf/uts-raster-policy-surrogate-e10/image-page.pdf",
+  "pdf_sha256": "c8d83280f28466e13993e336c4e25a469feb4e9b387994cf12ce6907d0d32d40",
+  "render": "output/pdf/uts-raster-policy-surrogate-e10/render-72dpi.png",
+  "render_sha256": "24a7055d809026ea8fc71d9d051a124bb75c7044adb1475a1772c54de908dddd",
+  "extractable_characters": 0
+}

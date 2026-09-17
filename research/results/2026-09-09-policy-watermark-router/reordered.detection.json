@@ -1,0 +1,40 @@
+{
+  "policy_id": "uts-ai-prohibited-v1",
+  "score": 7.096241190144705,
+  "threshold": 1.5,
+  "detected": true,
+  "pages": [
+    {
+      "page": 1,
+      "score": 7.217960389527045,
+      "positive_mean": 7.658794183275828,
+      "negative_mean": 0.44083379374878245,
+      "eligible_positive_pixels": 1558678,
+      "eligible_negative_pixels": 1565615
+    },
+    {
+      "page": 2,
+      "score": 7.184189540455381,
+      "positive_mean": 7.627347094240197,
+      "negative_mean": 0.44315755378481625,
+      "eligible_positive_pixels": 1430865,
+      "eligible_negative_pixels": 1438696
+    },
+    {
+      "page": 3,
+      "score": 7.052318365998725,
+      "positive_mean": 7.482618544203478,
+      "negative_mean": 0.43030017820475314,
+      "eligible_positive_pixels": 1405636,
+      "eligible_negative_pixels": 1415226
+    },
+    {
+      "page": 4,
+      "score": 6.917871168345336,
+      "positive_mean": 7.343591577899928,
+      "negative_mean": 0.4257204095545922,
+      "eligible_positive_pixels": 1423018,
+      "eligible_negative_pixels": 1427209
+    }
+  ]
+}

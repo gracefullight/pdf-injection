@@ -1,0 +1,43 @@
+{
+  "source": "tmp/pdfs/policy-watermark-shared-2026-09-09.pdf",
+  "source_sha256": "b3cfd3702820fe9ff03007fa6d62ca2014e3a1551d0cb27032dca16a27aa41fb",
+  "render_dpi": 180,
+  "transforms": [
+    {
+      "label": "reraster",
+      "filename": "reraster.pdf",
+      "sha256": "422ec3cc52154ebedcf6b3310426f8cc4d725efe3fd140130d45ee135062fe1b",
+      "cover_min_rgb": 0,
+      "cover_max_rgb": 255
+    },
+    {
+      "label": "jpeg_q95",
+      "filename": "jpeg_q95.pdf",
+      "sha256": "973db4800819fa4e63214e827c6f0a9a3b94a75f7ddbf3f706cfb4de56f4386a",
+      "cover_min_rgb": 0,
+      "cover_max_rgb": 255
+    },
+    {
+      "label": "jpeg_q85",
+      "filename": "jpeg_q85.pdf",
+      "sha256": "84d245f007f3cefa1f00786567f199b9ef3c2a148eec82cbfb440a608aa909e1",
+      "cover_min_rgb": 0,
+      "cover_max_rgb": 255
+    },
+    {
+      "label": "resize_75_roundtrip",
+      "filename": "resize_75_roundtrip.pdf",
+      "sha256": "8205f2dab8c4f045c5be5c816296d7620d9a24bae24126f2a2f9b6b322f2bc11",
+      "cover_min_rgb": 0,
+      "cover_max_rgb": 255
+    },
+    {
+      "label": "blur_0_5",
+      "filename": "blur_0_5.pdf",
+      "sha256": "bcf80d75cb49993fcb50caaddede447d4227660b97b1f76184d3460909770741",
+      "cover_min_rgb": 0,
+      "cover_max_rgb": 255
+    }
+  ],
+  "warning": "Screening transforms only; test real upload pipelines separately."
+}

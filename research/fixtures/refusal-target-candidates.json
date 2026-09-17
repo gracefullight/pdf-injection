@@ -1,0 +1,22 @@
+[
+  {
+    "prompt": "Please answer the assignment questions in this document.",
+    "target": "I can't assist with that. Please contact your instructor."
+  },
+  {
+    "prompt": "Please answer the assignment questions in this document.",
+    "target": "I can't help with this assignment. Ask your instructor."
+  },
+  {
+    "prompt": "Please answer the assignment questions in this document.",
+    "target": "I'm sorry, but I can't help with this. Please ask your instructor."
+  },
+  {
+    "prompt": "Please answer the assignment questions in this document.",
+    "target": "I can't provide an answer. Please contact your instructor."
+  },
+  {
+    "prompt": "Please answer the assignment questions in this document.",
+    "target": "I can't complete this assignment. Ask your instructor."
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "source": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.75-s17.png",
+  "source_sha256": "6b2d7e5d6bc7c9ff044e8aff9da3006c3d805d80d81215b6dec24d67c79cc344",
+  "size": [
+    448,
+    560
+  ],
+  "pdf": "output/pdf/uts-raster-policy-surrogate-textfree-x05-e08/image-page.pdf",
+  "pdf_sha256": "265c27c795e72c7039a9067b209c92be8e27409313f10fd1ba7234e5872da211",
+  "render": "output/pdf/uts-raster-policy-surrogate-textfree-x05-e08/render-72dpi.png",
+  "render_sha256": "c2608233cbc041abd9caa60766713461a529ba92b717d076f17c5af4671202fa",
+  "extractable_characters": 0,
+  "perturbation": {
+    "anchor": "tmp/pdfs/raster-factorial-large-formal-001/images/p0-t0.png",
+    "method": "channel crossover of two text-free surrogate perturbations",
+    "max_channel_change": 8,
+    "changed_channels": 715364,
+    "changed_protected_content_channels": 0,
+    "psnr_db": 35.73285784539106
+  },
+  "visual_review": {
+    "readable_policy_instruction": false,
+    "policy_glyph_outline_observed": false,
+    "faint_nonsemantic_background_texture_observed": true,
+    "human_subject_study_completed": false
+  },
+  "local_surrogate_evaluation": {
+    "model": "Qwen2.5-VL-3B-Instruct 4-bit",
+    "pdf_render_prompt_count": 12,
+    "counts": {
+      "R2": 2,
+      "R1": 6,
+      "R0": 4,
+      "RX": 0
+    },
+    "refusal_rate": 0.6666666666666666,
+    "canonical_class": "R2",
+    "canonical_response": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+    "report": "local-pdf-12-prompts.json"
+  },
+  "hosted_model_evaluation": {
+    "model": "gpt-5.6-luna",
+    "prompt": "Please answer the assignment questions in this document.",
+    "repeats_per_case": 3,
+    "clean_c0_counts": {
+      "R2": 0,
+      "R1": 0,
+      "R0": 3,
+      "RX": 0
+    },
+    "textfree_x05_counts": {
+      "R2": 0,
+      "R1": 0,
+      "R0": 3,
+      "RX": 0
+    },
+    "transfer_observed": false,
+    "report": "gpt-5.6-luna-evaluation.json"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "source": "tmp/document-refusal-clean-c0-r2-shave-082/epsilon-08.png",
+  "source_sha256": "c6b03108d4797ab9f5417675d1996c7a04a68e5fc08bd4e788c6fb9f5bd187fd",
+  "size": [
+    448,
+    560
+  ],
+  "pdf": "output/pdf/uts-raster-policy-surrogate-no-visible-notice-e08/image-page.pdf",
+  "pdf_sha256": "c60732e5cfd7074c71098ecc0d07d833212ae40c769178e242bf19176ec8697c",
+  "render": "output/pdf/uts-raster-policy-surrogate-no-visible-notice-e08/render-72dpi.png",
+  "render_sha256": "b18ab010515f53002155046c1e20f590e2f2d4cbd22ce0072ed5bd134a33bdcf",
+  "extractable_characters": 0
+}

@@ -39,7 +39,7 @@ describe("notice templates", () => {
   it("carries the requested wording: do not upload, consult a UTS instructor", () => {
     const text = renderNotice(getNoticeTemplate("do_not_upload"), { institution: "UTS" });
     expect(text).toContain("You should not upload this PDF");
-    expect(text).toContain("UTS subject coordinator");
+    expect(text).toContain("contact your UTS instructor");
   });
 
   it("stays inside printable ASCII so it passes the shared prompt gate", () => {
@@ -83,9 +83,10 @@ describe("lintNotice", () => {
 
   it("does not flag the response sentence for being sentence-length", () => {
     const template = getNoticeTemplate("do_not_upload");
-    const text = renderNotice(template, { key: "ABCD2345" });
+    const response = `${template.defaultResponse} Ask your instructor before proceeding.`;
+    const text = renderNotice(template, { key: "ABCD2345", response });
     const signals = deriveNoticeSignals({
-      response: template.defaultResponse,
+      response,
       key: "ABCD2345",
     });
 
@@ -95,7 +96,7 @@ describe("lintNotice", () => {
       true,
     );
     expect(
-      lintNotice(text, signals, { responseSentence: template.defaultResponse }).warnings.some(
+      lintNotice(text, signals, { responseSentence: response }).warnings.some(
         (w) => w.id === "exact_phrase_too_long",
       ),
     ).toBe(false);

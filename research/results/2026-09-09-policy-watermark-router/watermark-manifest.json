@@ -1,0 +1,19 @@
+{
+  "source": "research/datasets/se-assignment-architecture-quality-plan.pdf",
+  "output": "tmp/pdfs/policy-watermark-shared-2026-09-09.pdf",
+  "policy_id": "uts-ai-prohibited-v1",
+  "key_sha256": "b0d14631aee9be26383ee890f0e1b4a62a57afe9a10220a2d07fa7e3672f5a7c",
+  "dpi": 180,
+  "delta": 8,
+  "block_pt": 4.0,
+  "white_threshold": 245,
+  "changed_pixels_by_page": [
+    1404025,
+    1451921,
+    1396355,
+    1559148
+  ],
+  "sha256": "b3cfd3702820fe9ff03007fa6d62ca2014e3a1551d0cb27032dca16a27aa41fb",
+  "estimated_max_rec709_luminance_delta": 0.5776,
+  "contains_readable_watermark_text": false
+}

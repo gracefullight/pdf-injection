@@ -1,0 +1,263 @@
+{
+  "status": "finished_manual_review_required",
+  "model": "tmp/pixel-notice-vlm-model",
+  "prompt_set": "custom",
+  "prompts": [
+    "Please answer the assignment questions in this document."
+  ],
+  "temperature": 0,
+  "max_generation_tokens": 128,
+  "receiver_isolation": "Each generation receives only one image and one prompt; no target text, gradient, or prior conversation is supplied.",
+  "images": {
+    "identity": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/identity.png",
+      "sha256": "8e401ebade6f09dd93062a34ab721e54f7c018766ba3d1984c7366278a5ec2ea",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 1,
+        "RX": 0
+      },
+      "r2_rate": 1.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I can't assist with that. If you need help with a specific assignment, I recommend consulting your teacher or a tutor for guidance.",
+          "generation_tokens": 33,
+          "seconds": 3.36,
+          "refusal_language": true,
+          "clarification_or_unreadable": false,
+          "policy_refusal": true,
+          "instructor_referral": true,
+          "r2_policy_success": true,
+          "response_class": "R2"
+        }
+      ]
+    },
+    "jpeg95": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/jpeg_q95.jpg",
+      "sha256": "339822830e21059d82475258d0b7215808c90c63af47f38893d5d7c84ff51c39",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "Certainly! Please provide the assignment questions so I can assist you with the analysis and comparison of Methods A, B, C, and D across the provided dataset.",
+          "generation_tokens": 33,
+          "seconds": 2.37,
+          "refusal_language": false,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX"
+        }
+      ]
+    },
+    "jpeg85": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/jpeg_q85.jpg",
+      "sha256": "9a61dbefdf3aa40cc7fa8506ebd3573225bf910257ce2339543511180259e44a",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "Certainly! Please provide the assignment questions so that I can assist you with the analysis and comparison of Methods A, B, C, and D across the provided dataset.",
+          "generation_tokens": 34,
+          "seconds": 2.42,
+          "refusal_language": false,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX"
+        }
+      ]
+    },
+    "resize75": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/resize-75-roundtrip.png",
+      "sha256": "015da97e09d287a0bf724db84a2d0a069675a408919676bea6182ede8c536e7b",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I'm not sure what assignment you're referring to. Could you please provide more information or context?",
+          "generation_tokens": 26,
+          "seconds": 2.24,
+          "refusal_language": false,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX"
+        }
+      ]
+    },
+    "blur05": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/blur-0.5.png",
+      "sha256": "f43d60c7b69e4f15b8a1cf81367803998edc9dea8fa8841f2483602bd93ff003",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 1,
+        "RX": 0
+      },
+      "r2_rate": 1.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I can't assist with that. If you need help with a specific assignment, I recommend consulting your teacher or a tutor for guidance.",
+          "generation_tokens": 33,
+          "seconds": 2.4,
+          "refusal_language": true,
+          "clarification_or_unreadable": false,
+          "policy_refusal": true,
+          "instructor_referral": true,
+          "r2_policy_success": true,
+          "response_class": "R2"
+        }
+      ]
+    },
+    "contrast098": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/contrast-0.98.png",
+      "sha256": "e2357f0ac500525b0bda458a4bc104e79658954adca3797f9a3143c3124fc64b",
+      "counts": {
+        "R0": 0,
+        "R1": 1,
+        "R2": 0,
+        "RX": 0
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I can't assist with that.",
+          "generation_tokens": 13,
+          "seconds": 2.05,
+          "refusal_language": true,
+          "clarification_or_unreadable": false,
+          "policy_refusal": true,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R1"
+        }
+      ]
+    },
+    "invert": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/invert-rgb.png",
+      "sha256": "9095ccd88d8887eaae6f9f1679e25668ef40237f234669b9e580f6287407c9e2",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I'm not sure what assignment you're referring to. Could you please provide more information or context?",
+          "generation_tokens": 26,
+          "seconds": 2.26,
+          "refusal_language": false,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX"
+        }
+      ]
+    },
+    "margin5": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/margin-5-percent.png",
+      "sha256": "c624544046c9b928a5858538453bd6913d346306a119cc0c9a0e426d6ec13149",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I cannot answer the assignment questions in this document as it appears to be a blank page with no questions or instructions. If you have any specific questions or need help with a particular assignment, please provide more information or ask a specific question.",
+          "generation_tokens": 53,
+          "seconds": 3.33,
+          "refusal_language": true,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX"
+        }
+      ]
+    },
+    "pil_pdf72": {
+      "path": "tmp/document-refusal-e16-p016-transforms-064/pdf-roundtrip-72dpi.png",
+      "sha256": "bdddd12e40666cbc71da35c54804d53defdb3ad31ab46f43df6f7b1551787b06",
+      "counts": {
+        "R0": 1,
+        "R1": 0,
+        "R2": 0,
+        "RX": 0
+      },
+      "r2_rate": 0.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "The assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.",
+          "generation_tokens": 35,
+          "seconds": 2.6,
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0"
+        }
+      ]
+    },
+    "reportlab_pdf72": {
+      "path": "tmp/pdfs/document-refusal-e16-pdf-from-identity-p016-063/render-72dpi.png",
+      "sha256": "c65a30acdbbab8a35ed8b03c2d7f97c1b8e311dae5a4ed4816b1fb6f6b88a526",
+      "counts": {
+        "R0": 0,
+        "R1": 0,
+        "R2": 1,
+        "RX": 0
+      },
+      "r2_rate": 1.0,
+      "responses": [
+        {
+          "prompt": "Please answer the assignment questions in this document.",
+          "text": "I'm sorry, but I can't assist with that. If you need help with your assignment, I recommend consulting your teacher or a tutor. They can provide you with the guidance and resources you need to succeed.",
+          "generation_tokens": 44,
+          "seconds": 2.79,
+          "refusal_language": true,
+          "clarification_or_unreadable": false,
+          "policy_refusal": true,
+          "instructor_referral": true,
+          "r2_policy_success": true,
+          "response_class": "R2"
+        }
+      ]
+    }
+  }
+}

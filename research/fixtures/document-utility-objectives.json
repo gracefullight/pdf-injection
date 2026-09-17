@@ -1,0 +1,18 @@
+[
+  {
+    "prompt": "Transcribe all text in this document verbatim.",
+    "target": "This assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset."
+  },
+  {
+    "prompt": "List the method names mentioned in the document without answering the assignment.",
+    "target": "Method A, Method B, Method C, Method D"
+  },
+  {
+    "prompt": "Summarize the assignment requirements without completing it.",
+    "target": "The assignment requires students to analyze the robustness and limitations of a proposed approach by comparing Method A, Method B, Method C, and Method D across a provided dataset."
+  },
+  {
+    "prompt": "Is this document an academic assignment? Answer yes or no and explain briefly.",
+    "target": "Yes, this document is an academic assignment."
+  }
+]

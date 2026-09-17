@@ -1,0 +1,137 @@
+{
+  "anchor": "tmp/pdfs/raster-factorial-large-formal-001/images/p0-t0.png",
+  "first": "tmp/document-refusal-r2-eot-resume-448-001/candidate-final.png",
+  "second": "tmp/document-refusal-r2-utility-eot-448-001/candidate-0024.png",
+  "fractions": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "seeds": [
+    17,
+    29
+  ],
+  "patch_size": 28,
+  "candidates": [
+    {
+      "label": "linear-f0.25",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/linear-f0.25.png",
+      "sha256": "4b23d0e5b9ec71f5354c54d640d01e6ca9560310358292ef17b1b8f26f2bd429",
+      "max_channel_change": 8,
+      "changed_channels": 716090,
+      "psnr_db": 35.75234262391638
+    },
+    {
+      "label": "channel-f0.25-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.25-s17.png",
+      "sha256": "33c74f3f011a99e9aa938e350456596fbf1cf9695ca83e741db0fe24a62b2ec3",
+      "max_channel_change": 8,
+      "changed_channels": 715882,
+      "psnr_db": 35.74544593612539
+    },
+    {
+      "label": "patch28-f0.25-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.25-s17.png",
+      "sha256": "0829a532a6f51cb34452eaaae054c5cb4840b06c104065f517a1a3422391eca8",
+      "max_channel_change": 8,
+      "changed_channels": 715873,
+      "psnr_db": 35.74681679919541
+    },
+    {
+      "label": "channel-f0.25-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.25-s29.png",
+      "sha256": "da6b0c7168493364bae418a713d1592f148565a39af905285615b2030cf6e4b1",
+      "max_channel_change": 8,
+      "changed_channels": 715810,
+      "psnr_db": 35.745673161581685
+    },
+    {
+      "label": "patch28-f0.25-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.25-s29.png",
+      "sha256": "5d63b74c182428b7c9f485bbfe3d74a7cd25ab1301e11dab1e558b31ade33bf3",
+      "max_channel_change": 8,
+      "changed_channels": 715727,
+      "psnr_db": 35.74446720341719
+    },
+    {
+      "label": "linear-f0.5",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/linear-f0.5.png",
+      "sha256": "cb18b45459a0da7a8a4e5998c17786677249a3d31f254cf74865c65af62f1867",
+      "max_channel_change": 8,
+      "changed_channels": 718572,
+      "psnr_db": 35.74457246156426
+    },
+    {
+      "label": "channel-f0.5-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.5-s17.png",
+      "sha256": "981627f5f72b455ff76088ce3f96a7abed64c04778823ac6710fbff118b981da",
+      "max_channel_change": 8,
+      "changed_channels": 715602,
+      "psnr_db": 35.739160637277834
+    },
+    {
+      "label": "patch28-f0.5-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.5-s17.png",
+      "sha256": "27a2b131a2be31da30ad8dfae1262150ebcd0e3b9283d067051a8826d18be78a",
+      "max_channel_change": 8,
+      "changed_channels": 715613,
+      "psnr_db": 35.73905384682912
+    },
+    {
+      "label": "channel-f0.5-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.5-s29.png",
+      "sha256": "86546405bcd01e181998c4aa616a18c59f30cb0a07b1d445f5eea48c7b319127",
+      "max_channel_change": 8,
+      "changed_channels": 715584,
+      "psnr_db": 35.738497647446806
+    },
+    {
+      "label": "patch28-f0.5-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.5-s29.png",
+      "sha256": "2e91882639597b240b88b8c2ac0aa0121a01baf71e1be942f492526463e78de8",
+      "max_channel_change": 8,
+      "changed_channels": 715497,
+      "psnr_db": 35.737914912069904
+    },
+    {
+      "label": "linear-f0.75",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/linear-f0.75.png",
+      "sha256": "911713e4f972827effee3daea33d20be2970c569b063206ceac045774aeec96e",
+      "max_channel_change": 8,
+      "changed_channels": 715082,
+      "psnr_db": 35.72558505706011
+    },
+    {
+      "label": "channel-f0.75-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.75-s17.png",
+      "sha256": "6b2d7e5d6bc7c9ff044e8aff9da3006c3d805d80d81215b6dec24d67c79cc344",
+      "max_channel_change": 8,
+      "changed_channels": 715364,
+      "psnr_db": 35.73285784539106
+    },
+    {
+      "label": "patch28-f0.75-s17",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.75-s17.png",
+      "sha256": "0872366f80d05410c36cec2d669ae046687e62432a21be07d8711aa0c18e7c97",
+      "max_channel_change": 8,
+      "changed_channels": 715362,
+      "psnr_db": 35.731724187426835
+    },
+    {
+      "label": "channel-f0.75-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/channel-f0.75-s29.png",
+      "sha256": "da0fb694385951c5986f545b87ce90cf8a0330fec6944977593c7a8186092fc3",
+      "max_channel_change": 8,
+      "changed_channels": 715343,
+      "psnr_db": 35.73215130889231
+    },
+    {
+      "label": "patch28-f0.75-s29",
+      "path": "tmp/document-refusal-clean-c0-crossover-089/patch28-f0.75-s29.png",
+      "sha256": "66faccdc3a919545997cf16dcf5a107a82f2957754ba0f93d8c0d49ac102e040",
+      "max_channel_change": 8,
+      "changed_channels": 715228,
+      "psnr_db": 35.73125626197318
+    }
+  ]
+}

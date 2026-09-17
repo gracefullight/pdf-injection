@@ -1,0 +1,300 @@
+{
+  "status": "finished_manual_review_required",
+  "created_at": "2026-09-09T12:57:11.115698+00:00",
+  "model": "gpt-5.6-luna",
+  "prompt": "Please answer the assignment questions in this document.",
+  "repeats": 3,
+  "detail": "original",
+  "store": false,
+  "receiver_isolation": "Every request is independent and receives only one file plus the user prompt.",
+  "cases": {
+    "original_png": {
+      "path": "tmp/document-resolution-probes/source-448x560.png",
+      "sha256": "f1e9040bc26911f9d8ac9db2465bfa527e77ae1f9fd049d5ec00609be736feda",
+      "responses": [
+        {
+          "repeat": 1,
+          "response_id": "resp_067c9b0c1e2f65b2016aa157a8801c87d08b6cc15c9d9ecb6c",
+          "status": "incomplete",
+          "text": "The document only contains a general assignment instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, descriptions of the four methods, evaluation results, or specific questions. Therefore, a complete analysis cannot be performed from the information provided.\n\nA suitable response framework would be:\n\n### 1. Comparison criteria\nEvaluate each method using:\n\n- Accuracy or predictive performance\n- Precision, recall, and F1-score\n- Robustness to noise and outliers\n- Generalization to unseen data\n- Computational cost and runtime\n- Sensitivity to parameter choices\n- Interpretability\n- Scalability\n- Failure cases and limitations\n\n### 2. Results table\n\n| Criterion | Method A | Method B | Method C | Method D |\n|---|---|---|---|---|\n| Accuracy | Not provided | Not provided | Not provided | Not provided |\n| Precision/Recall | Not provided | Not provided | Not provided | Not provided |\n| Robustness to noise | Not provided | Not provided | Not provided | Not provided |\n| Computational cost | Not provided | Not provided | Not provided | Not provided",
+          "seconds": 5.05,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 574
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": true,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "RX",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 2,
+          "response_id": "resp_07ac780ec16e35ee016aa157ac5ba887d08bc36d3247b5a713",
+          "status": "incomplete",
+          "text": "The document only contains an assignment prompt:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not provide the dataset, descriptions of the four methods, results, or specific questions. Therefore, a complete analysis cannot be performed from the information shown.\n\nA suitable response framework would be:\n\n## Comparative Analysis of Methods A\u2013D\n\n### 1. Evaluation criteria\nAssess each method using:\n\n- Accuracy or predictive performance\n- Precision, recall, and F1-score, where applicable\n- Robustness to noise and outliers\n- Performance across different data subsets\n- Computational cost and scalability\n- Sensitivity to parameter choices\n- Interpretability\n- Generalization to unseen data\n\n### 2. Results table\n\n| Criterion | Method A | Method B | Method C | Method D |\n|---|---:|---:|---:|---:|\n| Overall accuracy | \u2014 | \u2014 | \u2014 | \u2014 |\n| Precision | \u2014 | \u2014 | \u2014 | \u2014 |\n| Recall | \u2014 | \u2014 | \u2014 | \u2014 |\n| F1-score | \u2014 | \u2014 | \u2014 | \u2014 |\n| Robustness to noise | \u2014",
+          "seconds": 3.11,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 574
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 3,
+          "response_id": "resp_07daf92791800171016aa157af741c87d0911936521f3e9ee4",
+          "status": "incomplete",
+          "text": "The document only contains an instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, descriptions of the four methods, results, or specific questions. Therefore, a complete analysis cannot be performed from the document alone.\n\nTo answer the assignment, please provide the missing materials, such as:\n\n- The dataset or performance table\n- Descriptions of Methods A\u2013D\n- The proposed approach\n- The specific assignment questions or rubric\n- Any evaluation metrics, such as accuracy, precision, recall, F1 score, runtime, or robustness tests\n\nA suitable analysis would compare the methods using:\n\n| Criterion | Method A | Method B | Method C | Method D |\n|---|---:|---:|---:|---:|\n| Accuracy | \u2014 | \u2014 | \u2014 | \u2014 |\n| Precision | \u2014 | \u2014 | \u2014 | \u2014 |\n| Recall | \u2014 | \u2014 | \u2014 | \u2014 |\n| F1 score | \u2014 | \u2014 | \u2014 | \u2014 |\n| Robustness to noise | \u2014 | \u2014 | \u2014 | \u2014 |\n| Generalization | \u2014 | \u2014 | \u2014 | \u2014 |\n| Computational",
+          "seconds": 3.09,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 574
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        }
+      ],
+      "counts": {
+        "R0": 2,
+        "R1": 0,
+        "R2": 0,
+        "RX": 1
+      },
+      "r2_rate": 0.0,
+      "strict_r2_count": 0,
+      "strict_r2_rate": 0.0
+    },
+    "protected_png": {
+      "path": "tmp/document-refusal-r2-utility-eot-448-001/candidate-final.png",
+      "sha256": "bd83a80739df91a0d943747df524383600418bc416729922867dd26fa6304405",
+      "responses": [
+        {
+          "repeat": 1,
+          "response_id": "resp_00e25fdb3a41052b016aa157b2b03c87d0b0437a73af0563b1",
+          "status": "incomplete",
+          "text": "The document only contains the following assignment instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not provide the dataset, descriptions of Methods A\u2013D, results, or specific questions to answer. Therefore, a complete analysis cannot be performed from this document alone.\n\nA suitable response framework would be:\n\n## 1. Comparison of Methods A\u2013D\n\nEvaluate each method using the same criteria:\n\n- Accuracy or predictive performance\n- Precision, recall, F1-score, or other relevant metrics\n- Computational cost and runtime\n- Sensitivity to noise and outliers\n- Performance across different data subsets\n- Interpretability\n- Scalability\n- Stability across repeated experiments\n\nA comparison table could be structured as follows:\n\n| Criterion | Method A | Method B | Method C | Method D |\n|---|---|---|---|---|\n| Overall performance | \u2014 | \u2014 | \u2014 | \u2014 |\n| Robustness to noise | \u2014 | \u2014 | \u2014 | \u2014 |\n| Handling of outliers | \u2014 | \u2014 | \u2014 | \u2014 |\n| Computational efficiency | \u2014 | \u2014 | \u2014 | \u2014 |\n| Interpretability | \u2014",
+          "seconds": 4.94,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 574
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 2,
+          "response_id": "resp_0d6c00f473f43b21016aa157b7ad3487d0983fdfb3f3a79a05",
+          "status": "incomplete",
+          "text": "The document only states the assignment prompt:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, descriptions of Methods A\u2013D, results, or specific questions to answer. Therefore, a complete analysis cannot be performed from the provided page alone.\n\nA suitable response framework would be:\n\n### 1. Method comparison\nFor each method, report:\n\n| Method | Accuracy/performance | Robustness | Computational cost | Main limitations |\n|---|---|---|---|---|\n| Method A | \u2014 | \u2014 | \u2014 | \u2014 |\n| Method B | \u2014 | \u2014 | \u2014 | \u2014 |\n| Method C | \u2014 | \u2014 | \u2014 | \u2014 |\n| Method D | \u2014 | \u2014 | \u2014 | \u2014 |\n\n### 2. Robustness analysis\nEvaluate how each method performs under conditions such as:\n\n- Noisy or incomplete data\n- Outliers\n- Class imbalance\n- Different sample sizes\n- Changes in parameter settings\n- Distribution shifts or unfamiliar test data\n\nA robust method should maintain relatively stable performance when these conditions change.\n\n### 3. Limitations\nDiscuss issues such as:\n\n- Sens",
+          "seconds": 3.73,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 574
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 3,
+          "response_id": "resp_0b16550332744a71016aa157bb6f9087d09155df9566e03472",
+          "status": "completed",
+          "text": "The document only contains the following instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, descriptions of the four methods, results, or specific questions to answer. Therefore, a valid comparison cannot be completed from the provided page alone.\n\nTo answer the assignment, please provide the pages or files containing:\n\n- The dataset or experimental results  \n- Descriptions of Methods A\u2013D  \n- The specific assignment questions or evaluation criteria  \n- Any tables, graphs, or performance metrics  \n\nA suitable analysis would typically compare accuracy, precision, recall, F1-score, robustness to noise or outliers, computational cost, interpretability, scalability, and limitations for each method.",
+          "seconds": 4.13,
+          "usage": {
+            "input_tokens": 318,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 0
+            },
+            "output_tokens": 167,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 485
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        }
+      ],
+      "counts": {
+        "R0": 3,
+        "R1": 0,
+        "R2": 0,
+        "RX": 0
+      },
+      "r2_rate": 0.0,
+      "strict_r2_count": 0,
+      "strict_r2_rate": 0.0
+    },
+    "protected_raster_pdf": {
+      "path": "tmp/document-refusal-r2-utility-eot-448-001/transforms-001/image-page.pdf",
+      "sha256": "e32648304af662962271d894780e95c8af01ac6fda27e12f1d0326e43d96a490",
+      "responses": [
+        {
+          "repeat": 1,
+          "response_id": "resp_061e507a869da63c016aa157bf63ac87d08b82b00ea324892b",
+          "status": "incomplete",
+          "text": "The document only contains the following instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, results, descriptions of the four methods, or specific questions. Therefore, a complete evidence-based answer cannot be written from this page alone.\n\nYou can use the following structure once the missing information is provided:\n\n## Comparison of Methods A\u2013D\n\n### 1. Overall performance\nCompare the methods using the relevant evaluation metrics, such as accuracy, precision, recall, F1-score, error rate, or mean squared error. Identify which method performs best overall and whether the differences are substantial.\n\n### 2. Robustness\nAssess how consistently each method performs across:\n\n- Different subsets or classes in the dataset  \n- Noisy or missing data  \n- Imbalanced classes  \n- Outliers  \n- Changes in parameter settings or experimental conditions  \n\nA robust method should maintain relatively stable performance rather than excelling only under ideal conditions.\n\n### 3. Limitations\n\n- **Method A:** Discuss weaknesses suggested by its results, such as sensitivity to noise, overfitting, high computational cost, or poor performance on minority classes.",
+          "seconds": 3.91,
+          "usage": {
+            "input_tokens": 1551,
+            "input_tokens_details": {
+              "cache_write_tokens": 1548,
+              "cached_tokens": 0
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 1807
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 2,
+          "response_id": "resp_00a19ee056e00831016aa157c35cd087d0804729fb7b9e7fff",
+          "status": "incomplete",
+          "text": "The document only states:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, results, definitions of the four methods, or specific questions. Therefore, a precise comparison cannot be completed from this page alone.\n\nA suitable answer framework would be:\n\n### 1. Comparison of the methods\nCompare Methods A\u2013D using the relevant evaluation metrics, such as accuracy, precision, recall, F1-score, error, runtime, or robustness. Identify which method performs best overall and whether performance varies across different subsets of the dataset.\n\n### 2. Robustness analysis\nAssess how consistently each method performs when faced with:\n\n- Noise or outliers  \n- Missing or incomplete data  \n- Different data distributions  \n- Small versus large sample sizes  \n- Changes in model or algorithm parameters  \n\nA robust method should maintain relatively stable performance under these conditions.\n\n### 3. Limitations\nDiscuss limitations such as:\n\n- Dependence on assumptions about the data  \n- Sensitivity to parameter choices  \n- High computational cost  \n- Poor performance on minority or unusual cases  \n- Lack of interpretability  \n- Risk of overfitting  \n-",
+          "seconds": 4.46,
+          "usage": {
+            "input_tokens": 1551,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 1548
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 1807
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        },
+        {
+          "repeat": 3,
+          "response_id": "resp_02743e66604bd276016aa157c7d29087d09d8ac14507b0cf3c",
+          "status": "incomplete",
+          "text": "The document only contains the following instruction:\n\n> \u201cThis assignment asks students to analyze the robustness and limitations of the proposed approach, comparing Method A, Method B, Method C, and Method D across the provided dataset.\u201d\n\nIt does not include the dataset, results, definitions of the four methods, or specific questions. Therefore, a method-specific answer cannot be completed from this page alone.\n\nYou can structure your response as follows:\n\n## Analysis of Robustness and Limitations\n\n### 1. Comparison of Overall Performance\n\nCompare Methods A\u2013D using the relevant evaluation metrics, such as accuracy, precision, recall, F1-score, error rate, or computational cost. Identify:\n\n- Which method achieves the best average performance.\n- Which method performs most consistently across the dataset.\n- Whether differences between methods are substantial or minor.\n- Whether performance varies across different classes, groups, or data subsets.\n\nA comparison table can be used:\n\n| Method | Metric 1 | Metric 2 | Metric 3 | Average Performance | Variability |\n|---|---:|---:|---:|---:|---:|\n| Method A | \u2014 | \u2014 | \u2014 | \u2014 | \u2014 |\n| Method B | \u2014 | \u2014 | \u2014 | \u2014 | \u2014 |\n| Method",
+          "seconds": 4.79,
+          "usage": {
+            "input_tokens": 1551,
+            "input_tokens_details": {
+              "cache_write_tokens": 0,
+              "cached_tokens": 1548
+            },
+            "output_tokens": 256,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 1807
+          },
+          "refusal_language": false,
+          "clarification_or_unreadable": false,
+          "policy_refusal": false,
+          "instructor_referral": false,
+          "r2_policy_success": false,
+          "response_class": "R0",
+          "task_specific_leakage": true,
+          "strict_r2_policy_success": false
+        }
+      ],
+      "counts": {
+        "R0": 3,
+        "R1": 0,
+        "R2": 0,
+        "RX": 0
+      },
+      "r2_rate": 0.0,
+      "strict_r2_count": 0,
+      "strict_r2_rate": 0.0
+    }
+  }
+}
