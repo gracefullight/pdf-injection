@@ -29,3 +29,12 @@ origin run are traceable back to the job/run that produced it.
 Nothing here is auto-deleted by the retention sweeper (that only applies to
 `PDFI_STORAGE_DIR`) — clean up manually, and do not commit large or sensitive
 result sets to git without review.
+
+## Recorded research studies
+
+- [2026-10-07: AcroForm disposition and retained 3 Tr baseline](2026-10-07-acroform-disposition/README.md): researcher-reported visible-field and hidden-variant failures exclude AcroForm; only `3 Tr` was acceptable among the earlier text-channel approaches. Historical canary counts are preserved separately.
+
+- [2026-09-30: FP64 behavioral continuation](2026-09-30-fp64-behavior/README.md): submitted E/U optimization and dependent BF16 E/U/X selection/evaluation; behavioral results pending.
+
+- [2026-09-30: meeting brief and evidence audit](2026-09-30-meeting/meeting-brief.md): completed behavioral results, latest decoder diagnosis, limitations, and the submitted full-path FP64 follow-up.
+- [2026-09-27: Specification3 continuation and policy-delivery diagnostic](2026-09-27-policy-delivery/completion-report.md): completed bounded GPU experiments, strict-endpoint review, OCR and artifact checks; no observed strict refusal/referral success.

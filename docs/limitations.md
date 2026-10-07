@@ -186,7 +186,7 @@ detectability framing.
   isn't, injection fails closed with `422 CANVAS_UNAVAILABLE` — on both synchronous job creation
   and a background model-test run regenerating an `image_only` condition PDF — never a silent
   text-free no-op.
-- **`freetext_annot` and `acroform_field` draw real, invisible (`3 Tr`) text**, but inside a
+- **`freetext_annot` and `acroform_field` use `3 Tr` text operators** inside a
   FreeText annotation's or an AcroForm text-field widget's own `/AP /N` appearance stream, never
   the page's own content stream — this app's PDF.js-based `extractText()` only ever walks a page's
   content stream, so it cannot see either payload regardless of the fact that the drawn text is
@@ -199,6 +199,14 @@ detectability framing.
   pipeline, behave the same way is what the Model Test benchmark measures — not something
   concluded here. `acroform_field` never mutates a pre-existing AcroForm field, even when the
   source PDF already has one — it always adds a brand-new, uniquely-named field.
+- **AcroForm is excluded from the adopted research methods (2026-10-07).** An invisible
+  appearance does not guarantee an invisible field value in an interactive viewer. The
+  researcher observed the instruction near the PDF bottom; a variant intended to keep it
+  invisible was not read or reflected by the LLM. Only page-content `3 Tr` was acceptable
+  among the earlier text-channel approaches. Historical canary matches do not establish
+  the hidden variant's effectiveness. See the
+  [AcroForm disposition](../research/results/2026-10-07-acroform-disposition/README.md)
+  for evidence provenance and the paper/slide correction.
 - **`info_dict` writes only to the classic `/Info` dictionary** (`Subject`/`Keywords`) — document
   metadata, not page text and not the XMP `/Metadata` stream `xmp_only` uses (a different,
   unrelated channel — see [`xmp_only` caveats](#xmp_only-caveats) above). The original `/Info

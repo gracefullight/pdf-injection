@@ -1,5 +1,21 @@
 # Round-3 probe modes — 2026-08-23
 
+## Interpretation update — 2026-10-07
+
+**AcroForm is excluded from the adopted methods.** The researcher reported that
+the displayed field value was visible near the PDF bottom, while a variant
+intended to keep the field invisible was not read or reflected by the LLM.
+Only page-content `3 Tr` was acceptable among the earlier text-channel approaches.
+See the [AcroForm disposition](../2026-10-07-acroform-disposition/README.md).
+
+The historical counts below remain unchanged. Earlier claims of zero visible
+pixels and a successful invisible AcroForm channel are superseded by that
+disposition. Canary matches do not validate the later hidden variant or measure
+policy refusal. The suggested AcroForm reach/detect inversion is not retained as
+a main viable-method contribution.
+
+## Historical experiment
+
 Nine-condition provider benchmark plus a mechanism-disambiguating probe, run against
 `gpt-5.6-luna` (OpenAI Responses API, PDF ingested `provider_native`). Four new
 research/diagnostic injection modes were added to answer two questions the round-2
@@ -132,12 +148,12 @@ This is the uncomfortable part, and it inverts cleanly:
 - The channel the detector **flags** (the `3 Tr` appearance stream) is the one the model
   **ignores**. `appearance_only`: detector CRITICAL, reaches the model 0/3.
 
-Our shipped `acroform_field` mode carries *both*, so it happens to trip the detector — but
-that CRITICAL comes from the appearance text, which is not the part that influenced the
-model. A minimal value-only AcroForm injection would **reach `gpt-5.6-luna` 5/5 while
-staying invisible to this scanner**. That is a concrete gap for the "transparent,
-detection-aware watermarking" positioning to state honestly, not bury: at least one working
-channel against this provider evades the free scanner we test with.
+The tested `acroform_field` artifact carried both components and was flagged by
+the scanner. The isolated value-only artifact produced canary matches in **3/3**
+responses and a CLEAN scanner result. This is an artifact-specific canary/scanner
+contrast, not a measured 5/5 result or proof of viewer invisibility. The later
+[operational disposition](../2026-10-07-acroform-disposition/README.md) excludes
+AcroForm as a usable invisible method.
 
 ## 5. What this run does and does not establish
 
