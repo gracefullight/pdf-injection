@@ -1,0 +1,415 @@
+{
+  "status": "passed_actual_forward_checks",
+  "dpi": 112,
+  "native_sha256": "0ba974732c0c296d953a6483fc830c2ec7ae89c92dc2a857f76dc927672d08ed",
+  "policy_sha256": "72ef823a3bab36bcb92d77177e694267b709669aa4c88ff14068473c2e59afb9",
+  "input_pages": [
+    {
+      "filename": "page-1.png",
+      "sha256": "be1063a75ccb52201eb6a5de64883a2dc2daca6c71bdb0c3d632b7d1504a8dee"
+    },
+    {
+      "filename": "page-2.png",
+      "sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a"
+    },
+    {
+      "filename": "page-3.png",
+      "sha256": "8d730049af9da2b6679e3ee9c4f1e106b0a2ffa2d8db8b5704a303f627ca0a39"
+    },
+    {
+      "filename": "page-4.png",
+      "sha256": "bbb559fc5f86b7995fd94bb17bc2f3ea748afbca5d057d93836bb4f8c4dbdf2a"
+    },
+    {
+      "filename": "page-5.png",
+      "sha256": "ce6dd7cbc99cbc345fdb45d2d20e1e76b88c9cdbb01d9a819e68769c91ac7d79"
+    },
+    {
+      "filename": "page-6.png",
+      "sha256": "6123290260040ada12073e5846ed849d5634b47491b30abcc7058900d5a89cd4"
+    },
+    {
+      "filename": "page-7.png",
+      "sha256": "145b3fbc5853d4862f5c969db8e105e9234210ce4083051f8aa7236d820bc2ac"
+    }
+  ],
+  "pdf_structures": {
+    "clean-page-2.pdf": {
+      "sha256": "83702a86b17391566e73fe5793becc23f5346e237874cacdd435aeacc0faed0d",
+      "pages": 1,
+      "extracted_text_characters": [
+        0
+      ],
+      "images_per_page": [
+        1
+      ]
+    },
+    "clean-raster-document.pdf": {
+      "sha256": "ed18827ef7cecbc1ef5655de9bc7d83c46254c98c7767d917a56acca5aa114a3",
+      "pages": 7,
+      "extracted_text_characters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "images_per_page": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "readable-policy.pdf": {
+      "sha256": "092ea3f5db1a068a7cae0ec10799c7147fbada75402f4994b69a2dd9f3a2e130",
+      "pages": 1,
+      "extracted_text_characters": [
+        937
+      ],
+      "images_per_page": [
+        0
+      ]
+    }
+  },
+  "embedded_pixels": [
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    }
+  ],
+  "renderer_comparisons": {
+    "poppler": [
+      {
+        "page": 1,
+        "rendered_pixel_sha256": "59dcc4a5b5fdcca1e4363af9166f7d6c99cc6a4727f14c5b35cdb004aa72b3cd",
+        "max_abs_bytes": 244,
+        "mean_abs_bytes": 6.233197824584379,
+        "changed_channels": 391133,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 2,
+        "rendered_pixel_sha256": "b28e7ae382e242c9f18d631987e9c66b91208e1878e87b9dfddaa933e22102bf",
+        "max_abs_bytes": 249,
+        "mean_abs_bytes": 10.587576507875877,
+        "changed_channels": 656836,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 3,
+        "rendered_pixel_sha256": "b0176adf6cca713f42e72abadc92168e66fae2c3c1bf3e4173ea9d7412a6c40e",
+        "max_abs_bytes": 241,
+        "mean_abs_bytes": 5.579896163010659,
+        "changed_channels": 495376,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 4,
+        "rendered_pixel_sha256": "8de3984796c7b92d87227966dbc6083699660a64e77c575ea74753beab2ab9d7",
+        "max_abs_bytes": 245,
+        "mean_abs_bytes": 7.175763203008476,
+        "changed_channels": 460316,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 5,
+        "rendered_pixel_sha256": "cc5d6bb68277b66ade00ed7e67370d34ca800b244ae2a1aea01dd892a26bcd5d",
+        "max_abs_bytes": 248,
+        "mean_abs_bytes": 7.847382703081233,
+        "changed_channels": 505482,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 6,
+        "rendered_pixel_sha256": "98e14438edbeb7a276a859d80859b2e9a0d28c69bd08c6fb72db2ef1df92c86f",
+        "max_abs_bytes": 242,
+        "mean_abs_bytes": 10.29042014533086,
+        "changed_channels": 554903,
+        "total_channels": 3518592,
+        "exact": false
+      },
+      {
+        "page": 7,
+        "rendered_pixel_sha256": "83e6ccf357f0efcecf88a7c5e6cf6f8ed679d53edbf16e17227438a57847e07d",
+        "max_abs_bytes": 232,
+        "mean_abs_bytes": 1.7031181790898178,
+        "changed_channels": 137810,
+        "total_channels": 3518592,
+        "exact": false
+      }
+    ],
+    "pymupdf": [
+      {
+        "page": 1,
+        "rendered_pixel_sha256": "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 2,
+        "rendered_pixel_sha256": "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 3,
+        "rendered_pixel_sha256": "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 4,
+        "rendered_pixel_sha256": "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 5,
+        "rendered_pixel_sha256": "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 6,
+        "rendered_pixel_sha256": "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 7,
+        "rendered_pixel_sha256": "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      }
+    ],
+    "pdfium": [
+      {
+        "page": 1,
+        "rendered_pixel_sha256": "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 2,
+        "rendered_pixel_sha256": "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 3,
+        "rendered_pixel_sha256": "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 4,
+        "rendered_pixel_sha256": "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 5,
+        "rendered_pixel_sha256": "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 6,
+        "rendered_pixel_sha256": "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      },
+      {
+        "page": 7,
+        "rendered_pixel_sha256": "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521",
+        "max_abs_bytes": 0,
+        "mean_abs_bytes": 0.0,
+        "changed_channels": 0,
+        "total_channels": 3518592,
+        "exact": true
+      }
+    ]
+  },
+  "note": "No differentiable-renderer parity is claimed; the optimizer uses actual forwards and identity BPDA.",
+  "poppler_version": "pdftoppm version 26.09.0",
+  "native_vs_clean_raster_pymupdf": [
+    {
+      "page": 1,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 3.703706766797628,
+      "changed_channels": 260407,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 2,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 7.921271917858053,
+      "changed_channels": 447602,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 3,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 3.8894222461711956,
+      "changed_channels": 414433,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 4,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 5.843483416093711,
+      "changed_channels": 320142,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 5,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 5.087957626232311,
+      "changed_channels": 332984,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 6,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 7.635400751209575,
+      "changed_channels": 438083,
+      "total_channels": 3518592,
+      "exact": false
+    },
+    {
+      "page": 7,
+      "max_abs_bytes": 255,
+      "mean_abs_bytes": 1.7411072383498853,
+      "changed_channels": 94426,
+      "total_channels": 3518592,
+      "exact": false
+    }
+  ],
+  "poppler_calibration": [
+    {
+      "input": "clean",
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "input": "bounded_noise",
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    },
+    {
+      "input": "full_range_stress",
+      "max_abs_bytes": 0,
+      "mean_abs_bytes": 0.0,
+      "changed_channels": 0,
+      "total_channels": 3518592,
+      "exact": true
+    }
+  ],
+  "interpolation_adjoint_error": 7.105427357601002e-15
+}

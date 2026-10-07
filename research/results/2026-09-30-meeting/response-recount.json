@@ -1,0 +1,42 @@
+{
+  "2026-09-27-hpc-preflight": {
+    "file_sha256": "c6b2842f51c8c6cefec4d77183a0b62ccbb480cdac427a6a631f3f978ec17619",
+    "groups": {
+      "page_task": {
+        "rows": 468,
+        "strict_r2_labels": 0,
+        "incomplete": 367
+      },
+      "page_utility": {
+        "rows": 312,
+        "strict_r2_labels": 0,
+        "incomplete": 0
+      },
+      "document_task": {
+        "rows": 372,
+        "strict_r2_labels": 0,
+        "incomplete": 262
+      },
+      "document_utility": {
+        "rows": 248,
+        "strict_r2_labels": 0,
+        "incomplete": 0
+      }
+    }
+  },
+  "2026-09-27-policy-delivery": {
+    "file_sha256": "76d376174690e68ec68c72165e28227e434de2028c1899d4cf46c4452d29b261",
+    "groups": {
+      "192": {
+        "rows": 144,
+        "strict_r2_labels": 0,
+        "incomplete": 103
+      },
+      "768": {
+        "rows": 144,
+        "strict_r2_labels": 0,
+        "incomplete": 32
+      }
+    }
+  }
+}

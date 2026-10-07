@@ -1,0 +1,13 @@
+{
+  "protocol": "full-fp64-scale-v1",
+  "files": {
+    "diagnose_full_precision.py": "3d120d4fb340a6ce84174248933aa3835219b0e71826e56f1da764c7750089b8",
+    "test_diagnose_full_precision.py": "3481e83d40095adeb92bd5d5c4b6703f8053b797b8234a7788a20c05f8be7921",
+    "diagnose_full_precision.pbs": "5d6761b56f072e4325322c7279efef069dc691753cf30a8c70ce73c095992d50",
+    "diagnose_downstream.py": "953265e16eba4883c75b6311109082b588fe7495b3cd5c05c759398fc8c7e2bc",
+    "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+    "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+    "numerical_protocol.py": "d916201189e57bb10a737b22c86829e1ddc548eac5b6a874035a754b0c35d14b",
+    "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+  }
+}

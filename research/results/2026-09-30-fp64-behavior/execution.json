@@ -1,0 +1,49 @@
+{
+  "protocol": "fp64-behavior-v1",
+  "status": "parents_complete_evaluation_running",
+  "local_cpu_tests_passed": 10,
+  "hpc_cpu_tests_required_per_job": 10,
+  "planned_updates": 72,
+  "planned_final_rows": 1024,
+  "planned_development_rows": 232,
+  "behavioral_result_available": false,
+  "monitor_interval_seconds": 60,
+  "notifications": [
+    "begin",
+    "end",
+    "abort"
+  ],
+  "last_observed_at": "2026-09-30T15:55:39+10:00",
+  "jobs": [
+    {
+      "arm": "E",
+      "scheduler_state": "F",
+      "walltime_limit": "03:00:00",
+      "completed_updates": 36,
+      "exit_status": 0,
+      "walltime": "01:12:30"
+    },
+    {
+      "arm": "U",
+      "scheduler_state": "F",
+      "walltime_limit": "03:00:00",
+      "completed_updates": 36,
+      "exit_status": 0,
+      "walltime": "01:12:13"
+    },
+    {
+      "arm": "evaluation",
+      "scheduler_state": "R",
+      "walltime_limit": "06:00:00",
+      "dependency": "after both parents exit successfully",
+      "resource_adjustment": "Queued job moved to an available GPU node; original resource budget retained."
+    }
+  ],
+  "scheduler_logger_started": true,
+  "optimizer_updates_observed": 72,
+  "scheduler_logger_two_samples_verified": true,
+  "parent_startup_tests_passed": 10,
+  "test_evidence": "Both optimizer manifests exist beyond the PBS set -e CPU prerequisite command.",
+  "model_phase": "Both parent banks complete; BF16 evaluation job started; generation result pending.",
+  "parent_completion_audit": "parent-completion-summary.json"
+}

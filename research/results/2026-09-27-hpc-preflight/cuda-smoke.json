@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "scope": "CUDA float32 forward and input backward through a frozen linear layer",
+  "torch_version": "2.7.1+cu128",
+  "torch_cuda_version": "12.8",
+  "gpu_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "gpu_memory_bytes": 101973950464,
+  "compute_capability": [
+    12,
+    0
+  ],
+  "loss": 0.18503504991531372,
+  "input_gradient_abs_max": 0.020743248984217644,
+  "peak_allocated_bytes": 17046016,
+  "device_visibility": {
+    "phase": "device_visibility",
+    "cuda_visible_devices": null,
+    "pbs_gpufile": null,
+    "visible_device_count": 2,
+    "expected_visible_device_count": 2
+  },
+  "allocation": "exclusive node; two GPUs reserved; computation on one GPU",
+  "pbs_exit_status": 0,
+  "pbs_walltime_seconds": 54
+}

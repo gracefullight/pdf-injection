@@ -1,0 +1,55 @@
+{
+  "status": "audited_isolated_decoder_agreement_full_gate_still_failed",
+  "observed_at": "2026-09-30T12:43:24+10:00",
+  "raw_report_sha256": "0e2118f19b0a3537c7455afceb97edbb301b9f7a1f398af5da26eed6a50a07a4",
+  "scalar_comparisons_recomputed": 60,
+  "provenance_hashes_match": true,
+  "bitwise_replay_checks_passed": 3,
+  "hpc_cpu_tests_passed": 17,
+  "full_reference_validated": false,
+  "new_behavioral_responses": 0,
+  "arms": {
+    "decoder_fp32": {
+      "scales": [
+        0.125,
+        0.25,
+        0.5,
+        1.0,
+        2.0
+      ],
+      "realized_relative_errors": [
+        6.53716583716922e-05,
+        0.02403609089955954,
+        0.10215918507069267,
+        0.15445095199517347,
+        0.12341764192040774
+      ],
+      "passing_scales": [
+        0.125,
+        0.25
+      ]
+    },
+    "decoder_fp64": {
+      "scales": [
+        0.125,
+        0.25,
+        0.5,
+        1.0,
+        2.0
+      ],
+      "realized_relative_errors": [
+        0.007298917276586058,
+        0.02885293987855393,
+        0.10185323570626313,
+        0.15677970841689462,
+        0.12224765164510576
+      ],
+      "passing_scales": [
+        0.125,
+        0.25
+      ]
+    }
+  },
+  "loss_only_passing_rows": 10,
+  "audit_limit": "Scalar arithmetic and recorded provenance checked locally; archived remote NPZ tensors not downloaded or independently reconstructed. No model rerun."
+}

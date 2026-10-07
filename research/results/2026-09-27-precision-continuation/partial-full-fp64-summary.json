@@ -1,0 +1,25 @@
+{
+  "status": "walltime_exceeded_partial_result",
+  "exit_status": -29,
+  "walltime": "00:30:06",
+  "hpc_cpu_tests_passed": 21,
+  "completed_pairs": 7,
+  "planned_pairs": 96,
+  "complete_directions": 0,
+  "directions_with_observed_adjacent_passes": 1,
+  "full_reference_validated": false,
+  "source_sha256": "3928bb08cbf049abb448002dbb1193ac5acecd883bd6273482cd445f4ffeb08c",
+  "first_direction_relative_errors": [
+    0.00020387966911398087,
+    0.0008155590074940558,
+    0.0032612156058662166,
+    0.013010631937097786,
+    0.05077112769216511,
+    0.17520762638945836,
+    0.27659844751702206
+  ],
+  "arithmetic_recomputed": true,
+  "gradient_checkpoint_available": true,
+  "gradient_projection_independently_reconstructed_locally": false,
+  "interpretation": "The first direction agrees at four small adjacent steps. The full 12-direction reference remains incomplete. Runtime termination is not a numerical rejection."
+}

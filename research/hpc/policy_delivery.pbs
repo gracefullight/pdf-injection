@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N pdfi_policy_diag
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=1:mem=64gb:Qlist=large_gpuq
+#PBS -l place=shared
+#PBS -l walltime=03:00:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit through PBS}"
+cd "${PBS_O_WORKDIR:?}"
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export TOKENIZERS_PARALLELISM=false
+export HF_HUB_OFFLINE=1
+.venv/bin/python -u gpu_binding.py --uuid "${PDFI_GPU_UUID:?}" --host "${PDFI_GPU_HOST:?}"
+export CUDA_VISIBLE_DEVICES="$PDFI_GPU_UUID"
+export PDFI_EXPECTED_VISIBLE_GPUS=1
+PDFI_RUN="runs/policy-delivery-${PBS_JOBID%%.*}"
+mkdir -p runs
+sha256sum policy_delivery.py torch_document.py document_artifacts.py run_pilot.py \
+    gpu_binding.py specification3-prompts.json > "${PDFI_RUN}-code.sha256"
+.venv/bin/python -u gpu_smoke.py
+exec .venv/bin/python -u policy_delivery.py \
+    --model model --pages inputs/document --policy inputs/uts-assessment-integrity-notice.txt \
+    --prompts specification3-prompts.json --output "$PDFI_RUN"

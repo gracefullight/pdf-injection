@@ -1,0 +1,357 @@
+{
+  "protocol": "full-fp64-scale-v1",
+  "steps": [
+    9.313225746154785e-10,
+    1.862645149230957e-09,
+    3.725290298461914e-09,
+    7.450580596923828e-09,
+    1.4901161193847656e-08,
+    2.9802322387695312e-08,
+    5.960464477539063e-08,
+    1.1920928955078125e-07
+  ],
+  "script_sha256": "3d120d4fb340a6ce84174248933aa3835219b0e71826e56f1da764c7750089b8",
+  "failed_report_sha256": "4deec2e7939ba6b6613b7603b06953b4629b94da1f2ea6e322935aa7c7e9fd4e",
+  "decoder_report_sha256": "0e2118f19b0a3537c7455afceb97edbb301b9f7a1f398af5da26eed6a50a07a4",
+  "input_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+  "prompts_sha256": "113dfcba6379c79ddb8d296abdf520d9965105c868c8651ec4c82d977bac91e2",
+  "scope": "Smooth identity derivative diagnostic only. Original FP32 gate remains failed.",
+  "status": "shard_complete_pending_full_grid_audit",
+  "shard": {
+    "state": "clean_interior",
+    "prompt_index": 1
+  },
+  "resume_report_sha256": "3928bb08cbf049abb448002dbb1193ac5acecd883bd6273482cd445f4ffeb08c",
+  "resume_runner_sha256": "d0f201cef9d0c9b3aa8cba45134e7d4ec8382e622385cf7f38bc4d5af73e67c8",
+  "checks": [
+    {
+      "state": "clean_interior",
+      "train_prompt_index": 1,
+      "direction": "all",
+      "direction_file_sha256": "39ebcc676b00e3a970984c3f063aeb96ebf1c9b6160251f701a251170e512a2e",
+      "base_loss": 2.6162893897981583,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 15224.53227555469,
+          "finite_difference": 15222.25246143341,
+          "plus_loss": 2.6163035323000425,
+          "minus_loss": 2.616275178645335,
+          "absolute_error": 2.2798141212788323,
+          "relative_error": 0.00014974608612045324,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 15224.53227555469,
+          "finite_difference": 15215.4079580307,
+          "plus_loss": 2.6163175943308272,
+          "minus_loss": 2.616260912519174,
+          "absolute_error": 9.124317523988793,
+          "relative_error": 0.0005993167710405973,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 15224.53227555469,
+          "finite_difference": 15187.979175031185,
+          "plus_loss": 2.6163454386177105,
+          "minus_loss": 2.6162322793547625,
+          "absolute_error": 36.55310052350433,
+          "relative_error": 0.002400934219975737,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 15224.53227555469,
+          "finite_difference": 15077.715140551329,
+          "plus_loss": 2.6163998282722667,
+          "minus_loss": 2.6161751528085224,
+          "absolute_error": 146.81713500336082,
+          "relative_error": 0.00964345783148282,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 15224.53227555469,
+          "finite_difference": 14639.312214761972,
+          "plus_loss": 2.616502945464475,
+          "minus_loss": 2.6160666599623164,
+          "absolute_error": 585.220060792717,
+          "relative_error": 0.0384392801171552,
+          "agrees": true
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 15224.53227555469,
+          "finite_difference": 13067.13697937131,
+          "plus_loss": 2.6166903645172983,
+          "minus_loss": 2.6159115024594115,
+          "absolute_error": 2157.39529618338,
+          "relative_error": 0.14170519377120094,
+          "agrees": false
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 15224.53227555469,
+          "finite_difference": 11345.721735987812,
+          "plus_loss": 2.617050865635716,
+          "minus_loss": 2.615698350208128,
+          "absolute_error": 3878.810539566877,
+          "relative_error": 0.25477370794470316,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 15224.53227555469,
+          "finite_difference": 11701.811892883852,
+          "plus_loss": 2.617932351140896,
+          "minus_loss": 2.615142421776481,
+          "absolute_error": 3522.7203826708374,
+          "relative_error": 0.23138447335601256,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    },
+    {
+      "state": "clean_interior",
+      "train_prompt_index": 1,
+      "direction": "even_tiles",
+      "direction_file_sha256": "39ebcc676b00e3a970984c3f063aeb96ebf1c9b6160251f701a251170e512a2e",
+      "base_loss": 2.6162893897981583,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 8135.253937051042,
+          "finite_difference": 8134.987221240997,
+          "plus_loss": 2.6162969590015233,
+          "minus_loss": 2.6162818064070366,
+          "absolute_error": 0.26671581004484324,
+          "relative_error": 3.2785185577320206e-05,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 8135.253937051042,
+          "finite_difference": 8134.186321973801,
+          "plus_loss": 2.6163045125779645,
+          "minus_loss": 2.6162742103725734,
+          "absolute_error": 1.0676150772414985,
+          "relative_error": 0.00013123315946895933,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 8135.253937051042,
+          "finite_difference": 8130.98184710741,
+          "plus_loss": 2.616319567614638,
+          "minus_loss": 2.616258987079054,
+          "absolute_error": 4.272089943631727,
+          "relative_error": 0.0005251329554907935,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 8135.253937051042,
+          "finite_difference": 8118.140033125877,
+          "plus_loss": 2.6163494381398156,
+          "minus_loss": 2.6162284684265877,
+          "absolute_error": 17.113903925164777,
+          "relative_error": 0.0021036717547588215,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 8135.253937051042,
+          "finite_difference": 8066.515369296074,
+          "plus_loss": 2.6164080474158213,
+          "minus_loss": 2.6161676465242403,
+          "absolute_error": 68.73856775496824,
+          "relative_error": 0.008449467992868255,
+          "agrees": true
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 8135.253937051042,
+          "finite_difference": 7860.905130781233,
+          "plus_loss": 2.6165202422940688,
+          "minus_loss": 2.6160516958361355,
+          "absolute_error": 274.34880626980885,
+          "relative_error": 0.03372344715883053,
+          "agrees": true
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 8135.253937051042,
+          "finite_difference": 7117.473048541695,
+          "plus_loss": 2.616727627582898,
+          "minus_loss": 2.6158791586773846,
+          "absolute_error": 1017.7808885093473,
+          "relative_error": 0.12510745164007553,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 8135.253937051042,
+          "finite_difference": 6236.456227207556,
+          "plus_loss": 2.6171286751331193,
+          "minus_loss": 2.6156417881007994,
+          "absolute_error": 1898.7977098434858,
+          "relative_error": 0.23340361893261113,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    },
+    {
+      "state": "clean_interior",
+      "train_prompt_index": 1,
+      "direction": "odd_tiles",
+      "direction_file_sha256": "39ebcc676b00e3a970984c3f063aeb96ebf1c9b6160251f701a251170e512a2e",
+      "base_loss": 2.6162893897981583,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 7089.278338503647,
+          "finite_difference": 7088.973880290985,
+          "plus_loss": 2.6162959818030855,
+          "minus_loss": 2.6162827775602744,
+          "absolute_error": 0.30445821266221174,
+          "relative_error": 4.2946291304239375e-05,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 7089.278338503647,
+          "finite_difference": 7088.059809327126,
+          "plus_loss": 2.6163025519366783,
+          "minus_loss": 2.6162761468562357,
+          "absolute_error": 1.2185291765217698,
+          "relative_error": 0.00017188338760852886,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 7089.278338503647,
+          "finite_difference": 7084.402170300484,
+          "plus_loss": 2.6163156206696785,
+          "minus_loss": 2.6162628377603276,
+          "absolute_error": 4.8761682031636155,
+          "relative_error": 0.0006878229306754573,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 7089.278338503647,
+          "finite_difference": 7069.742450088263,
+          "plus_loss": 2.6163414373242984,
+          "minus_loss": 2.6162360899524506,
+          "absolute_error": 19.53588841538476,
+          "relative_error": 0.0027556949357285714,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 7089.278338503647,
+          "finite_difference": 7010.806469738483,
+          "plus_loss": 2.616391600514908,
+          "minus_loss": 2.6161826622002993,
+          "absolute_error": 78.47186876516389,
+          "relative_error": 0.011069091241482719,
+          "agrees": true
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 7089.278338503647,
+          "finite_difference": 6776.839454308152,
+          "plus_loss": 2.616485606537915,
+          "minus_loss": 2.616081675429541,
+          "absolute_error": 312.4388841954951,
+          "relative_error": 0.044072029517949834,
+          "agrees": true
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 7089.278338503647,
+          "finite_difference": 5944.649711292237,
+          "plus_loss": 2.6166529091741877,
+          "minus_loss": 2.6159442517054763,
+          "absolute_error": 1144.6286272114103,
+          "relative_error": 0.16145911791820125,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 7089.278338503647,
+          "finite_difference": 5104.672657573596,
+          "plus_loss": 2.616972696903888,
+          "minus_loss": 2.6157556481020907,
+          "absolute_error": 1984.6056809300517,
+          "relative_error": 0.2799446694244125,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    }
+  ],
+  "artifacts": {
+    "gradient-clean_interior-1.npz": {
+      "sha256": "d2aac14194aad20798ce5033f653e3845c9b84e48872f9117c1c3a1498edbaf5",
+      "bytes": 29897638
+    }
+  },
+  "base_repeats": [
+    {
+      "state": "clean_interior",
+      "prompt": 1,
+      "gradient_forward": 2.6162893897981583,
+      "no_grad_forwards": [
+        2.6162893897981583,
+        2.6162893897981583
+      ],
+      "bitwise_equal_losses": true
+    }
+  ],
+  "optimizer_authorized": false,
+  "full_reference_passed": false,
+  "reused_pairs": 0,
+  "precision": {
+    "modeling_source_sha256": "72bdd5615b7527543ea7e6d69fbe194c40bddd94cab13e2e83696ff1cfb10719",
+    "rmsnorm_overrides": 138,
+    "parameter_dtypes": [
+      "torch.float64"
+    ],
+    "scope": "Pixel packing, vision, decoder, head and loss arithmetic FP64. Original FP32 normalization and position constants retained. Frozen promoted weights."
+  },
+  "execution": {
+    "backend": "math",
+    "checkpointed_blocks": 68,
+    "recompute_backend": "math",
+    "implementation_sha256": {
+      "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+      "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+      "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    }
+  },
+  "gradient_reused": false,
+  "observed_output_dtypes": {
+    "Conv3d": [
+      "torch.float64"
+    ],
+    "Qwen2RMSNorm": [
+      "torch.float64"
+    ],
+    "Linear": [
+      "torch.float64"
+    ],
+    "Qwen2_5_VLVisionBlock": [
+      "torch.float64"
+    ],
+    "Qwen2_5_VLDecoderLayer": [
+      "torch.float64"
+    ]
+  },
+  "peak_cuda_memory_bytes": 50781406720,
+  "shard_passed": true
+}

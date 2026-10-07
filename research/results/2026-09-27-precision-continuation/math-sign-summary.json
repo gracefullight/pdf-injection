@@ -1,0 +1,140 @@
+{
+  "protocol": "math-sign-v1",
+  "reference_passed": false,
+  "stable_fp32_directions": 0,
+  "fp32_rows": [
+    {
+      "state": "clean_interior",
+      "prompt_index": 0,
+      "direction": "all",
+      "analytic": 17817.706807958337,
+      "relative_errors": [
+        0.6445941815925149,
+        0.7744734280267933,
+        0.8271928609741471
+      ]
+    },
+    {
+      "state": "clean_interior",
+      "prompt_index": 0,
+      "direction": "even_tiles",
+      "analytic": 9233.556180441885,
+      "relative_errors": [
+        0.548805880442336,
+        0.5907519058069591,
+        0.7577226494328968
+      ]
+    },
+    {
+      "state": "clean_interior",
+      "prompt_index": 0,
+      "direction": "odd_tiles",
+      "analytic": 8584.150627516454,
+      "relative_errors": [
+        0.609868615234329,
+        0.6681598795191652,
+        0.7604711615959675
+      ]
+    },
+    {
+      "state": "clean_interior",
+      "prompt_index": 1,
+      "direction": "all",
+      "analytic": 15225.721304637374,
+      "relative_errors": [
+        0.5863770634130747,
+        0.7296171706431528,
+        0.7747775389680006
+      ]
+    },
+    {
+      "state": "clean_interior",
+      "prompt_index": 1,
+      "direction": "even_tiles",
+      "analytic": 8135.776960266579,
+      "relative_errors": [
+        0.42291217029581896,
+        0.5259264139605453,
+        0.7085548945859842
+      ]
+    },
+    {
+      "state": "clean_interior",
+      "prompt_index": 1,
+      "direction": "odd_tiles",
+      "analytic": 7089.944344370795,
+      "relative_errors": [
+        0.4374420706198078,
+        0.5957024720272757,
+        0.7431431583425039
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 0,
+      "direction": "all",
+      "analytic": 6970.235039716868,
+      "relative_errors": [
+        0.2449534793160048,
+        0.42846460477897635,
+        0.533786821776399
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 0,
+      "direction": "even_tiles",
+      "analytic": 3504.7026344065657,
+      "relative_errors": [
+        0.10311633403179112,
+        0.24932592285780544,
+        0.4648392309423993
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 0,
+      "direction": "odd_tiles",
+      "analytic": 3465.532405310307,
+      "relative_errors": [
+        0.03154322468031385,
+        0.20446473528385375,
+        0.41556003669548564
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 1,
+      "direction": "all",
+      "analytic": 8123.673353861541,
+      "relative_errors": [
+        0.45093139607818783,
+        0.5744230398845862,
+        0.6494197624303115
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 1,
+      "direction": "even_tiles",
+      "analytic": 4451.545014515077,
+      "relative_errors": [
+        0.4226113666999763,
+        0.5130986442808297,
+        0.6205439178747271
+      ]
+    },
+    {
+      "state": "crossover_interior",
+      "prompt_index": 1,
+      "direction": "odd_tiles",
+      "analytic": 3672.128339346457,
+      "relative_errors": [
+        0.2916514735808544,
+        0.37879911882247663,
+        0.5234554448409786
+      ]
+    }
+  ],
+  "interpretation": "All 12 math-FP32 directions failed adjacent-step agreement. Errors generally grow as step size increases. This motivates an explicitly revised representable-step convergence diagnostic, not a retroactive pass."
+}

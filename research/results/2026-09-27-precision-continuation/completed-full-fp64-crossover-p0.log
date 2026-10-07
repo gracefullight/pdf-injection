@@ -1,0 +1,34 @@
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.170s
+
+OK
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  6.00it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  7.61it/s]
+{"event": "completed_pair", "direction": "all", "step": 9.313225746154785e-10, "relative_error": 0.0023861864584968744, "elapsed_seconds": 39.460691603366286}
+{"event": "completed_pair", "direction": "all", "step": 1.862645149230957e-09, "relative_error": 0.008816641929391477, "elapsed_seconds": 39.75903774891049}
+{"event": "completed_pair", "direction": "all", "step": 3.725290298461914e-09, "relative_error": 0.026291410548571904, "elapsed_seconds": 37.82881452096626}
+{"event": "completed_pair", "direction": "all", "step": 7.450580596923828e-09, "relative_error": 0.05944982803952587, "elapsed_seconds": 37.726728863082826}
+{"event": "completed_pair", "direction": "all", "step": 1.4901161193847656e-08, "relative_error": 0.12895069226088343, "elapsed_seconds": 37.727178626693785}
+{"event": "completed_pair", "direction": "all", "step": 2.9802322387695312e-08, "relative_error": 0.005529999809477708, "elapsed_seconds": 39.512653719168156}
+{"event": "completed_pair", "direction": "all", "step": 5.960464477539063e-08, "relative_error": 0.25673307948605223, "elapsed_seconds": 38.651686795055866}
+{"event": "completed_pair", "direction": "all", "step": 1.1920928955078125e-07, "relative_error": 0.129662085011105, "elapsed_seconds": 38.89403304969892}
+{"event": "completed_pair", "direction": "even_tiles", "step": 9.313225746154785e-10, "relative_error": 0.0013780190696929342, "elapsed_seconds": 37.95696214726195}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.862645149230957e-09, "relative_error": 0.005310865828916433, "elapsed_seconds": 38.124069747980684}
+{"event": "completed_pair", "direction": "even_tiles", "step": 3.725290298461914e-09, "relative_error": 0.018381577729558913, "elapsed_seconds": 38.97179783415049}
+{"event": "completed_pair", "direction": "even_tiles", "step": 7.450580596923828e-09, "relative_error": 0.0459973746452549, "elapsed_seconds": 39.5442444072105}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.4901161193847656e-08, "relative_error": 0.11593819519448775, "elapsed_seconds": 37.72528997762129}
+{"event": "completed_pair", "direction": "even_tiles", "step": 2.9802322387695312e-08, "relative_error": 0.128158541378446, "elapsed_seconds": 38.43037262791768}
+{"event": "completed_pair", "direction": "even_tiles", "step": 5.960464477539063e-08, "relative_error": 0.14754351131474347, "elapsed_seconds": 38.15103847393766}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.1920928955078125e-07, "relative_error": 0.3138382798452397, "elapsed_seconds": 38.60500159300864}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 9.313225746154785e-10, "relative_error": 0.0001845324543174573, "elapsed_seconds": 39.89005112601444}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.862645149230957e-09, "relative_error": 0.0007320148640822689, "elapsed_seconds": 38.67616939218715}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 3.725290298461914e-09, "relative_error": 0.002832657452848107, "elapsed_seconds": 38.51331009110436}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 7.450580596923828e-09, "relative_error": 0.009949499002492972, "elapsed_seconds": 38.485796202905476}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.4901161193847656e-08, "relative_error": 0.025735440672457997, "elapsed_seconds": 39.02810396719724}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 2.9802322387695312e-08, "relative_error": 0.06571808552499102, "elapsed_seconds": 38.50771011412144}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 5.960464477539063e-08, "relative_error": 0.07996363163750647, "elapsed_seconds": 37.72223960235715}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.1920928955078125e-07, "relative_error": 0.071802616125661, "elapsed_seconds": 38.31756355566904}
+{"status": "shard_complete_pending_full_grid_audit", "shard_passed": true}

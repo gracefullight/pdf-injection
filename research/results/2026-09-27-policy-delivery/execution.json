@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "pbs_exit_status": 0,
+  "started_at": "2026-09-27T11:30:18+10:00",
+  "finished_at": "2026-09-27T12:05:58+10:00",
+  "pbs_walltime": "00:35:39",
+  "response_count": 288,
+  "condition_cells": 48,
+  "questions_per_cell": 6,
+  "duplicate_response_keys": 0,
+  "missing_response_keys": 0,
+  "short_long_pairs": 144,
+  "short_response_prefix_mismatches": 0,
+  "raw_response_hash_verified": true,
+  "review_status": "Strict endpoint audit and focused semantic leakage review completed; exhaustive correctness and independent human coding are outside this report.",
+  "completion_report": "completion-report.md"
+}

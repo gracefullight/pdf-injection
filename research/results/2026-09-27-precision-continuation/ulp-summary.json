@@ -1,0 +1,96 @@
+{
+  "protocol": "math-sign-ulp-v1",
+  "reference_passed": false,
+  "stable_fp32_directions": 0,
+  "stable_bf16_directions": 0,
+  "direction_count": 24,
+  "finite_difference_count": 168,
+  "audit": "Recomputed every finite difference, relative error, per-step acceptance and adjacent-step decision from recorded losses. All match.",
+  "bf16_finite_differences_all_zero": true,
+  "saved_byte_probes": 0,
+  "source_hashes_verified": 6,
+  "first_direction": {
+    "precision": "float32",
+    "state": "clean_interior",
+    "train_prompt_index": 0,
+    "direction": "all",
+    "state_sha256": "126b3e2e93a99b0d55774c70230103692830e267e14f2bb00859823f17e83738",
+    "direction_sha256": "4eb10cc8fa0aeb402edb05e1e7bd758db963689e7bee41b3cbe76e488b055e25",
+    "base_loss": 2.5605525970458984,
+    "checks": [
+      {
+        "step": 5.960464477539063e-08,
+        "analytic": 17817.706807958337,
+        "finite_difference": 13704.0,
+        "plus_loss": 2.5615477561950684,
+        "minus_loss": 2.5599141120910645,
+        "absolute_error": 4113.706807958337,
+        "relative_error": 0.23087745534801013,
+        "agrees": false
+      },
+      {
+        "step": 1.1920928955078125e-07,
+        "analytic": 17817.706807958337,
+        "finite_difference": 12832.0,
+        "plus_loss": 2.562448263168335,
+        "minus_loss": 2.5593888759613037,
+        "absolute_error": 4985.706807958337,
+        "relative_error": 0.27981753553894234,
+        "agrees": false
+      },
+      {
+        "step": 2.384185791015625e-07,
+        "analytic": 17817.706807958337,
+        "finite_difference": 11235.5,
+        "plus_loss": 2.5640065670013428,
+        "minus_loss": 2.5586490631103516,
+        "absolute_error": 6582.206807958337,
+        "relative_error": 0.3694194140077764,
+        "agrees": false
+      },
+      {
+        "step": 4.76837158203125e-07,
+        "analytic": 17817.706807958337,
+        "finite_difference": 7766.75,
+        "plus_loss": 2.565420150756836,
+        "minus_loss": 2.5580132007598877,
+        "absolute_error": 10050.956807958337,
+        "relative_error": 0.5640993488269234,
+        "agrees": false
+      },
+      {
+        "step": 9.5367431640625e-07,
+        "analytic": 17817.706807958337,
+        "finite_difference": 6365.25,
+        "plus_loss": 2.5683350563049316,
+        "minus_loss": 2.556194305419922,
+        "absolute_error": 11452.456807958337,
+        "relative_error": 0.6427570579870053,
+        "agrees": false
+      },
+      {
+        "step": 1.9073486328125e-06,
+        "analytic": 17817.706807958337,
+        "finite_difference": 4113.5,
+        "plus_loss": 2.5703651905059814,
+        "minus_loss": 2.554673433303833,
+        "absolute_error": 13704.206807958337,
+        "relative_error": 0.7691341515305049,
+        "agrees": false
+      },
+      {
+        "step": 3.814697265625e-06,
+        "analytic": 17817.706807958337,
+        "finite_difference": 3123.46875,
+        "plus_loss": 2.575165271759033,
+        "minus_loss": 2.551335096359253,
+        "absolute_error": 14694.238057958337,
+        "relative_error": 0.8246986111251481,
+        "agrees": false
+      }
+    ],
+    "stable_agreement": false
+  },
+  "interpretation": "Representable input displacement alone did not resolve the mismatch. Roundoff inside the model, local nonlinearity, and forward/gradient path differences remain hypotheses. No precision-only or perturbation-efficacy conclusion.",
+  "next_diagnostic": "Compare grad-enabled/no-grad forwards and cotangent-projected finite differences at patch embedding and vision output; first prompt/clean state, three saved directions, seven unchanged steps. Diagnostic cannot authorize optimization."
+}

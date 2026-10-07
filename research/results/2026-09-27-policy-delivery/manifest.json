@@ -1,0 +1,669 @@
+{
+  "status": "finished_pending_manual_review",
+  "design": "policy-delivery-v1",
+  "selectors": {
+    "exclusive": "Consider only the page headed \"Game Specification\". ",
+    "targeted": "Answer the question about the page headed \"Game Specification\". "
+  },
+  "channels": [
+    "clean",
+    "text_policy",
+    "inline_policy",
+    "inline_blank",
+    "separate_policy",
+    "separate_blank"
+  ],
+  "scopes": [
+    "single",
+    "full"
+  ],
+  "token_limits": [
+    192,
+    768
+  ],
+  "expected_responses": 288,
+  "completed_responses": 288,
+  "prompts_sha256": "113dfcba6379c79ddb8d296abdf520d9965105c868c8651ec4c82d977bac91e2",
+  "policy_sha256": "72ef823a3bab36bcb92d77177e694267b709669aa4c88ff14068473c2e59afb9",
+  "source_pages_sha256": [
+    "be1063a75ccb52201eb6a5de64883a2dc2daca6c71bdb0c3d632b7d1504a8dee",
+    "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+    "8d730049af9da2b6679e3ee9c4f1e106b0a2ffa2d8db8b5704a303f627ca0a39",
+    "bbb559fc5f86b7995fd94bb17bc2f3ea748afbca5d057d93836bb4f8c4dbdf2a",
+    "ce6dd7cbc99cbc345fdb45d2d20e1e76b88c9cdbb01d9a819e68769c91ac7d79",
+    "6123290260040ada12073e5846ed849d5634b47491b30abcc7058900d5a89cd4",
+    "145b3fbc5853d4862f5c969db8e105e9234210ce4083051f8aa7236d820bc2ac"
+  ],
+  "code_sha256": "ab17b44831ac5c3acf7955f7a1e35cf76f6178dda4b7f3da25d5a31415f78a97",
+  "precision": "bfloat16",
+  "inputs": {
+    "single/clean": {
+      "sizes": [
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "single/text_policy": {
+      "sizes": [
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "single/inline_policy": {
+      "sizes": [
+        [
+          952,
+          2464
+        ]
+      ],
+      "pixel_sha256s": [
+        "ac065d09dbe427ae63931d446211ee8bae01164df1a71e0558600910914bbbb1"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          176,
+          68
+        ]
+      ]
+    },
+    "single/inline_blank": {
+      "sizes": [
+        [
+          952,
+          2464
+        ]
+      ],
+      "pixel_sha256s": [
+        "6ea56704acc2bf128ace45cd96ddd3e5786e115b1f9530895820f7b9badc96ab"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          176,
+          68
+        ]
+      ]
+    },
+    "single/separate_policy": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "252999e5fadab3d6126769466819a215f29138ab53df5808aad3c7a2a4aa88f3",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "single/separate_blank": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "54af7bf4d7621df24be293b49f2b93826b646bf9aeb8078c750cc9bd59212919",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/clean": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/text_policy": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/inline_policy": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          2464
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "ac065d09dbe427ae63931d446211ee8bae01164df1a71e0558600910914bbbb1",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          176,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/inline_blank": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          2464
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "6ea56704acc2bf128ace45cd96ddd3e5786e115b1f9530895820f7b9badc96ab",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          176,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/separate_policy": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "252999e5fadab3d6126769466819a215f29138ab53df5808aad3c7a2a4aa88f3",
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    },
+    "full/separate_blank": {
+      "sizes": [
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ],
+        [
+          952,
+          1232
+        ]
+      ],
+      "pixel_sha256s": [
+        "54af7bf4d7621df24be293b49f2b93826b646bf9aeb8078c750cc9bd59212919",
+        "bf003b2212aed636336036187795251cb4e570327af2d5ad9cc5eb9b4f5267a7",
+        "76933565297e80120cff2da77702156723fc68fccfd645484ce9af6143596a7a",
+        "b918a0fc7504e194f97904fe31219f9531d48b2e4a85fc55a2592b14cabc2a42",
+        "d6af0db151fca608be5256fdc0f36954d2212c40ec94a3900624e48a27ac7a24",
+        "36dc00e4a676662d779cf4754d938966be6c71553c4f04432cf78bfea0b3c725",
+        "85f0aebadc879efa0feda2b3fe18765126792f70e3d896c89b6995ab3676f2ec",
+        "56d42232948b3161b67e4ca03c28564024a32cdfd0e5d6de93b50f52f089a521"
+      ],
+      "image_grid_thw": [
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ],
+        [
+          1,
+          88,
+          68
+        ]
+      ]
+    }
+  },
+  "generation": "greedy, frozen weights; no pixel or weight optimization",
+  "prompt_reuse": "Prior final questions reused for diagnosis, not new held-out evidence.",
+  "scope_note": "Rendered images only. No original PDF byte/text ingestion. No renderer sweep.",
+  "inline_note": "Full notice above intact target pixels in one 952x2464 image; blank-prefix control matches geometry.",
+  "manual_review_required": true,
+  "model_config_sha256": "7ed3eed5be6924cc800e8a5e53fc405c1aab1aaf36bad65c33403b36c56827f5",
+  "input_module_sha256": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7",
+  "checkpoint": {
+    "repo_id": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "revision": "66285546d2b821cf421d4f5eb2576359d3770cd3"
+  },
+  "elapsed_seconds": 2134.4680800661445
+}

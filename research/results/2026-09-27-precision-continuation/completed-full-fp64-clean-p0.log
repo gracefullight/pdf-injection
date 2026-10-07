@@ -1,0 +1,26 @@
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.096s
+
+OK
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 60.27it/s]
+{"event": "completed_pair", "direction": "all", "step": 1.1920928955078125e-07, "relative_error": 0.21802391305118016, "elapsed_seconds": 40.67322246916592}
+{"event": "completed_pair", "direction": "even_tiles", "step": 9.313225746154785e-10, "relative_error": 4.4678046396004966e-05, "elapsed_seconds": 38.88193153217435}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.862645149230957e-09, "relative_error": 0.00017879535338526708, "elapsed_seconds": 38.873280512169}
+{"event": "completed_pair", "direction": "even_tiles", "step": 3.725290298461914e-09, "relative_error": 0.0007151378374884539, "elapsed_seconds": 42.013406436890364}
+{"event": "completed_pair", "direction": "even_tiles", "step": 7.450580596923828e-09, "relative_error": 0.0028598155564754455, "elapsed_seconds": 38.987980579957366}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.4901161193847656e-08, "relative_error": 0.011413201346239044, "elapsed_seconds": 40.7061408162117}
+{"event": "completed_pair", "direction": "even_tiles", "step": 2.9802322387695312e-08, "relative_error": 0.044652590101113755, "elapsed_seconds": 40.868885735049844}
+{"event": "completed_pair", "direction": "even_tiles", "step": 5.960464477539063e-08, "relative_error": 0.15570831063577087, "elapsed_seconds": 39.601932844147086}
+{"event": "completed_pair", "direction": "even_tiles", "step": 1.1920928955078125e-07, "relative_error": 0.25874497047378725, "elapsed_seconds": 39.73832883127034}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 9.313225746154785e-10, "relative_error": 5.8017720293711466e-05, "elapsed_seconds": 38.94222265854478}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.862645149230957e-09, "relative_error": 0.000232147722699873, "elapsed_seconds": 38.83335919678211}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 3.725290298461914e-09, "relative_error": 0.0009285249017104415, "elapsed_seconds": 41.274734834209085}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 7.450580596923828e-09, "relative_error": 0.00371285513672929, "elapsed_seconds": 43.14121730066836}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.4901161193847656e-08, "relative_error": 0.014808322525074531, "elapsed_seconds": 38.83356015570462}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 2.9802322387695312e-08, "relative_error": 0.05764648233147619, "elapsed_seconds": 38.90427838265896}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 5.960464477539063e-08, "relative_error": 0.19694936935219076, "elapsed_seconds": 40.971574515104294}
+{"event": "completed_pair", "direction": "odd_tiles", "step": 1.1920928955078125e-07, "relative_error": 0.29622233200059195, "elapsed_seconds": 39.07228581421077}
+{"status": "shard_complete_pending_full_grid_audit", "shard_passed": true}

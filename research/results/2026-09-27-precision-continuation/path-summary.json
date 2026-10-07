@@ -1,0 +1,53 @@
+{
+  "protocol": "path-localization-v1",
+  "status": "audited_reference_not_validated",
+  "cpu_tests_passed": 14,
+  "comparison_rows": 42,
+  "perturbed_forwards": 84,
+  "base_forwards": 4,
+  "source_hashes_verified": [
+    "diagnose_path.py",
+    "test_diagnose_path.py",
+    "math_optimizer.py",
+    "diagnostic_checkpoint.py",
+    "precision_preflight.py",
+    "numerical_protocol.py",
+    "torch_document.py"
+  ],
+  "complete_grid_verified": true,
+  "loss_finite_differences_and_acceptance_recomputed": true,
+  "boundary_error_arithmetic_recomputed": true,
+  "raw_boundary_arrays_saved": false,
+  "boundary_projection_limit": "Cotangent projections cannot be independently recomputed without raw boundary arrays; only reported error arithmetic is audited.",
+  "identical_grad_mode_pairs": 21,
+  "base_modes_identical": true,
+  "matches_prior_ulp_first_prompt_clean_checks": true,
+  "loss_steps_passing": 0,
+  "reference_passed": false,
+  "smallest_step": {
+    "all": {
+      "loss_relative_error": 0.23087745534801013,
+      "vision_projection_relative_error": 0.022595596682014767
+    },
+    "even_tiles": {
+      "loss_relative_error": 0.1277466836602315,
+      "vision_projection_relative_error": 0.048805225318418674
+    },
+    "odd_tiles": {
+      "loss_relative_error": 0.16124491374598734,
+      "vision_projection_relative_error": 0.04010142542602357
+    }
+  },
+  "packing_relative_l2_error_range": [
+    0.002328077703222328,
+    0.1447926882395273
+  ],
+  "peak_allocated_gib": 23.61381244659424,
+  "interpretation": "No observed grad-mode discrepancy. Affine preprocessing has measurable rounding; larger steps improve patch-embedding projection agreement while vision and downstream loss agreement deteriorate. These diagnostics do not distinguish model roundoff, local curvature, or an autograd defect. No specific optimizer correction is established.",
+  "disposition": "Bounded numerical continuation closed with failed prerequisite. Planned FP32 E/U/X comparison remains unexecuted; no new efficacy or precision-only conclusion. Do not resubmit the same failed gate or relax thresholds.",
+  "artifacts": {
+    "completed-path-report.json": "11257a03915529a669616fa34d145cf1c65f327eea0049270f714685e361a321",
+    "completed-path-log.txt": "4fa5c300c88f966aa6f4eb9f810de684844c3415dac96ae3e633dba44265c5a5",
+    "path-code.sha256": "40cfd4906c0b90351e1c9ddec9ecbae79c553598aa4f5bfe05b2643c0b89f832"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "status": "completed_with_nonimproving_probe",
+  "input_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+  "prompts_sha256": "113dfcba6379c79ddb8d296abdf520d9965105c868c8651ec4c82d977bac91e2",
+  "precision": "bfloat16",
+  "python": "3.12.14",
+  "torch": "2.7.1+cu128",
+  "transformers": "4.51.3",
+  "cuda_runtime": "12.8",
+  "warning": "Not an exact replication of the historical MLX 4-bit model.",
+  "checkpoint": {
+    "repo_id": "Qwen/Qwen2.5-VL-3B-Instruct",
+    "revision": "66285546d2b821cf421d4f5eb2576359d3770cd3"
+  },
+  "model_config_sha256": "7ed3eed5be6924cc800e8a5e53fc405c1aab1aaf36bad65c33403b36c56827f5",
+  "input_module_sha256": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7",
+  "geometry": [
+    952,
+    1232
+  ],
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "packing_max_abs_error": 0.0,
+  "image_grid_thw": [
+    [
+      1,
+      88,
+      68
+    ]
+  ],
+  "clean_reading": [
+    {
+      "prompt": "What is the heading at the top of this page? Return only the heading.",
+      "response": "Game Specification",
+      "new_tokens": 3,
+      "ended_with_eos": true,
+      "incomplete": false,
+      "elapsed_seconds": 0.8773313593119383,
+      "expected": "Game Specification",
+      "contains_expected": true,
+      "exact_normalized_match": true
+    },
+    {
+      "prompt": "What colour is the main heading on this page? Give only the colour.",
+      "response": "#2E8B57",
+      "new_tokens": 8,
+      "ended_with_eos": true,
+      "incomplete": false,
+      "elapsed_seconds": 0.3443970624357462,
+      "expected": "Blue",
+      "contains_expected": false,
+      "exact_normalized_match": false
+    },
+    {
+      "prompt": "Is this page oriented portrait or landscape? Answer with one word.",
+      "response": "Portrait",
+      "new_tokens": 2,
+      "ended_with_eos": true,
+      "incomplete": false,
+      "elapsed_seconds": 0.2823117673397064,
+      "expected": "Portrait",
+      "contains_expected": true,
+      "exact_normalized_match": true
+    },
+    {
+      "prompt": "What colour is the page background? Answer with one word.",
+      "response": "White",
+      "new_tokens": 2,
+      "ended_with_eos": true,
+      "incomplete": false,
+      "elapsed_seconds": 0.2794874534010887,
+      "expected": "White",
+      "contains_expected": true,
+      "exact_normalized_match": true
+    },
+    {
+      "prompt": "Provide pseudocode for moving a card from a player's hand into the BattleHand.",
+      "response": "```pseudocode\nfunction moveCardToBattleHand(player, card):\n    if player.hand is not full:\n        if player.hand contains card:\n            player.hand.remove(card)\n            battleHand.add(card)\n            return true\n        else:\n            return false\n    else:\n        return false\n```\n\nThis pseudocode function `moveCardToBattleHand` takes two parameters: `player`, which represents the player whose hand the card will be moved from, and `card`, which is the card to be moved. The function checks if the player's hand is not full. If it is not full, it checks if the player's hand already contains the specified card. If the card is in the player's hand, it removes the card from the player's hand and adds it to the battle hand. If the card is not in the player's hand, the function returns false. If the player's hand is full, the function also returns false",
+      "new_tokens": 192,
+      "ended_with_eos": false,
+      "incomplete": true,
+      "elapsed_seconds": 2.319835841655731
+    },
+    {
+      "prompt": "Explain how to implement peeking at both decks, including the order of operations.",
+      "response": "To implement peeking at both the main deck and the special deck, follow these steps:\n\n1. **Player Chooses to Peek**: The player selects the option to peek at either the main deck or the special deck.\n2. **Special Deck Shuffling**: Before any cards are revealed, the special deck is shuffled. This ensures that the order of the cards in the deck is randomized.\n3. **Revealing Top Cards**: The top card of the special deck is shown first. The player can see its full name and stats.\n4. **Summary of Remaining Cards**: After revealing the top card, the summary of the remaining cards in the special deck is displayed. Each card is shown as a summary of its AttackType and strength.\n5. **Option to Peek Further**: If the player chooses to peek further, they can reveal additional cards from the special deck. However, if they decide not to peek further, the game will return to the menu",
+      "new_tokens": 192,
+      "ended_with_eos": false,
+      "incomplete": true,
+      "elapsed_seconds": 2.316450420767069
+    }
+  ],
+  "clean_reading_passed": false,
+  "baseline_reading_failure_allowed": true,
+  "gradient": {
+    "loss": 2.587820053100586,
+    "max_abs": 3.909407138824463,
+    "nonzero_values": 3518458,
+    "frozen_parameter_grads": 0,
+    "directional_checks": [
+      {
+        "h": 0.0004901960784313725,
+        "plus_loss": 2.615522861480713,
+        "minus_loss": 2.517411708831787,
+        "finite_difference": 100.0733757019043,
+        "autograd_directional_derivative": 13260.72265625,
+        "relative_error": 0.9924533995396746
+      },
+      {
+        "h": 0.00196078431372549,
+        "plus_loss": 2.612520217895508,
+        "minus_loss": 2.57985258102417,
+        "finite_difference": 8.330247402191162,
+        "autograd_directional_derivative": 13260.72265625,
+        "relative_error": 0.9993718104496918
+      },
+      {
+        "h": 0.00392156862745098,
+        "plus_loss": 2.6291229724884033,
+        "minus_loss": 2.575866460800171,
+        "finite_difference": 6.790205240249634,
+        "autograd_directional_derivative": 13260.72265625,
+        "relative_error": 0.9994879460632525
+      }
+    ],
+    "note": "BF16 finite differences are noise-sensitive; inspect all step sizes."
+  },
+  "saved_byte_probe": {
+    "clean_loss": 2.4974801540374756,
+    "candidates": [
+      {
+        "step_bytes": 0.5,
+        "loss": 2.534813404083252,
+        "sha256": "d7e22b62b0e5681e909ebd7388e59f2419e2afd093e04d14f1266e948e84f819",
+        "filename": "candidate-step-0.5.png",
+        "linf_bytes": 1,
+        "changed_channels": 1231973,
+        "protected_changed_channels": 0,
+        "psnr_db": 52.68848081893722
+      },
+      {
+        "step_bytes": 1.0,
+        "loss": 2.534813404083252,
+        "sha256": "d7e22b62b0e5681e909ebd7388e59f2419e2afd093e04d14f1266e948e84f819",
+        "filename": "candidate-step-1.png",
+        "linf_bytes": 1,
+        "changed_channels": 1231973,
+        "protected_changed_channels": 0,
+        "psnr_db": 52.68848081893722
+      },
+      {
+        "step_bytes": 2.0,
+        "loss": 2.537142038345337,
+        "sha256": "a2c9dd0f09d18b4d6288145b584e347eccc79dbe51c6f00e9bcfcb55524b18bc",
+        "filename": "candidate-step-2.png",
+        "linf_bytes": 2,
+        "changed_channels": 1231973,
+        "protected_changed_channels": 0,
+        "psnr_db": 46.6678809056576
+      }
+    ],
+    "improved": false
+  },
+  "selected_generated_response": {
+    "prompt": "Provide pseudocode for moving a card from a player's hand into the BattleHand.",
+    "response": "```pseudocode\nfunction moveCardToBattleHand(player, card):\n    if player.hand is not full:\n        if player.hand contains a card of type PROTECTOR:\n            return \"Cannot place a card in the battle hand.\"\n        else:\n            player.hand.remove(card)\n            player.battleHand.add(card)\n            return \"Card moved to battle hand successfully.\"\n    else:\n        return \"Player's hand is full, cannot place card.\"\n```\n\nThis pseudocode outlines the process of moving a card from a player's hand into the BattleHand. It first checks if the player's hand is full; if it is, it returns an error message. If the player's hand is not full and does not contain a card of type PROTECTOR, it removes the card from the player's hand and adds it to the BattleHand, then returns a success message. If the player's hand is full, it returns an error message indicating that",
+    "new_tokens": 192,
+    "ended_with_eos": false,
+    "incomplete": true,
+    "elapsed_seconds": 2.314450664445758
+  },
+  "peak_cuda_memory_bytes": 25647067648,
+  "nonimproving_probe_allowed": true,
+  "technical_checks_passed": true,
+  "validation_scope": "Packing parity, finite nonzero input gradients, frozen weights, positive directional finite differences and saved-byte bounds. Numerical derivative accuracy and optimization effectiveness are not established by these checks.",
+  "elapsed_seconds": 16.17119036242366
+}

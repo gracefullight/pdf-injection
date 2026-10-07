@@ -1,0 +1,93 @@
+{
+  "status": "running",
+  "protocol": "frozen-decoder-v1",
+  "scope": "One prompt and one saved vision secant. Diagnostic, not the full gate.",
+  "failed_report_sha256": "4deec2e7939ba6b6613b7603b06953b4629b94da1f2ea6e322935aa7c7e9fd4e",
+  "path_report_sha256": "11257a03915529a669616fa34d145cf1c65f327eea0049270f714685e361a321",
+  "script_sha256": "4a616ed309c909e04f17c4711c757fe2d5d6f2ad1933fa4e2d82925d60c31bd4",
+  "scales": [
+    0.125,
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "captures": [
+    {
+      "name": "base",
+      "loss": 2.5605525970458984
+    },
+    {
+      "name": "plus",
+      "loss": 2.5615477561950684
+    },
+    {
+      "name": "minus",
+      "loss": 2.5599141120910645
+    }
+  ],
+  "arms": [],
+  "artifacts": {
+    "capture-base.npz": {
+      "sha256": "2d0cd7421207f727772d4f1b69aac35c30abcdcece1516b30b371d62b656ef43",
+      "bytes": 20829242
+    },
+    "capture-plus.npz": {
+      "sha256": "69b73a8d7096ae5a3d6a833e69d63c4533383e21861dd3d66d86dea5668c3480",
+      "bytes": 20828966
+    },
+    "capture-minus.npz": {
+      "sha256": "06dad7897b8154d4a38295ecb2b57f0bc02de50cf955b266d97aa2a0c4ce2b1c",
+      "bytes": 20828830
+    },
+    "fixed-context.npz": {
+      "sha256": "bda405b47be1d9b60f06ae73a25a39dc6826061886a450a0bda5d086a4b66e99",
+      "bytes": 119931
+    },
+    "embedding-secant.npz": {
+      "sha256": "5fdacb533448e096f9eda6f49535873f6a0ce1503feb9de3e5247a521bb738be",
+      "bytes": 8869171
+    }
+  },
+  "loss_only": [],
+  "torch_version": "2.7.1+cu128",
+  "cuda_version": "12.8",
+  "fp64_scope": "Decoder/head and RMS arithmetic FP64; fixed FP32 vision embeddings and fixed original FP32 RoPE constants promoted exactly. Not a full-model FP64 reference.",
+  "modeling_source_sha256": "72bdd5615b7527543ea7e6d69fbe194c40bddd94cab13e2e83696ff1cfb10719",
+  "fp32_dtype": {
+    "requested": "float32",
+    "parameter_dtypes": [
+      "torch.float32"
+    ],
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "attention_implementation": "sdpa"
+  },
+  "optimizer_execution": {
+    "backend": "math",
+    "checkpointed_blocks": 68,
+    "recompute_backend": "math",
+    "implementation_sha256": {
+      "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+      "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+      "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    }
+  },
+  "replay_checks": [
+    {
+      "name": "base",
+      "logits_bitwise_equal": true,
+      "loss": 2.5605525970458984
+    },
+    {
+      "name": "plus",
+      "logits_bitwise_equal": true,
+      "loss": 2.5615477561950684
+    },
+    {
+      "name": "minus",
+      "logits_bitwise_equal": true,
+      "loss": 2.5599141120910645
+    }
+  ]
+}

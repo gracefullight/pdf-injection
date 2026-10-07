@@ -1,0 +1,16 @@
+.................
+----------------------------------------------------------------------
+Ran 17 tests in 0.392s
+
+OK
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 33.36it/s]
+{"event": "frozen_decoder_check", "arm": "decoder_fp32", "scale": 0.125, "relative_error": 6.53716583716922e-05}
+{"event": "frozen_decoder_check", "arm": "decoder_fp32", "scale": 0.25, "relative_error": 0.02403609089955954}
+{"event": "frozen_decoder_check", "arm": "decoder_fp32", "scale": 0.5, "relative_error": 0.10215918507069267}
+{"event": "frozen_decoder_check", "arm": "decoder_fp32", "scale": 1.0, "relative_error": 0.15445095199517347}
+{"event": "frozen_decoder_check", "arm": "decoder_fp32", "scale": 2.0, "relative_error": 0.12341764192040774}
+{"event": "frozen_decoder_check", "arm": "decoder_fp64", "scale": 0.125, "relative_error": 0.007298917276586058}
+{"event": "frozen_decoder_check", "arm": "decoder_fp64", "scale": 0.25, "relative_error": 0.02885293987855393}
+{"event": "frozen_decoder_check", "arm": "decoder_fp64", "scale": 0.5, "relative_error": 0.10185323570626313}
+{"event": "frozen_decoder_check", "arm": "decoder_fp64", "scale": 1.0, "relative_error": 0.15677970841689462}
+{"event": "frozen_decoder_check", "arm": "decoder_fp64", "scale": 2.0, "relative_error": 0.12224765164510576}

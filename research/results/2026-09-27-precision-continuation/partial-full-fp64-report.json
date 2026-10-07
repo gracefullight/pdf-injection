@@ -1,0 +1,138 @@
+{
+  "protocol": "full-fp64-scale-v1",
+  "status": "running",
+  "steps": [
+    9.313225746154785e-10,
+    1.862645149230957e-09,
+    3.725290298461914e-09,
+    7.450580596923828e-09,
+    1.4901161193847656e-08,
+    2.9802322387695312e-08,
+    5.960464477539063e-08,
+    1.1920928955078125e-07
+  ],
+  "script_sha256": "3d120d4fb340a6ce84174248933aa3835219b0e71826e56f1da764c7750089b8",
+  "failed_report_sha256": "4deec2e7939ba6b6613b7603b06953b4629b94da1f2ea6e322935aa7c7e9fd4e",
+  "decoder_report_sha256": "0e2118f19b0a3537c7455afceb97edbb301b9f7a1f398af5da26eed6a50a07a4",
+  "input_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+  "prompts_sha256": "113dfcba6379c79ddb8d296abdf520d9965105c868c8651ec4c82d977bac91e2",
+  "checks": [
+    {
+      "state": "clean_interior",
+      "train_prompt_index": 0,
+      "direction": "all",
+      "direction_file_sha256": "85e59fc9824972dba4f6433e1cc2fab8b1140760529f1df0e3cc4684358e0502",
+      "base_loss": 2.560550592074766,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 17817.47393858312,
+          "finite_difference": 17813.841317892075,
+          "plus_loss": 2.5605671936916337,
+          "minus_loss": 2.5605340128265137,
+          "absolute_error": 3.632620691045304,
+          "relative_error": 0.00020387966911398087,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 17817.47393858312,
+          "finite_difference": 17802.942737221718,
+          "plus_loss": 2.560583798399616,
+          "minus_loss": 2.560517477269753,
+          "absolute_error": 14.531201361402054,
+          "relative_error": 0.0008155590074940558,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 17817.47393858312,
+          "finite_difference": 17759.367314517498,
+          "plus_loss": 2.560616950061125,
+          "minus_loss": 2.5604846324635977,
+          "absolute_error": 58.10662406562187,
+          "relative_error": 0.0032612156058662166,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 17817.47393858312,
+          "finite_difference": 17585.657343119383,
+          "plus_loss": 2.560682657334538,
+          "minus_loss": 2.5604206106197682,
+          "absolute_error": 231.81659546373703,
+          "relative_error": 0.013010631937097786,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 17817.47393858312,
+          "finite_difference": 16912.860694095492,
+          "plus_loss": 2.5608099993099,
+          "minus_loss": 2.5603059567829964,
+          "absolute_error": 904.6132444876275,
+          "relative_error": 0.05077112769216511,
+          "agrees": false
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 17817.47393858312,
+          "finite_difference": 14695.716621547937,
+          "plus_loss": 2.561046404988708,
+          "minus_loss": 2.560170472019761,
+          "absolute_error": 3121.7573170351825,
+          "relative_error": 0.17520762638945836,
+          "agrees": false
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 17817.47393858312,
+          "finite_difference": 12889.188308496028,
+          "plus_loss": 2.5614935962001013,
+          "minus_loss": 2.5599570852189593,
+          "absolute_error": 4928.285630087092,
+          "relative_error": 0.27659844751702206,
+          "agrees": false
+        }
+      ]
+    }
+  ],
+  "base_repeats": [
+    {
+      "state": "clean_interior",
+      "prompt": 0,
+      "gradient_forward": 2.560550592074766,
+      "no_grad_forwards": [
+        2.560550592074766,
+        2.560550592074766
+      ],
+      "bitwise_equal_losses": true
+    }
+  ],
+  "artifacts": {
+    "gradient-clean_interior-0.npz": {
+      "sha256": "c872208c7f25158bdab4f2b47a75ac0cd37ca595dc8198b83732b20e2bf2dcdb",
+      "bytes": 29566788
+    }
+  },
+  "optimizer_authorized": false,
+  "scope": "Smooth identity derivative diagnostic only. Original FP32 gate remains failed.",
+  "precision": {
+    "modeling_source_sha256": "72bdd5615b7527543ea7e6d69fbe194c40bddd94cab13e2e83696ff1cfb10719",
+    "rmsnorm_overrides": 138,
+    "parameter_dtypes": [
+      "torch.float64"
+    ],
+    "scope": "Pixel packing, vision, decoder, head and loss arithmetic FP64. Original FP32 normalization and position constants retained. Frozen promoted weights."
+  },
+  "execution": {
+    "backend": "math",
+    "checkpointed_blocks": 68,
+    "recompute_backend": "math",
+    "implementation_sha256": {
+      "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+      "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+      "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    }
+  }
+}

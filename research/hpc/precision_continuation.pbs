@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -N pdfi_precision_opt
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=1:mem=96gb:Qlist=large_gpuq
+#PBS -l place=shared
+#PBS -l walltime=06:00:00
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit through PBS}"
+cd "${PBS_O_WORKDIR:?}"
+export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 TOKENIZERS_PARALLELISM=false HF_HUB_OFFLINE=1
+export PDFI_EXPECTED_VISIBLE_GPUS=1
+export PDFI_PDFTOPPM="$PWD/.pdf-tools/bin/pdftoppm"
+mkdir -p runs
+PDFI_RUN="runs/precision-pilot-${PBS_JOBID%%.*}"
+PDFI_GPU_UUID=$(.venv/bin/python choose_allocated_gpu.py --record "${PDFI_RUN}-binding.json")
+export CUDA_VISIBLE_DEVICES="$PDFI_GPU_UUID"
+sha256sum precision_continuation.py precision_preflight.py numerical_protocol.py torch_document.py \
+    math_optimizer.py diagnostic_checkpoint.py run_pilot.py document_artifacts.py specification3-prompts.json > "${PDFI_RUN}-code.sha256"
+.venv/bin/python -m unittest test_precision_continuation test_numerical_protocol test_math_optimizer test_diagnostic_checkpoint
+exec .venv/bin/python -u precision_continuation.py --model model --pages inputs/document \
+    --native inputs/document/Specification3.pdf --prompts specification3-prompts.json \
+    --previous-pilot "${PDFI_PREVIOUS_PILOT:?}" --previous-preflight "${PDFI_PREVIOUS_PREFLIGHT:?}" \
+    --preflight "${PDFI_NUMERICAL_REPORT:?}" --output "$PDFI_RUN"

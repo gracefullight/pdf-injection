@@ -1,0 +1,19 @@
+test_failed_reference_stops_before_model_creation (test_precision_continuation.PrecisionContinuationTests.test_failed_reference_stops_before_model_creation) ... ok
+test_limits_and_pixel_order_are_in_cache_identity (test_precision_continuation.PrecisionContinuationTests.test_limits_and_pixel_order_are_in_cache_identity) ... ok
+test_optimizer_and_evaluator_are_separate (test_precision_continuation.PrecisionContinuationTests.test_optimizer_and_evaluator_are_separate) ... ok
+test_feasibility_and_disjoint_directions (test_numerical_protocol.NumericalProtocolTests.test_feasibility_and_disjoint_directions) ... ok
+test_known_quadratic_derivative (test_numerical_protocol.NumericalProtocolTests.test_known_quadratic_derivative) ... ok
+test_requires_adjacent_agreement (test_numerical_protocol.NumericalProtocolTests.test_requires_adjacent_agreement) ... ok
+test_zero_direction_rejected (test_numerical_protocol.NumericalProtocolTests.test_zero_direction_rejected) ... ok
+test_honors_visibility (test_choose_allocated_gpu.DeviceSelectionTests.test_honors_visibility) ... ok
+test_rejects_active_process (test_choose_allocated_gpu.DeviceSelectionTests.test_rejects_active_process) ... ok
+test_rejects_ambiguous_idle (test_choose_allocated_gpu.DeviceSelectionTests.test_rejects_ambiguous_idle) ... ok
+test_unique_idle_device (test_choose_allocated_gpu.DeviceSelectionTests.test_unique_idle_device) ... ok
+test_idle_reserved_gpu_is_accepted (test_gpu_binding.BindingTests.test_idle_reserved_gpu_is_accepted) ... ok
+test_occupied_gpu_is_rejected (test_gpu_binding.BindingTests.test_occupied_gpu_is_rejected) ... ok
+test_wrong_allocation_is_rejected (test_gpu_binding.BindingTests.test_wrong_allocation_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.148s
+
+OK

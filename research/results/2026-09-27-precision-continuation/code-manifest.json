@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "name": "numerical_protocol.py",
+      "sha256": "565ca48fb4541ca7645252ac3fb4a72a6dddf3cebc3c8cd93c9c3d1ba9b14833"
+    },
+    {
+      "name": "precision_preflight.py",
+      "sha256": "6d37a9eb1ca25e450b05d06f564e3ced3e0c72beebf1e78bc5dcb867be120baa"
+    },
+    {
+      "name": "precision_continuation.py",
+      "sha256": "38585f8668bbb8fb8089ebe8f7aa03b4d8403d015717a9aa2701028715c3ddaf"
+    },
+    {
+      "name": "choose_allocated_gpu.py",
+      "sha256": "96ad8950aa64d63e838bc98939a0f7ac7789f8d6fccfe0116d1aff023ed9d7b2"
+    },
+    {
+      "name": "test_numerical_protocol.py",
+      "sha256": "e5d0a78b445da0286c7b9efa6f7204bcbea3da82a9f89ffccd3e359ebb1c46d1"
+    },
+    {
+      "name": "test_choose_allocated_gpu.py",
+      "sha256": "5918fd023447ac0bfdc57415e5a9c23094394b3365119c0479696fd1b0d7a3eb"
+    },
+    {
+      "name": "test_precision_continuation.py",
+      "sha256": "7c7db1414029ec568c2a56bc4a02a5d2c03061634e7d185972fae295c5174a64"
+    },
+    {
+      "name": "precision_preflight.pbs",
+      "sha256": "8606706ef1ae7945d8062d80c11e89482ff9d4cff5f95dbc614b6cc0bae74d24"
+    },
+    {
+      "name": "precision_continuation.pbs",
+      "sha256": "875c9925593c99913a5a0ed5374399f431927108480f97373a382ee82d187a58"
+    },
+    {
+      "name": "torch_document.py",
+      "sha256": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    },
+    {
+      "name": "run_pilot.py",
+      "sha256": "4ec6ef7e9eb3a8e526d0889583990cf01197d118fe4ea2ce2a7e5503b55327c8"
+    }
+  ],
+  "first_diagnostic_files": [
+    {
+      "name": "diagnose_precision.py",
+      "sha256": "a85b6aacc18534d3cef49a5dcd520d593c892e12da6fdac91b7fdbd5cb29c603"
+    },
+    {
+      "name": "diagnose_precision.pbs",
+      "sha256": "bf9d34564ef11c5cb113aca0320dca372e3ffd665d68e07c439cfa478d6fa506"
+    }
+  ],
+  "diagnostic_files": [
+    {
+      "name": "diagnose_precision.py",
+      "sha256": "8254f8a3f03f2568084900b74814c37a385d1fe3eb27a2d5aa351e658315a0b6"
+    },
+    {
+      "name": "diagnose_precision.pbs",
+      "sha256": "9c87ffda4efe304bc07931827c04570c59d3b74230c7b01e82dbb85b46f33c00"
+    },
+    {
+      "name": "diagnostic_checkpoint.py",
+      "sha256": "98a9da4f323549b9f99da2b143e006f9922ca092efec1ce5bd9475c37ebe9e1f"
+    },
+    {
+      "name": "test_diagnostic_checkpoint.py",
+      "sha256": "48094fada4ccf951c3dbcce9192aabf724a83414af51a785e7b7017429fc4b64"
+    }
+  ]
+}

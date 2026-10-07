@@ -1,0 +1,37 @@
+{
+  "status": "complete",
+  "reviewer": "Codex assistant visual inspection",
+  "scope": "All 13 final page-2 candidates in MuPDF-rendered PDF contact sheets; a seven-page X-s43 contact sheet; post-render OCR for all 13 candidates.",
+  "findings": [
+    "All inspected page-2 headings, paragraphs, bullets and lower-page content remain present and legible at contact-sheet resolution. No clipping, overlap or missing blocks observed.",
+    "Optimized pages show faint background texture; this is not evidence of perceptual invisibility.",
+    "Full-document page order and seven-page layout are retained. Exact pixel checks establish preservation of the other six pages for every candidate."
+  ],
+  "evidence": [
+    {
+      "artifact": "contact-0.png",
+      "sha256": "e73572980a184077c850f7e1bdccd00d3bc27619d09be29d93ebac62ba9b94e6"
+    },
+    {
+      "artifact": "contact-1.png",
+      "sha256": "fd8f398a4a61bf65375edb3ae3cb97e7a15ebaa9ac8d0f6334f89f8dc2baf203"
+    },
+    {
+      "artifact": "contact-2.png",
+      "sha256": "3aadce77a010299d608bffc3c6da7fd44be936200a806b96f538aa498211bd8a"
+    },
+    {
+      "artifact": "contact-3.png",
+      "sha256": "66337b3df3478dc01aa5a0333329cd09619979cdc29b0cf1c69509ab12c70cac"
+    },
+    {
+      "artifact": "full-document-contact.png",
+      "sha256": "25d2859a2526dd40f15c3067f5dee1ff310f54b8e3006064be81a65bb0843667"
+    }
+  ],
+  "limitations": [
+    "Visual inspection is not a blinded human readability study.",
+    "Pixel constraints apply before rendering; Poppler conversion changes are measured separately.",
+    "The original native PDF was not edited. Experimental output PDFs are raster derivatives and lose native text semantics."
+  ]
+}

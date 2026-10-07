@@ -1,0 +1,74 @@
+{
+  "status": "running",
+  "failed_report_sha256": "ec568d4a0bbc90f82f21114781c47c330fabb08d6eed59ac5648e09485441e5f",
+  "torch_version": "2.7.1+cu128",
+  "cuda_version": "12.8",
+  "scope": "First prompt and clean interior; identical saved direction; diagnostic only.",
+  "rows": [
+    {
+      "precision": "float32",
+      "backend": "default",
+      "dtype": {
+        "requested": "float32",
+        "parameter_dtypes": [
+          "torch.float32"
+        ],
+        "tf32_matmul": false,
+        "tf32_cudnn": false,
+        "attention_implementation": "sdpa"
+      },
+      "base_losses": [
+        2.665417194366455,
+        2.695230484008789,
+        2.6403002738952637
+      ],
+      "gradient_repeats": [
+        {
+          "loss": 2.6053638458251953,
+          "max_abs": 1.4054430072635392e+17,
+          "l2": 1.3447080069111982e+18,
+          "analytic": 9.689635910884093e+19
+        },
+        {
+          "loss": 2.6567444801330566,
+          "max_abs": 1249305859981312.0,
+          "l2": 7370442545378593.0,
+          "analytic": 4.94787540957638e+17
+        }
+      ],
+      "checks": [
+        {
+          "step": 1e-06,
+          "analytic": 9.689635910884093e+19,
+          "finite_difference": -27975.797653198242,
+          "plus_loss": 2.5819733142852783,
+          "minus_loss": 2.637924909591675,
+          "absolute_error": 9.689635910884096e+19,
+          "relative_error": 1.0000000000000004,
+          "agrees": false
+        },
+        {
+          "step": 2e-06,
+          "analytic": 9.689635910884093e+19,
+          "finite_difference": 155.1508903503418,
+          "plus_loss": 2.6444737911224365,
+          "minus_loss": 2.643853187561035,
+          "absolute_error": 9.689635910884093e+19,
+          "relative_error": 1.0,
+          "agrees": false
+        },
+        {
+          "step": 4e-06,
+          "analytic": 9.689635910884093e+19,
+          "finite_difference": -9305.477142333984,
+          "plus_loss": 2.6341419219970703,
+          "minus_loss": 2.708585739135742,
+          "absolute_error": 9.689635910884095e+19,
+          "relative_error": 1.0000000000000002,
+          "agrees": false
+        }
+      ],
+      "peak_cuda_memory_bytes": 47511413248
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 0.726s
+
+OK
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 48.64it/s]
+{"event": "path_check", "direction": "all", "step": 5.960464477539063e-08, "grad_enabled": false, "relative_error": 0.23087745534801013}
+{"event": "path_check", "direction": "all", "step": 5.960464477539063e-08, "grad_enabled": true, "relative_error": 0.23087745534801013}
+{"event": "path_check", "direction": "all", "step": 1.1920928955078125e-07, "grad_enabled": false, "relative_error": 0.27981753553894234}
+{"event": "path_check", "direction": "all", "step": 1.1920928955078125e-07, "grad_enabled": true, "relative_error": 0.27981753553894234}
+{"event": "path_check", "direction": "all", "step": 2.384185791015625e-07, "grad_enabled": false, "relative_error": 0.3694194140077764}
+{"event": "path_check", "direction": "all", "step": 2.384185791015625e-07, "grad_enabled": true, "relative_error": 0.3694194140077764}
+{"event": "path_check", "direction": "all", "step": 4.76837158203125e-07, "grad_enabled": false, "relative_error": 0.5640993488269234}
+{"event": "path_check", "direction": "all", "step": 4.76837158203125e-07, "grad_enabled": true, "relative_error": 0.5640993488269234}
+{"event": "path_check", "direction": "all", "step": 9.5367431640625e-07, "grad_enabled": false, "relative_error": 0.6427570579870053}
+{"event": "path_check", "direction": "all", "step": 9.5367431640625e-07, "grad_enabled": true, "relative_error": 0.6427570579870053}
+{"event": "path_check", "direction": "all", "step": 1.9073486328125e-06, "grad_enabled": false, "relative_error": 0.7691341515305049}
+{"event": "path_check", "direction": "all", "step": 1.9073486328125e-06, "grad_enabled": true, "relative_error": 0.7691341515305049}
+{"event": "path_check", "direction": "all", "step": 3.814697265625e-06, "grad_enabled": false, "relative_error": 0.8246986111251481}
+{"event": "path_check", "direction": "all", "step": 3.814697265625e-06, "grad_enabled": true, "relative_error": 0.8246986111251481}
+{"event": "path_check", "direction": "even_tiles", "step": 5.960464477539063e-08, "grad_enabled": false, "relative_error": 0.1277466836602315}
+{"event": "path_check", "direction": "even_tiles", "step": 5.960464477539063e-08, "grad_enabled": true, "relative_error": 0.1277466836602315}
+{"event": "path_check", "direction": "even_tiles", "step": 1.1920928955078125e-07, "grad_enabled": false, "relative_error": 0.31467358010950397}
+{"event": "path_check", "direction": "even_tiles", "step": 1.1920928955078125e-07, "grad_enabled": true, "relative_error": 0.31467358010950397}
+{"event": "path_check", "direction": "even_tiles", "step": 2.384185791015625e-07, "grad_enabled": false, "relative_error": 0.21059666962992643}
+{"event": "path_check", "direction": "even_tiles", "step": 2.384185791015625e-07, "grad_enabled": true, "relative_error": 0.21059666962992643}
+{"event": "path_check", "direction": "even_tiles", "step": 4.76837158203125e-07, "grad_enabled": false, "relative_error": 0.3708003843301502}
+{"event": "path_check", "direction": "even_tiles", "step": 4.76837158203125e-07, "grad_enabled": true, "relative_error": 0.3708003843301502}
+{"event": "path_check", "direction": "even_tiles", "step": 9.5367431640625e-07, "grad_enabled": false, "relative_error": 0.5541127470778037}
+{"event": "path_check", "direction": "even_tiles", "step": 9.5367431640625e-07, "grad_enabled": true, "relative_error": 0.5541127470778037}
+{"event": "path_check", "direction": "even_tiles", "step": 1.9073486328125e-06, "grad_enabled": false, "relative_error": 0.5997546960478733}
+{"event": "path_check", "direction": "even_tiles", "step": 1.9073486328125e-06, "grad_enabled": true, "relative_error": 0.5997546960478733}
+{"event": "path_check", "direction": "even_tiles", "step": 3.814697265625e-06, "grad_enabled": false, "relative_error": 0.7484650058317129}
+{"event": "path_check", "direction": "even_tiles", "step": 3.814697265625e-06, "grad_enabled": true, "relative_error": 0.7484650058317129}
+{"event": "path_check", "direction": "odd_tiles", "step": 5.960464477539063e-08, "grad_enabled": false, "relative_error": 0.16124491374598734}
+{"event": "path_check", "direction": "odd_tiles", "step": 5.960464477539063e-08, "grad_enabled": true, "relative_error": 0.16124491374598734}
+{"event": "path_check", "direction": "odd_tiles", "step": 1.1920928955078125e-07, "grad_enabled": false, "relative_error": 0.35415858358441027}
+{"event": "path_check", "direction": "odd_tiles", "step": 1.1920928955078125e-07, "grad_enabled": true, "relative_error": 0.35415858358441027}
+{"event": "path_check", "direction": "odd_tiles", "step": 2.384185791015625e-07, "grad_enabled": false, "relative_error": 0.23504371196014248}
+{"event": "path_check", "direction": "odd_tiles", "step": 2.384185791015625e-07, "grad_enabled": true, "relative_error": 0.23504371196014248}
+{"event": "path_check", "direction": "odd_tiles", "step": 4.76837158203125e-07, "grad_enabled": false, "relative_error": 0.38240832086449333}
+{"event": "path_check", "direction": "odd_tiles", "step": 4.76837158203125e-07, "grad_enabled": true, "relative_error": 0.38240832086449333}
+{"event": "path_check", "direction": "odd_tiles", "step": 9.5367431640625e-07, "grad_enabled": false, "relative_error": 0.6001642854450924}
+{"event": "path_check", "direction": "odd_tiles", "step": 9.5367431640625e-07, "grad_enabled": true, "relative_error": 0.6001642854450924}
+{"event": "path_check", "direction": "odd_tiles", "step": 1.9073486328125e-06, "grad_enabled": false, "relative_error": 0.6800717253030593}
+{"event": "path_check", "direction": "odd_tiles", "step": 1.9073486328125e-06, "grad_enabled": true, "relative_error": 0.6800717253030593}
+{"event": "path_check", "direction": "odd_tiles", "step": 3.814697265625e-06, "grad_enabled": false, "relative_error": 0.7705582549208099}
+{"event": "path_check", "direction": "odd_tiles", "step": 3.814697265625e-06, "grad_enabled": true, "relative_error": 0.7705582549208099}

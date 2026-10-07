@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N pdfi_vlm_check
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=2:mem=48gb
+#PBS -l place=excl
+#PBS -l walltime=00:30:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script through PBS}"
+cd "${PBS_O_WORKDIR:?PBS working directory is required}"
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export TOKENIZERS_PARALLELISM=false
+export HF_HUB_OFFLINE=1
+export PDFI_EXPECTED_VISIBLE_GPUS=2
+.venv/bin/python -u gpu_smoke.py
+exec .venv/bin/python -u vlm_preflight.py \
+    --model model --image inputs/page-2-112dpi.png \
+    --prompts specification3-prompts.json --output "runs/preflight-${PBS_JOBID%%.*}"

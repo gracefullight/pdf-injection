@@ -1,0 +1,11 @@
+# Install torch/torchvision from the official cu128 index before this file.
+# torch==2.7.1+cu128
+# torchvision==0.22.1+cu128
+transformers==4.51.3
+accelerate==1.6.0
+Pillow==11.2.1
+numpy==2.2.5
+reportlab==4.4.0
+pypdf==5.4.0
+PyMuPDF==1.25.5
+pypdfium2==4.30.0

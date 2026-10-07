@@ -1,0 +1,36 @@
+{
+  "status": "complete",
+  "scope": "Page 2 only; raw OCR is retained separately.",
+  "ocr_engine": "tesseract 5.5.3",
+  "reference": "NFKC-normalized native PDF text with collapsed whitespace; case and punctuation retained.",
+  "reference_sha256": "8c096a1a460a933078d6b21622508fc1e51bf5970dda7e5b61c8405634375a9d",
+  "rows": [
+    {
+      "candidate": "clean.png",
+      "view": "image",
+      "candidate_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+      "ocr_sha256": "70218256c7709d919729c55bbfc8fed6f42c1f2ebf4bc374306811c2cd68952c",
+      "linf_bytes": 0,
+      "protected_changed_channels": 0,
+      "changed_channels": 0,
+      "reference_characters": 3169,
+      "ocr_characters": 3227,
+      "cer": 0.023666771852319343,
+      "wer": 0.15482695810564662
+    },
+    {
+      "candidate": "clean.png",
+      "view": "poppler",
+      "candidate_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+      "ocr_sha256": "d40696260c2bf437bc943e4340537bcf5b5e49f3723c756342a97eeb51ea164a",
+      "linf_bytes": 0,
+      "protected_changed_channels": 0,
+      "changed_channels": 0,
+      "reference_characters": 3169,
+      "ocr_characters": 3227,
+      "cer": 0.023982328810350267,
+      "wer": 0.14754098360655737
+    }
+  ],
+  "limitation": "PDF extraction order and OCR transcription differ; these are transcription errors, not semantic answer accuracy."
+}

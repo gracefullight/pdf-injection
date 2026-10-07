@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -N pdfi_fp64_eval
+#PBS -l walltime=06:00:00
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=1:mem=96gb:Qlist=large_gpuq
+#PBS -l place=shared
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit through PBS}"
+cd "${PBS_O_WORKDIR:?}"
+export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 TOKENIZERS_PARALLELISM=false HF_HUB_OFFLINE=1
+export PDFI_EXPECTED_VISIBLE_GPUS=1
+export PDFI_PDFTOPPM="$PWD/.pdf-tools/bin/pdftoppm"
+mkdir -p "${PDFI_STUDY:?}"
+PDFI_GPU_UUID=$(.venv/bin/python choose_allocated_gpu.py --record "${PDFI_STUDY}/binding-${PBS_JOBID%%.*}.json")
+export CUDA_VISIBLE_DEVICES="$PDFI_GPU_UUID"
+.venv/bin/python -m unittest test_fp64_behavior test_precision_continuation test_math_optimizer test_diagnostic_checkpoint
+exec .venv/bin/python -u evaluate_fp64_behavior.py --model model --pages inputs/document \
+    --native inputs/document/Specification3.pdf --prompts specification3-prompts.json \
+    --reference full-fp64-audited-bundle.json --parent-e "${PDFI_STUDY}/E" --parent-u "${PDFI_STUDY}/U" \
+    --previous-pilot runs/pilot-100412 --previous-preflight runs/pilot-100412-preflight/report.json \
+    --output "${PDFI_STUDY}/evaluation"

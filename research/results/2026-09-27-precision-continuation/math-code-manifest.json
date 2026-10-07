@@ -1,0 +1,45 @@
+{
+  "protocol": "math-sign-v1",
+  "files": [
+    {
+      "name": "math_optimizer.py",
+      "sha256": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0"
+    },
+    {
+      "name": "diagnostic_checkpoint.py",
+      "sha256": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430"
+    },
+    {
+      "name": "test_math_optimizer.py",
+      "sha256": "c9ebeb7556267122f6d1cafee6c14045eb8f6a37cbdb8c1af0a82b24494c8b30"
+    },
+    {
+      "name": "precision_preflight.py",
+      "sha256": "804a9b5481a25dee108de738d2c4be9b00032308e2853547c046e1a3c1a7245d"
+    },
+    {
+      "name": "precision_continuation.py",
+      "sha256": "3ccdc6bc25587273305dcdebe5ff0c3443a8066fa0ea97e32316273968611454"
+    },
+    {
+      "name": "math_preflight.pbs",
+      "sha256": "c074e117d718082f147b816a88d0a8587f70ce5b028eb4b865e32c9edf6f1cd7"
+    },
+    {
+      "name": "precision_continuation.pbs",
+      "sha256": "69756b69e3e3d5314d50bee6b58bea9ffb9e111350c765211305eff36f3af74f"
+    },
+    {
+      "name": "numerical_protocol.py",
+      "sha256": "565ca48fb4541ca7645252ac3fb4a72a6dddf3cebc3c8cd93c9c3d1ba9b14833"
+    },
+    {
+      "name": "torch_document.py",
+      "sha256": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    },
+    {
+      "name": "run_pilot.py",
+      "sha256": "4ec6ef7e9eb3a8e526d0889583990cf01197d118fe4ea2ce2a7e5503b55327c8"
+    }
+  ]
+}

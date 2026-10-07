@@ -1,0 +1,15 @@
+{
+  "protocol": "full-fp64-scale-v1",
+  "execution": "four_state_prompt_shards",
+  "files": {
+    "resume_full_precision.py": "d0f201cef9d0c9b3aa8cba45134e7d4ec8382e622385cf7f38bc4d5af73e67c8",
+    "test_resume_full_precision.py": "e1ccd2d203594c6ea54509a3219d35ad0c543fbcedf586a2bce0f03c0b935e82",
+    "resume_full_precision.pbs": "38aed36ee1c62124439a3e7710e5a2dad4a47c9dc80a380a0184ee62f82a3074",
+    "diagnose_full_precision.py": "3d120d4fb340a6ce84174248933aa3835219b0e71826e56f1da764c7750089b8",
+    "diagnose_downstream.py": "953265e16eba4883c75b6311109082b588fe7495b3cd5c05c759398fc8c7e2bc",
+    "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+    "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+    "numerical_protocol.py": "d916201189e57bb10a737b22c86829e1ddc548eac5b6a874035a754b0c35d14b",
+    "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+  }
+}

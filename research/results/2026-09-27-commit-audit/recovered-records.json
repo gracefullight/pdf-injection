@@ -1,0 +1,92 @@
+[
+  {
+    "source": "tmp/document-refusal-r2-utility-eot-448-001/prompt-transfer.json",
+    "copy": "recovered/utility-eot-prompts.json",
+    "sha256": "32d9a6529074a0b0ecc85013cc02d72bc1b584ba74460248fc719842fcf0b26e",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-r2-utility-eot-448-001/benign-controls.json",
+    "copy": "recovered/utility-eot-benign.json",
+    "sha256": "45c9e054ed8b984a0417d2360f373eeb4bb8ee2ed66f60f44dd1c8058f131ec4",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-r2-utility-eot-448-001/transforms-001/holdout-screen.json",
+    "copy": "recovered/utility-eot-transforms.json",
+    "sha256": "200eb82de8125a9e12db917a268ed76c93bc8845316fe656ca12a292bef249fb",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-epsilon3-opt-001/all-prompts.json",
+    "copy": "recovered/shave-e03-prompts.json",
+    "sha256": "ef09e3d42feb8ccb01d19a8b15b2583521fb9e4c8059755358e9ebab04d4bebe",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-epsilon3-opt-001/report.json",
+    "copy": "recovered/shave-e03-optimizer.json",
+    "sha256": "c77d30b5d5b7e1a297874c7dbd3c2a58820a0a877b0572af8d20eb250890b34e",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-epsilon4-opt-001/all-prompts.json",
+    "copy": "recovered/shave-e04-prompts.json",
+    "sha256": "5bc682e7343631b13ceaef386ab0ebc65cf97caeb6672d301ffbf59c70dd5d58",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-epsilon4-opt-001/report.json",
+    "copy": "recovered/shave-e04-optimizer.json",
+    "sha256": "05346d0b63b7c2710ac3b1f35ccbd3b50f156e49e891ad7a4fd41c8ec7d47cf2",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-scale-003/canonical-screen.json",
+    "copy": "recovered/shave-e00-e03-screen.json",
+    "sha256": "9fd5c9fff3910746e30a82c6d7a438ff9ca8c5630229da7cf5eb1e65228a5fb5",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-shave-scale-003/manifest.json",
+    "copy": "recovered/shave-e00-e03-manifest.json",
+    "sha256": "00ab74060e0976901b6bec361f6a5f561abc13902953f1d2b01768d294e54fe9",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/document-refusal-clean-c0-r2-shave-082/local-canonical.json",
+    "copy": "recovered/early-c0-shave-screen.json",
+    "sha256": "7fc536ef313abaa91ce968bb95b74f80a43236bdde3c4b8bb8d3d33506928e62",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/pdfs/chroma-sweep-2026-09-10/round1.responses.json",
+    "copy": "recovered/chroma-sweep.json",
+    "sha256": "ef96fb21ae90f40cb12af331e1f858ef493755d308d72658191849db7242abd3",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/pdfs/chroma-low-2026-09-10/round1.responses.json",
+    "copy": "recovered/chroma-low.json",
+    "sha256": "b47a830d4576462c7a66d0e9bdefed26134ffeeb6fe677c1a4d55212ae4c6ddd",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/pdfs/chroma-core-2026-09-10/round1.responses.json",
+    "copy": "recovered/chroma-core.json",
+    "sha256": "cd4dd1cad50dfea698e13bbaf8cd795f80814b01d88e27be31a4b6f23728949a",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/pdfs/chroma-directive-2026-09-10/round1.responses.json",
+    "copy": "recovered/chroma-directive.json",
+    "sha256": "74a7f7ca046ff2c552f4febacaf4acbf5a552af916219ab441d7e940b86b8896",
+    "provenance": "existing ignored local record; not part of audited commit"
+  },
+  {
+    "source": "tmp/pdfs/hybrid-2026-09-10/ablation.responses.json",
+    "copy": "recovered/hybrid-ablation.json",
+    "sha256": "145b9f3be821bb7cc2e86d25e9063257166709a666e4d67fa07a5cd22d6f01d3",
+    "provenance": "existing ignored local record; not part of audited commit"
+  }
+]

@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N pdfi_gpu_info
+#PBS -q small_gpuq
+#PBS -l select=1:ncpus=1:ngpus=1:mem=2gb
+#PBS -l walltime=00:05:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script through PBS}"
+cd "${PBS_O_WORKDIR:?PBS working directory is required}"
+
+date -u
+hostname
+printf 'PBS_JOBID=%s\n' "$PBS_JOBID"
+printf 'CUDA_VISIBLE_DEVICES=%s\n' "${CUDA_VISIBLE_DEVICES-unset}"
+nvidia-smi --query-gpu=name,uuid,memory.total,driver_version --format=csv
+command -v python3.12 || true
+command -v uv || true

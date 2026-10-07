@@ -1,0 +1,37 @@
+{
+  "protocol": "math-sign-ulp-v1",
+  "files": [
+    {
+      "name": "numerical_protocol.py",
+      "sha256": "d916201189e57bb10a737b22c86829e1ddc548eac5b6a874035a754b0c35d14b"
+    },
+    {
+      "name": "test_numerical_protocol.py",
+      "sha256": "5013dc327025c8f737fd3e07dfb1e17bed7cda36e6f8375c18d650d8a801b984"
+    },
+    {
+      "name": "precision_preflight.py",
+      "sha256": "b47ade7ea76152a20ff6cf733068afcc9080ca422666aef4e918a84a2fc8f4cd"
+    },
+    {
+      "name": "precision_continuation.py",
+      "sha256": "ef2dab0bd2efe86ac2301f1d0ee454c14cce90bf832ff324d25405396bf695ec"
+    },
+    {
+      "name": "math_optimizer.py",
+      "sha256": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0"
+    },
+    {
+      "name": "diagnostic_checkpoint.py",
+      "sha256": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430"
+    },
+    {
+      "name": "ulp_preflight.pbs",
+      "sha256": "17550bbaa3845287d203e1536795ac5cebbece203854791ddfb54b57cbc86b7d"
+    },
+    {
+      "name": "precision_continuation.pbs",
+      "sha256": "69756b69e3e3d5314d50bee6b58bea9ffb9e111350c765211305eff36f3af74f"
+    }
+  ]
+}

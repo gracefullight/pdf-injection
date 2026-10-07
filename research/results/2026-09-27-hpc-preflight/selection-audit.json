@@ -1,0 +1,915 @@
+{
+  "selection": "Development only; lexicographic R2, utility, R1, -incomplete; earlier candidate wins exact ties.",
+  "records": [
+    {
+      "arm": "E-s17",
+      "selected": "candidate-0012",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -2
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "E-s29",
+      "selected": "candidate-0024",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -2
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "E-s43",
+      "selected": "candidate-0024",
+      "selected_score": [
+        0,
+        4,
+        0,
+        0
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "U-s17",
+      "selected": "candidate-0006",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -2
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "U-s29",
+      "selected": "candidate-0018",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -2
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "U-s43",
+      "selected": "candidate-0006",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -3
+      ],
+      "evaluated_candidates": 7,
+      "records": [
+        {
+          "name": "candidate-0000",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0006",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0012",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0018",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0024",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "candidate-0030",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "candidate-0036",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "X-s17",
+      "selected": "patch28-f0.5-s17",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -2
+      ],
+      "evaluated_candidates": 15,
+      "records": [
+        {
+          "name": "linear-f0.25",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "linear-f0.5",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "linear-f0.75",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -4
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "X-s29",
+      "selected": "patch28-f0.5-s29",
+      "selected_score": [
+        0,
+        4,
+        0,
+        -1
+      ],
+      "evaluated_candidates": 15,
+      "records": [
+        {
+          "name": "linear-f0.25",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "linear-f0.5",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "linear-f0.75",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "X-s43",
+      "selected": "linear-f0.25",
+      "selected_score": [
+        0,
+        4,
+        0,
+        0
+      ],
+      "evaluated_candidates": 15,
+      "records": [
+        {
+          "name": "linear-f0.25",
+          "score": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patchNone-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "patch28-f0.25-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "linear-f0.5",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -1
+          ]
+        },
+        {
+          "name": "patchNone-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "patch28-f0.5-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -2
+          ]
+        },
+        {
+          "name": "linear-f0.75",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s17",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patchNone-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        },
+        {
+          "name": "patch28-f0.75-s29",
+          "score": [
+            0,
+            4,
+            0,
+            -3
+          ]
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "parent_checkpoint_candidates": 42,
+    "crossover_candidates": 45,
+    "development_generations_per_candidate": 8,
+    "parent_development_generations": 336,
+    "crossover_development_generations": 360,
+    "optimization_updates": 216,
+    "proposal_forwards": 648,
+    "note": "U substitutes utility for every third update; X has extra search evaluations and is not compute-matched to either parent."
+  }
+}

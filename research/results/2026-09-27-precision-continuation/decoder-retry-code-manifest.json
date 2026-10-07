@@ -1,0 +1,17 @@
+{
+  "revision": "independent_reduction_graphs",
+  "files": [
+    {
+      "name": "diagnose_downstream.py",
+      "sha256": "953265e16eba4883c75b6311109082b588fe7495b3cd5c05c759398fc8c7e2bc"
+    },
+    {
+      "name": "test_diagnose_downstream.py",
+      "sha256": "3b355abff2b25bbafd10103ddcccf2b202dac6ade98014d1abecd0dc0bf95c27"
+    },
+    {
+      "name": "diagnose_downstream.pbs",
+      "sha256": "9d4e27a476fdc8429c492e0df9e0da53c48631914707bfadc962be3c776daddd"
+    }
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "protocol": "full-fp64-scale-v1",
+  "steps": [
+    9.313225746154785e-10,
+    1.862645149230957e-09,
+    3.725290298461914e-09,
+    7.450580596923828e-09,
+    1.4901161193847656e-08,
+    2.9802322387695312e-08,
+    5.960464477539063e-08,
+    1.1920928955078125e-07
+  ],
+  "script_sha256": "3d120d4fb340a6ce84174248933aa3835219b0e71826e56f1da764c7750089b8",
+  "failed_report_sha256": "4deec2e7939ba6b6613b7603b06953b4629b94da1f2ea6e322935aa7c7e9fd4e",
+  "decoder_report_sha256": "0e2118f19b0a3537c7455afceb97edbb301b9f7a1f398af5da26eed6a50a07a4",
+  "input_sha256": "f0231a507508a799941ffdf9e6da2ee1dc140cb30b881718c75dfbc485aa0f0a",
+  "prompts_sha256": "113dfcba6379c79ddb8d296abdf520d9965105c868c8651ec4c82d977bac91e2",
+  "scope": "Smooth identity derivative diagnostic only. Original FP32 gate remains failed.",
+  "status": "shard_complete_pending_full_grid_audit",
+  "shard": {
+    "state": "crossover_interior",
+    "prompt_index": 1
+  },
+  "resume_report_sha256": "3928bb08cbf049abb448002dbb1193ac5acecd883bd6273482cd445f4ffeb08c",
+  "resume_runner_sha256": "d0f201cef9d0c9b3aa8cba45134e7d4ec8382e622385cf7f38bc4d5af73e67c8",
+  "checks": [
+    {
+      "state": "crossover_interior",
+      "train_prompt_index": 1,
+      "direction": "all",
+      "direction_file_sha256": "a25a6014b93feb49f92d38340fbf04672e935a40e1a55835ccf60ab1f3e30439",
+      "base_loss": 2.6258979017814106,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 11046.830923344733,
+          "finite_difference": 11071.932275772095,
+          "plus_loss": 2.625907551878584,
+          "minus_loss": 2.625886928797638,
+          "absolute_error": 25.101352427362144,
+          "relative_error": 0.002267115784503994,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 11046.830923344733,
+          "finite_difference": 11132.673409819603,
+          "plus_loss": 2.6259160609630214,
+          "minus_loss": 2.625874588522772,
+          "absolute_error": 85.84248647487038,
+          "relative_error": 0.007710860034675301,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 11046.830923344733,
+          "finite_difference": 11215.809690773487,
+          "plus_loss": 2.625930469327144,
+          "minus_loss": 2.6258469050330833,
+          "absolute_error": 168.9787674287545,
+          "relative_error": 0.015066122918237662,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 11046.830923344733,
+          "finite_difference": 10947.031281352043,
+          "plus_loss": 2.625952814853992,
+          "minus_loss": 2.6257896913762746,
+          "absolute_error": 99.79964199268943,
+          "relative_error": 0.009034232775463929,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 11046.830923344733,
+          "finite_difference": 10088.619852617383,
+          "plus_loss": 2.625984148267362,
+          "minus_loss": 2.625683483966067,
+          "absolute_error": 958.2110707273496,
+          "relative_error": 0.08674081076975737,
+          "agrees": false
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 11046.830923344733,
+          "finite_difference": 7736.561512671411,
+          "plus_loss": 2.625996872919174,
+          "minus_loss": 2.6255357379184283,
+          "absolute_error": 3310.2694106733215,
+          "relative_error": 0.2996578325171873,
+          "agrees": false
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 11046.830923344733,
+          "finite_difference": 5151.679971743375,
+          "plus_loss": 2.6259217601016074,
+          "minus_loss": 2.625307631992183,
+          "absolute_error": 5895.1509516013575,
+          "relative_error": 0.5336508716851474,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 11046.830923344733,
+          "finite_difference": 5844.428665945306,
+          "plus_loss": 2.6263736430955023,
+          "minus_loss": 2.624980222717307,
+          "absolute_error": 5202.402257399426,
+          "relative_error": 0.47094069724607096,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    },
+    {
+      "state": "crossover_interior",
+      "train_prompt_index": 1,
+      "direction": "even_tiles",
+      "direction_file_sha256": "a25a6014b93feb49f92d38340fbf04672e935a40e1a55835ccf60ab1f3e30439",
+      "base_loss": 2.6258979017814106,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 6342.215641733771,
+          "finite_difference": 6349.203269958496,
+          "plus_loss": 2.6259035367647563,
+          "minus_loss": 2.625891710452084,
+          "absolute_error": 6.987628224725086,
+          "relative_error": 0.0011005519791415913,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 6342.215641733771,
+          "finite_difference": 6368.4325115680695,
+          "plus_loss": 2.6259086630396684,
+          "minus_loss": 2.6258849387798167,
+          "absolute_error": 26.21686983429845,
+          "relative_error": 0.004116691161706791,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 6342.215641733771,
+          "finite_difference": 6422.264831185341,
+          "plus_loss": 2.625917617990191,
+          "minus_loss": 2.6258697683884513,
+          "absolute_error": 80.04918945156987,
+          "relative_error": 0.012464323966035421,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 6342.215641733771,
+          "finite_difference": 6424.90020430088,
+          "plus_loss": 2.625931746935059,
+          "minus_loss": 2.6258360084614605,
+          "absolute_error": 82.68456256710942,
+          "relative_error": 0.012869392510059488,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 6342.215641733771,
+          "finite_difference": 6169.015968844295,
+          "plus_loss": 2.6259515293213833,
+          "minus_loss": 2.625767678318665,
+          "absolute_error": 173.19967288947646,
+          "relative_error": 0.027309016702265404,
+          "agrees": true
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 6342.215641733771,
+          "finite_difference": 5228.800631016493,
+          "plus_loss": 2.6259717779167007,
+          "minus_loss": 2.6256601171124876,
+          "absolute_error": 1113.4150107172782,
+          "relative_error": 0.17555615791280538,
+          "agrees": false
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 6342.215641733771,
+          "finite_difference": 3475.758879236877,
+          "plus_loss": 2.62592172546298,
+          "minus_loss": 2.625507382716336,
+          "absolute_error": 2866.456762496894,
+          "relative_error": 0.4519645695480154,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 6342.215641733771,
+          "finite_difference": 2464.5272019635886,
+          "plus_loss": 2.625882873497686,
+          "minus_loss": 2.6252952844240367,
+          "absolute_error": 3877.6884397701824,
+          "relative_error": 0.6114091129689402,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    },
+    {
+      "state": "crossover_interior",
+      "train_prompt_index": 1,
+      "direction": "odd_tiles",
+      "direction_file_sha256": "a25a6014b93feb49f92d38340fbf04672e935a40e1a55835ccf60ab1f3e30439",
+      "base_loss": 2.6258979017814106,
+      "checks": [
+        {
+          "step": 9.313225746154785e-10,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4705.773504734039,
+          "plus_loss": 2.625902201314923,
+          "minus_loss": 2.625893436128731,
+          "absolute_error": 1.158223123065909,
+          "relative_error": 0.00024612810665467194,
+          "agrees": true
+        },
+        {
+          "step": 1.862645149230957e-09,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4709.1619881391525,
+          "plus_loss": 2.6259063420754702,
+          "minus_loss": 2.625888799080002,
+          "absolute_error": 4.546706528179129,
+          "relative_error": 0.0009655022570110785,
+          "agrees": true
+        },
+        {
+          "step": 3.725290298461914e-09,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4721.465022146702,
+          "plus_loss": 2.625914182617594,
+          "minus_loss": 2.6258790049619107,
+          "absolute_error": 16.849740535728415,
+          "relative_error": 0.0035687525919798867,
+          "agrees": true
+        },
+        {
+          "step": 7.450580596923828e-09,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4753.310855329037,
+          "plus_loss": 2.62592836202541,
+          "minus_loss": 2.6258575321741504,
+          "absolute_error": 48.695573718063315,
+          "relative_error": 0.010244559045295698,
+          "agrees": true
+        },
+        {
+          "step": 1.4901161193847656e-08,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4738.797008320689,
+          "plus_loss": 2.6259524749523995,
+          "minus_loss": 2.6258112477962277,
+          "absolute_error": 34.181726709715804,
+          "relative_error": 0.00721316541934531,
+          "agrees": true
+        },
+        {
+          "step": 2.9802322387695312e-08,
+          "analytic": 4704.615281610973,
+          "finite_difference": 4583.533911019564,
+          "plus_loss": 2.6259914666000066,
+          "minus_loss": 2.6257182666894243,
+          "absolute_error": 121.08137059140972,
+          "relative_error": 0.02573672093118495,
+          "agrees": true
+        },
+        {
+          "step": 5.960464477539063e-08,
+          "analytic": 4704.615281610973,
+          "finite_difference": 3992.8984402902424,
+          "plus_loss": 2.6260467480942995,
+          "minus_loss": 2.625570757507984,
+          "absolute_error": 711.716841320731,
+          "relative_error": 0.15128056147388572,
+          "agrees": false
+        },
+        {
+          "step": 1.1920928955078125e-07,
+          "analytic": 4704.615281610973,
+          "finite_difference": 2994.792128721252,
+          "plus_loss": 2.626050127898969,
+          "minus_loss": 2.6253361138149347,
+          "absolute_error": 1709.8231528897213,
+          "relative_error": 0.363435275902993,
+          "agrees": false
+        }
+      ],
+      "stable_agreement": true
+    }
+  ],
+  "artifacts": {
+    "gradient-crossover_interior-1.npz": {
+      "sha256": "c02cb34c4d916c3fdaf480876d7ac64db01c1a28cf1f1f600b7682d0ffdb991d",
+      "bytes": 31031242
+    }
+  },
+  "base_repeats": [
+    {
+      "state": "crossover_interior",
+      "prompt": 1,
+      "gradient_forward": 2.6258979017814106,
+      "no_grad_forwards": [
+        2.6258979017814106,
+        2.6258979017814106
+      ],
+      "bitwise_equal_losses": true
+    }
+  ],
+  "optimizer_authorized": false,
+  "full_reference_passed": false,
+  "reused_pairs": 0,
+  "precision": {
+    "modeling_source_sha256": "72bdd5615b7527543ea7e6d69fbe194c40bddd94cab13e2e83696ff1cfb10719",
+    "rmsnorm_overrides": 138,
+    "parameter_dtypes": [
+      "torch.float64"
+    ],
+    "scope": "Pixel packing, vision, decoder, head and loss arithmetic FP64. Original FP32 normalization and position constants retained. Frozen promoted weights."
+  },
+  "execution": {
+    "backend": "math",
+    "checkpointed_blocks": 68,
+    "recompute_backend": "math",
+    "implementation_sha256": {
+      "math_optimizer.py": "f93e56586aedfa5ee4f77956d4a2c76b788f9a364d6d7ab842ba28467f68cdf0",
+      "diagnostic_checkpoint.py": "e708c9b2f8349717c708f7ada444b08585a814cdce668638a248002793a08430",
+      "torch_document.py": "058f1b777a6da90b4ac703368674805ae91d716f1e0b6ee6fe916f11237b09f7"
+    }
+  },
+  "gradient_reused": false,
+  "observed_output_dtypes": {
+    "Conv3d": [
+      "torch.float64"
+    ],
+    "Qwen2RMSNorm": [
+      "torch.float64"
+    ],
+    "Linear": [
+      "torch.float64"
+    ],
+    "Qwen2_5_VLVisionBlock": [
+      "torch.float64"
+    ],
+    "Qwen2_5_VLDecoderLayer": [
+      "torch.float64"
+    ]
+  },
+  "peak_cuda_memory_bytes": 50781406720,
+  "shard_passed": true
+}

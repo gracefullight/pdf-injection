@@ -1,0 +1,2504 @@
+{
+  "status": "summarized_pending_manual_review",
+  "responses": 288,
+  "response_sha256": "bb150c87fc862f58286f6c2bde33add459d5a27539580c75bb06d0d828e3dd7f",
+  "cells": [
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 977
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2373
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 877
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2755
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 949
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 0,
+      "labels": {
+        "R0": 6
+      },
+      "total_new_tokens": 2467
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 3000
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 3,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "total_new_tokens": 3121
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2646
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 951
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2651
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 944
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 0,
+      "labels": {
+        "R0": 6
+      },
+      "total_new_tokens": 2237
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 902
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2887
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 922
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2247
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 942
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 0,
+      "labels": {
+        "R0": 6
+      },
+      "total_new_tokens": 2700
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 951
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2655
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 966
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 3,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "total_new_tokens": 2930
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 849
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2938
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2646
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2496
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 0,
+      "labels": {
+        "R0": 6
+      },
+      "total_new_tokens": 2762
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 920
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2180
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 900
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 0,
+      "labels": {
+        "R0": 6
+      },
+      "total_new_tokens": 2317
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 5,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "total_new_tokens": 995
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2691
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 874
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 1,
+      "labels": {
+        "R0": 5,
+        "RX": 1
+      },
+      "total_new_tokens": 2690
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 874
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2562
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 901
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 3,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "total_new_tokens": 2918
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "max_new_tokens": 192,
+      "responses": 6,
+      "incomplete": 4,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "total_new_tokens": 847
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "max_new_tokens": 768,
+      "responses": 6,
+      "incomplete": 2,
+      "labels": {
+        "R0": 4,
+        "RX": 2
+      },
+      "total_new_tokens": 2590
+    }
+  ],
+  "policy_control_contrasts": [
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 1,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 5,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 0,
+      "control_incomplete": 2,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 5,
+      "control_incomplete": 5,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 3,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 0,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 2,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 0,
+      "control_incomplete": 2,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 2,
+      "control_incomplete": 3,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 5,
+      "control_incomplete": 5,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 2,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 5,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 0,
+      "control_incomplete": 1,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 5,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "text_policy",
+      "control": "clean",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 1,
+      "control_incomplete": 0,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "inline_policy",
+      "control": "inline_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 1,
+      "control_incomplete": 2,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 192,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 4,
+      "control_incomplete": 4,
+      "paired_questions": 6
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "policy": "separate_policy",
+      "control": "separate_blank",
+      "max_new_tokens": 768,
+      "policy_R2": 0,
+      "control_R2": 0,
+      "policy_incomplete": 3,
+      "control_incomplete": 2,
+      "paired_questions": 6
+    }
+  ],
+  "length_pairs": [
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "single",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "clean",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "text_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "inline_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "exclusive",
+      "channel": "separate_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "clean",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T2",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "text_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "inline_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_policy",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T1",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T2",
+      "short_incomplete": false,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "R0",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T3",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T4",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T5",
+      "short_incomplete": true,
+      "long_incomplete": false,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "R0"
+    },
+    {
+      "scope": "full",
+      "selector": "targeted",
+      "channel": "separate_blank",
+      "question_id": "T6",
+      "short_incomplete": true,
+      "long_incomplete": true,
+      "short_response_is_prefix": true,
+      "short_label": "RX",
+      "long_label": "RX"
+    }
+  ],
+  "labels_are_provisional": true,
+  "note": "Paired repeated questions on one document; not independent population samples."
+}

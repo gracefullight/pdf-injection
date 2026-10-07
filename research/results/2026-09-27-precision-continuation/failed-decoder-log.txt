@@ -1,0 +1,29 @@
+................
+----------------------------------------------------------------------
+Ran 16 tests in 0.225s
+
+OK
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 44.88it/s]
+Traceback (most recent call last):
+  File "diagnose_downstream.py", line 259, in <module>
+    main()
+  File "diagnose_downstream.py", line 202, in main
+    gradient = torch.autograd.grad(loss, value)[0].detach()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "__init__.py", line 502, in grad
+    result = _engine_run_backward(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "graph.py", line 824, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "checkpoint.py", line 1124, in unpack_hook
+    frame.recompute_fn(*args)
+  File "checkpoint.py", line 1517, in recompute_fn
+    with device_autocast_ctx, torch.amp.autocast("cpu", **cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+                                                                                ^^^^^^^^^^^^^^^^^
+  File "contextlib.py", line 135, in __enter__
+    del self.args, self.kwds, self.func
+        ^^^^^^^^^
+AttributeError: '_GeneratorContextManager' object has no attribute 'args'

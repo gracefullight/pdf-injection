@@ -1,0 +1,47 @@
+{
+  "status": "finished",
+  "method": "proportional_integer_projection",
+  "original": "tmp/document-resolution-probes/source-448x560.png",
+  "original_sha256": "f1e9040bc26911f9d8ac9db2465bfa527e77ae1f9fd049d5ec00609be736feda",
+  "source_candidate": "tmp/document-refusal-shave-epsilon3-opt-001/candidate-final.png",
+  "source_candidate_sha256": "18e6ba3b2416b6bcaed0c60c5676c64b87046087735abb38f4d46631b72484fd",
+  "source_epsilon": 3,
+  "variants": [
+    {
+      "requested_epsilon": 0,
+      "path": "tmp/document-refusal-shave-scale-003/epsilon-00.png",
+      "sha256": "fc96ab8baa5bc96e8ec8b249638c6cc5e4f7d97705d286cd2533888ea39d9885",
+      "max_channel_change": 0,
+      "changed_channels": 0,
+      "mean_absolute_change": 0.0,
+      "psnr_db": null
+    },
+    {
+      "requested_epsilon": 1,
+      "path": "tmp/document-refusal-shave-scale-003/epsilon-01.png",
+      "sha256": "9d9ccdcdcd3e8e84ec27db08656ff91ddceb07039dfdf1ecca3724f317c12314",
+      "max_channel_change": 1,
+      "changed_channels": 465186,
+      "mean_absolute_change": 0.6180723852040816,
+      "psnr_db": 50.220410206434984
+    },
+    {
+      "requested_epsilon": 2,
+      "path": "tmp/document-refusal-shave-scale-003/epsilon-02.png",
+      "sha256": "316ec87d2598f7ea17531933f58cb049d26a2089eb3609de054685dcc0a184de",
+      "max_channel_change": 2,
+      "changed_channels": 652376,
+      "mean_absolute_change": 1.0065104166666667,
+      "psnr_db": 47.038515252965574
+    },
+    {
+      "requested_epsilon": 3,
+      "path": "tmp/document-refusal-shave-scale-003/epsilon-03.png",
+      "sha256": "18e6ba3b2416b6bcaed0c60c5676c64b87046087735abb38f4d46631b72484fd",
+      "max_channel_change": 3,
+      "changed_channels": 652376,
+      "mean_absolute_change": 1.6245828018707482,
+      "psnr_db": 42.791006220064986
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "status": "both_parent_banks_complete_evaluation_pending",
+  "completed_updates": 72,
+  "behavioral_result_available": false,
+  "arms": [
+    {
+      "arm": "E",
+      "manifest": "completed-E-manifest.json",
+      "manifest_sha256": "c502da560c4eb932117a1d4f728393a6a40b7501d04f9e07e2e128140b71f457",
+      "exit_status": 0,
+      "completed_updates": 36,
+      "accepted_nonzero_proposals": 23,
+      "retained_current_image": 13,
+      "checkpoints": 7,
+      "max_recorded_linf_bytes": 8,
+      "recorded_protected_changed_channels": 0,
+      "walltime": "01:12:30"
+    },
+    {
+      "arm": "U",
+      "manifest": "completed-U-manifest.json",
+      "manifest_sha256": "c8e26c4a7097aa89492c6b19c14a7ef3d4ddff28385171076a158ab9b5a19cf6",
+      "exit_status": 0,
+      "completed_updates": 36,
+      "accepted_nonzero_proposals": 32,
+      "retained_current_image": 4,
+      "checkpoints": 7,
+      "max_recorded_linf_bytes": 8,
+      "recorded_protected_changed_channels": 0,
+      "walltime": "01:12:13"
+    }
+  ],
+  "audit_scope": "Recomputed history budgets, stable proposal choices, non-increasing sampled losses and recorded constraints from SHA-verified manifests. Independent pixel/artifact review remains pending."
+}

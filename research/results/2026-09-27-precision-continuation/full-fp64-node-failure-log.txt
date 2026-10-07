@@ -1,0 +1,53 @@
+Unable to determine the device handle for GPU1: 0000:82:00.0: Unknown Error
+Unable to determine the device handle for GPU1: 0000:82:00.0: Unknown Error
+Traceback (most recent call last):
+  File "gpu_binding.py", line 43, in <module>
+    main()
+  File "gpu_binding.py", line 32, in main
+    devices = query('gpu', 'uuid,name,memory.total,memory.used,utilization.gpu')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "gpu_binding.py", line 29, in query
+    output = subprocess.check_output(['nvidia-smi', '-i', args.uuid,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['nvidia-smi', '-i', '<GPU_UUID>', '--query-gpu=uuid,name,memory.total,memory.used,utilization.gpu', '--format=csv,noheader,nounits']' returned non-zero exit status 255.
+Traceback (most recent call last):
+  File "choose_allocated_gpu.py", line 48, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "choose_allocated_gpu.py", line 42, in main
+    subprocess.run([os.sys.executable,str(Path(__file__).with_name('gpu_binding.py')),'--uuid',selected,'--host',host],check=True,stdout=subprocess.PIPE)
+  File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['.venv/bin/python', 'gpu_binding.py', '--uuid', '<GPU_UUID>', '--host', '<COMPUTE_NODE>']' returned non-zero exit status 1.
+
+Unable to determine the device handle for GPU1: 0000:82:00.0: Unknown Error
+Unable to determine the device handle for GPU1: 0000:82:00.0: Unknown Error
+Traceback (most recent call last):
+  File "gpu_binding.py", line 43, in <module>
+    main()
+  File "gpu_binding.py", line 32, in main
+    devices = query('gpu', 'uuid,name,memory.total,memory.used,utilization.gpu')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "gpu_binding.py", line 29, in query
+    output = subprocess.check_output(['nvidia-smi', '-i', args.uuid,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['nvidia-smi', '-i', '<GPU_UUID>', '--query-gpu=uuid,name,memory.total,memory.used,utilization.gpu', '--format=csv,noheader,nounits']' returned non-zero exit status 255.
+Traceback (most recent call last):
+  File "choose_allocated_gpu.py", line 48, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "choose_allocated_gpu.py", line 42, in main
+    subprocess.run([os.sys.executable,str(Path(__file__).with_name('gpu_binding.py')),'--uuid',selected,'--host',host],check=True,stdout=subprocess.PIPE)
+  File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['.venv/bin/python', 'gpu_binding.py', '--uuid', '<GPU_UUID>', '--host', '<COMPUTE_NODE>']' returned non-zero exit status 1.

@@ -1,0 +1,79 @@
+{
+  "status": "bounded_experiment_complete",
+  "date": "2026-09-27",
+  "checks": [
+    {
+      "check": "pilot_generations",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/completed-summary.json",
+      "sha256": "321a72171823b087807c1ed568fe75f569978ef7ab7ddcf30d560dde6822a5b6"
+    },
+    {
+      "check": "pilot_strict_endpoint_review",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/response-audit.json",
+      "sha256": "5afc7013ad953cc96687dba280aa8ec02f70e17d4dcc065d454bb992565e6c0b"
+    },
+    {
+      "check": "development_selection_and_extra_compute",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/selection-audit.json",
+      "sha256": "9eef168eea816e404f41219e1814569c625c94213a681b63d35e4d99755cd5bc"
+    },
+    {
+      "check": "all_optimization_updates",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/optimization-history.json",
+      "sha256": "9795f07afa7222d23be677980dc90ab53f6085bb9f1bd197ed48c51cfa440c9d"
+    },
+    {
+      "check": "independent_pixel_and_ocr_checks",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/ocr-final.json",
+      "sha256": "f3ff6473063f6cbb1ef5aee99e093f834a28a9193b7ec8f464cd25c0ecacb9cf"
+    },
+    {
+      "check": "reproduced_pdf_hashes_and_preserved_pages",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/artifact-audit.json",
+      "sha256": "c4783a19c6831222f6a4c58a22841b14c9a8eaab8defa5fb9c4936e6bdcb4440"
+    },
+    {
+      "check": "visual_review",
+      "status": "complete",
+      "evidence": "../2026-09-27-hpc-preflight/visual-review.json",
+      "sha256": "4a4a4d17f2fbb2a0dd2d545703504492687eb8e11018781b14fe469b3c4a549b"
+    },
+    {
+      "check": "delivery_matrix_and_pairs",
+      "status": "complete",
+      "evidence": "analysis.json",
+      "sha256": "633ea4c0d11ae6c746b94bb2fb50b05d30fc38ae9e84d234c88f823a238af77c"
+    },
+    {
+      "check": "delivery_strict_endpoint_and_focused_semantic_review",
+      "status": "complete",
+      "evidence": "semantic-review.json",
+      "sha256": "5d58bba6cb75e90dcfde430eb0c44b6590165ad901ff64f14f29624a2bac811f"
+    }
+  ],
+  "conditional_branches": [
+    {
+      "branch": "R1-heavy joint-objective continuation",
+      "status": "not triggered; no observed R1 in final classifier results"
+    },
+    {
+      "branch": "successful-candidate shaving",
+      "status": "not triggered; no strict R2"
+    },
+    {
+      "branch": "transfer or new named optimizer",
+      "status": "not a completion requirement"
+    }
+  ],
+  "limits": [
+    "Strict endpoint fully dispositioned; leakage counts are conservative lower bounds.",
+    "Independent human coding and exhaustive correctness grading were not performed.",
+    "The next numerical/policy-control protocol is unexecuted and is not included in this completed run."
+  ]
+}

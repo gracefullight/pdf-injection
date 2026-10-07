@@ -1,0 +1,20 @@
+{
+  "scope": "One saved state, one prompt and the previously saved direction; not the full numerical gate.",
+  "diagnostic_completed": true,
+  "reference_passed": false,
+  "checkpoint_cpu_regression_passed": true,
+  "fp32_math_base_losses": [
+    2.5605525970458984,
+    2.5605525970458984,
+    2.5605525970458984
+  ],
+  "fp32_math_gradient_summaries_equal": true,
+  "fp32_math_relative_errors": [
+    0.5569875212848543,
+    0.15419394254144364,
+    0.10481998874650766
+  ],
+  "fp32_math_peak_allocated_gib": 23.613642692565918,
+  "interpretation": "The math-SDPA path with activation recomputation completed with repeatable loss and gradient summaries. All three directional checks still failed the fixed tolerance. The default FP32 path remained unstable. A backend-specific root cause is not proven by this comparison.",
+  "optimization_started": false
+}

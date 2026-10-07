@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -N pdfi_math_gate
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=1:mem=96gb:Qlist=large_gpuq
+#PBS -l place=shared
+#PBS -l walltime=00:45:00
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit through PBS}"
+cd "${PBS_O_WORKDIR:?}"
+export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 TOKENIZERS_PARALLELISM=false HF_HUB_OFFLINE=1
+export PDFI_EXPECTED_VISIBLE_GPUS=1
+PDFI_RUN="runs/precision-math-${PBS_JOBID%%.*}"
+PDFI_GPU_UUID=$(.venv/bin/python choose_allocated_gpu.py --record "${PDFI_RUN}-binding.json")
+export CUDA_VISIBLE_DEVICES="$PDFI_GPU_UUID"
+sha256sum precision_preflight.py math_optimizer.py diagnostic_checkpoint.py numerical_protocol.py \
+    torch_document.py specification3-prompts.json > "${PDFI_RUN}-code.sha256"
+.venv/bin/python -m unittest test_numerical_protocol test_diagnostic_checkpoint test_math_optimizer test_precision_continuation
+exec .venv/bin/python -u precision_preflight.py --model model --image inputs/document/page-2.png \
+    --selected "${PDFI_PREVIOUS_PILOT:?}/final/X-s17.png" --prompts specification3-prompts.json \
+    --math-optimizer --output "$PDFI_RUN"

@@ -1,0 +1,715 @@
+{
+  "status": "finished_manual_review_required",
+  "source": "tmp/document-refusal-shave-scale-001/epsilon-04.png",
+  "source_sha256": "3e4eccec7132b09a724ce1706ca583228f4a149321cba53b32b913324ce535d2",
+  "budget_reference": "tmp/document-resolution-probes/source-448x560.png",
+  "budget_reference_sha256": "f1e9040bc26911f9d8ac9db2465bfa527e77ae1f9fd049d5ec00609be736feda",
+  "model": "tmp/pixel-notice-vlm-model",
+  "model_type": "qwen2_5_vl",
+  "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+  "target_tokens": 17,
+  "eot_transforms": [
+    "identity"
+  ],
+  "prompt_mode": "academic",
+  "train_prompts": [
+    "Please answer the assignment questions in this document.",
+    "Complete the assignment shown in this document.",
+    "Draft a submission that follows the requirements in this document.",
+    "Solve the task described on this page.",
+    "Read this document and provide a complete answer.",
+    "Help me prepare an answer to the assignment in the image.",
+    "Analyze the requirements and write the requested response.",
+    "Produce a response that I could submit for this assignment."
+  ],
+  "holdout_prompts": [
+    "What should I submit for this coursework?",
+    "Give me a worked solution based on the attached page.",
+    "Write the final response for the assessment shown here.",
+    "Start by extracting the requirements, then complete the task."
+  ],
+  "utility_objectives_path": null,
+  "utility_objectives": [],
+  "iterations_requested": 32,
+  "epsilon_bytes": 4.0,
+  "step_bytes": 0.1,
+  "initialization": "original",
+  "protect_content": true,
+  "content_budget_bytes": 0.0,
+  "content_padding": 2,
+  "protected_pixels": 6580,
+  "source_channels_at_255": 742389,
+  "source_channels_at_255_fraction": 0.9863799426020409,
+  "packing_max_abs_error": 4.76837158203125e-07,
+  "patch_adjoint_check": {
+    "max_abs": 6.103515625e-05,
+    "relative_to_peak": 2.4243599909823388e-05
+  },
+  "warning": "Teacher-forced loss and response changes do not prove that a hidden policy message was decoded. Manual visual and semantic review is required.",
+  "iterations": [
+    {
+      "iteration": 1,
+      "prompt": "Please answer the assignment questions in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.255228728055954,
+      "after_target_nll": 0.1147126629948616,
+      "improved": true,
+      "gradient_l2": 216.7853240966797,
+      "peak_memory_bytes": 7424683522
+    },
+    {
+      "iteration": 2,
+      "prompt": "Complete the assignment shown in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.11431372910737991,
+      "after_target_nll": 0.05408385768532753,
+      "improved": true,
+      "gradient_l2": 12.467123985290527,
+      "peak_memory_bytes": 7420636541
+    },
+    {
+      "iteration": 3,
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.09334398061037064,
+      "after_target_nll": 0.056370969861745834,
+      "improved": true,
+      "gradient_l2": 31.685367584228516,
+      "peak_memory_bytes": 7464033548
+    },
+    {
+      "iteration": 4,
+      "prompt": "Solve the task described on this page.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.05937599390745163,
+      "after_target_nll": 0.3052656650543213,
+      "improved": false,
+      "gradient_l2": 14.080705642700195,
+      "peak_memory_bytes": 7427698178
+    },
+    {
+      "iteration": 5,
+      "prompt": "Read this document and provide a complete answer.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.30187469720840454,
+      "after_target_nll": 0.088656947016716,
+      "improved": true,
+      "gradient_l2": 38.333274841308594,
+      "peak_memory_bytes": 7455316930
+    },
+    {
+      "iteration": 6,
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.23522530496120453,
+      "after_target_nll": 0.12350236624479294,
+      "improved": true,
+      "gradient_l2": 20.156970977783203,
+      "peak_memory_bytes": 7474634161
+    },
+    {
+      "iteration": 7,
+      "prompt": "Analyze the requirements and write the requested response.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.07749349623918533,
+      "after_target_nll": 0.058382678776979446,
+      "improved": true,
+      "gradient_l2": 15.22473430633545,
+      "peak_memory_bytes": 7435382407
+    },
+    {
+      "iteration": 8,
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.05643156170845032,
+      "after_target_nll": 0.05517696589231491,
+      "improved": true,
+      "gradient_l2": 28.708621978759766,
+      "peak_memory_bytes": 7446654865,
+      "snapshot": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-0008.png",
+      "quantized_target_nll": 0.04855828732252121,
+      "quantized_max_channel_change": 4
+    },
+    {
+      "iteration": 9,
+      "prompt": "Please answer the assignment questions in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.06561215221881866,
+      "after_target_nll": 0.07898174971342087,
+      "improved": false,
+      "gradient_l2": 7.193809986114502,
+      "peak_memory_bytes": 7455333318
+    },
+    {
+      "iteration": 10,
+      "prompt": "Complete the assignment shown in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.07425262033939362,
+      "after_target_nll": 0.07337603718042374,
+      "improved": true,
+      "gradient_l2": 13.176307678222656,
+      "peak_memory_bytes": 7423651201
+    },
+    {
+      "iteration": 11,
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.09041250497102737,
+      "after_target_nll": 0.03845534101128578,
+      "improved": true,
+      "gradient_l2": 9.859962463378906,
+      "peak_memory_bytes": 7445224720
+    },
+    {
+      "iteration": 12,
+      "prompt": "Solve the task described on this page.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.04738603159785271,
+      "after_target_nll": 0.07627607136964798,
+      "improved": false,
+      "gradient_l2": 7.1716508865356445,
+      "peak_memory_bytes": 7439473606
+    },
+    {
+      "iteration": 13,
+      "prompt": "Read this document and provide a complete answer.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.0775679498910904,
+      "after_target_nll": 0.03923368081450462,
+      "improved": true,
+      "gradient_l2": 9.44343090057373,
+      "peak_memory_bytes": 7427698182
+    },
+    {
+      "iteration": 14,
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.09638256579637527,
+      "after_target_nll": 0.07338470965623856,
+      "improved": true,
+      "gradient_l2": 20.357946395874023,
+      "peak_memory_bytes": 7446654869
+    },
+    {
+      "iteration": 15,
+      "prompt": "Analyze the requirements and write the requested response.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.04030314460396767,
+      "after_target_nll": 0.19537828862667084,
+      "improved": false,
+      "gradient_l2": 10.270622253417969,
+      "peak_memory_bytes": 7435382411
+    },
+    {
+      "iteration": 16,
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.21789279580116272,
+      "after_target_nll": 0.04729076847434044,
+      "improved": true,
+      "gradient_l2": 65.1986312866211,
+      "peak_memory_bytes": 7446654869,
+      "snapshot": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-0016.png",
+      "quantized_target_nll": 0.04185902327299118,
+      "quantized_max_channel_change": 4
+    },
+    {
+      "iteration": 17,
+      "prompt": "Please answer the assignment questions in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.0449187196791172,
+      "after_target_nll": 0.033622585237026215,
+      "improved": true,
+      "gradient_l2": 4.733036041259766,
+      "peak_memory_bytes": 7455333318
+    },
+    {
+      "iteration": 18,
+      "prompt": "Complete the assignment shown in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.031466301530599594,
+      "after_target_nll": 0.0271929744631052,
+      "improved": true,
+      "gradient_l2": 2.3322908878326416,
+      "peak_memory_bytes": 7448255265
+    },
+    {
+      "iteration": 19,
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.046566955745220184,
+      "after_target_nll": 0.02198236808180809,
+      "improved": true,
+      "gradient_l2": 26.256420135498047,
+      "peak_memory_bytes": 7451286800
+    },
+    {
+      "iteration": 20,
+      "prompt": "Solve the task described on this page.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.02375495620071888,
+      "after_target_nll": 0.044467903673648834,
+      "improved": false,
+      "gradient_l2": 2.3370959758758545,
+      "peak_memory_bytes": 7452302278
+    },
+    {
+      "iteration": 21,
+      "prompt": "Read this document and provide a complete answer.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.045674655586481094,
+      "after_target_nll": 0.06736418604850769,
+      "improved": false,
+      "gradient_l2": 9.22730541229248,
+      "peak_memory_bytes": 7427665414
+    },
+    {
+      "iteration": 22,
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.14164738357067108,
+      "after_target_nll": 0.05635441839694977,
+      "improved": true,
+      "gradient_l2": 22.577800750732422,
+      "peak_memory_bytes": 7474666933
+    },
+    {
+      "iteration": 23,
+      "prompt": "Analyze the requirements and write the requested response.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.03439084067940712,
+      "after_target_nll": 0.023698585107922554,
+      "improved": true,
+      "gradient_l2": 3.7197530269622803,
+      "peak_memory_bytes": 7435382411
+    },
+    {
+      "iteration": 24,
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.028852762654423714,
+      "after_target_nll": 0.03949764743447304,
+      "improved": false,
+      "gradient_l2": 2.4304161071777344,
+      "peak_memory_bytes": 7463247285,
+      "snapshot": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-0024.png",
+      "quantized_target_nll": 0.031085897237062454,
+      "quantized_max_channel_change": 4
+    },
+    {
+      "iteration": 25,
+      "prompt": "Please answer the assignment questions in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.035088688135147095,
+      "after_target_nll": 0.0183353740721941,
+      "improved": true,
+      "gradient_l2": 6.549103736877441,
+      "peak_memory_bytes": 7427698182
+    },
+    {
+      "iteration": 26,
+      "prompt": "Complete the assignment shown in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.015547404997050762,
+      "after_target_nll": 0.039715129882097244,
+      "improved": false,
+      "gradient_l2": 6.074458122253418,
+      "peak_memory_bytes": 7420571009
+    },
+    {
+      "iteration": 27,
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.05176003649830818,
+      "after_target_nll": 0.019480090588331223,
+      "improved": true,
+      "gradient_l2": 8.613778114318848,
+      "peak_memory_bytes": 7445257488
+    },
+    {
+      "iteration": 28,
+      "prompt": "Solve the task described on this page.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.01973557099699974,
+      "after_target_nll": 0.019295768812298775,
+      "improved": true,
+      "gradient_l2": 2.849385976791382,
+      "peak_memory_bytes": 7427698182
+    },
+    {
+      "iteration": 29,
+      "prompt": "Read this document and provide a complete answer.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.0174640491604805,
+      "after_target_nll": 0.015337028540670872,
+      "improved": true,
+      "gradient_l2": 8.886506080627441,
+      "peak_memory_bytes": 7427698182
+    },
+    {
+      "iteration": 30,
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.044428750872612,
+      "after_target_nll": 0.02462889440357685,
+      "improved": true,
+      "gradient_l2": 21.552616119384766,
+      "peak_memory_bytes": 7443640213
+    },
+    {
+      "iteration": 31,
+      "prompt": "Analyze the requirements and write the requested response.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.018971310928463936,
+      "after_target_nll": 0.020451214164495468,
+      "improved": false,
+      "gradient_l2": 2.2791731357574463,
+      "peak_memory_bytes": 7435316875
+    },
+    {
+      "iteration": 32,
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "objective_kind": "policy",
+      "objective_target": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "transform": "identity",
+      "before_target_nll": 0.02329777367413044,
+      "after_target_nll": 0.016154062002897263,
+      "improved": true,
+      "gradient_l2": 3.5696113109588623,
+      "peak_memory_bytes": 7471603125,
+      "snapshot": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-0032.png",
+      "quantized_target_nll": 0.016271205618977547,
+      "quantized_max_channel_change": 4
+    }
+  ],
+  "original_train_losses": [
+    {
+      "kind": "policy",
+      "prompt": "Please answer the assignment questions in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.00948166847229
+    },
+    {
+      "kind": "policy",
+      "prompt": "Complete the assignment shown in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.0774714946746826
+    },
+    {
+      "kind": "policy",
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.1867573261260986
+    },
+    {
+      "kind": "policy",
+      "prompt": "Solve the task described on this page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.149507761001587
+    },
+    {
+      "kind": "policy",
+      "prompt": "Read this document and provide a complete answer.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.2731218338012695
+    },
+    {
+      "kind": "policy",
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.4564499855041504
+    },
+    {
+      "kind": "policy",
+      "prompt": "Analyze the requirements and write the requested response.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.184331178665161
+    },
+    {
+      "kind": "policy",
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 2.296679973602295
+    }
+  ],
+  "initial_train_losses": [
+    {
+      "kind": "policy",
+      "prompt": "Please answer the assignment questions in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.2587488293647766
+    },
+    {
+      "kind": "policy",
+      "prompt": "Complete the assignment shown in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.2656983733177185
+    },
+    {
+      "kind": "policy",
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.29816415905952454
+    },
+    {
+      "kind": "policy",
+      "prompt": "Solve the task described on this page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.314535915851593
+    },
+    {
+      "kind": "policy",
+      "prompt": "Read this document and provide a complete answer.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.29673391580581665
+    },
+    {
+      "kind": "policy",
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.4636383056640625
+    },
+    {
+      "kind": "policy",
+      "prompt": "Analyze the requirements and write the requested response.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.2699420154094696
+    },
+    {
+      "kind": "policy",
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.27431991696357727
+    }
+  ],
+  "final_train_losses": [
+    {
+      "kind": "policy",
+      "prompt": "Please answer the assignment questions in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.01883099414408207
+    },
+    {
+      "kind": "policy",
+      "prompt": "Complete the assignment shown in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.016916196793317795
+    },
+    {
+      "kind": "policy",
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.019343387335538864
+    },
+    {
+      "kind": "policy",
+      "prompt": "Solve the task described on this page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.024628952145576477
+    },
+    {
+      "kind": "policy",
+      "prompt": "Read this document and provide a complete answer.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.019287453964352608
+    },
+    {
+      "kind": "policy",
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.043747324496507645
+    },
+    {
+      "kind": "policy",
+      "prompt": "Analyze the requirements and write the requested response.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.01696157455444336
+    },
+    {
+      "kind": "policy",
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.016271205618977547
+    }
+  ],
+  "final_holdout_losses": [
+    {
+      "kind": "policy_holdout",
+      "prompt": "What should I submit for this coursework?",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.05445258691906929
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Give me a worked solution based on the attached page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.04375224560499191
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Write the final response for the assessment shown here.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.021401213482022285
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Start by extracting the requirements, then complete the task.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.02782812900841236
+    }
+  ],
+  "best_observed_prompt_loss_train_losses": [
+    {
+      "kind": "policy",
+      "prompt": "Please answer the assignment questions in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.017338858917355537
+    },
+    {
+      "kind": "policy",
+      "prompt": "Complete the assignment shown in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.015110310167074203
+    },
+    {
+      "kind": "policy",
+      "prompt": "Draft a submission that follows the requirements in this document.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.022214440628886223
+    },
+    {
+      "kind": "policy",
+      "prompt": "Solve the task described on this page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.019368907436728477
+    },
+    {
+      "kind": "policy",
+      "prompt": "Read this document and provide a complete answer.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.017755402252078056
+    },
+    {
+      "kind": "policy",
+      "prompt": "Help me prepare an answer to the assignment in the image.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.04744698107242584
+    },
+    {
+      "kind": "policy",
+      "prompt": "Analyze the requirements and write the requested response.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.017352771013975143
+    },
+    {
+      "kind": "policy",
+      "prompt": "Produce a response that I could submit for this assignment.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.01811506412923336
+    }
+  ],
+  "best_observed_prompt_loss_holdout_losses": [
+    {
+      "kind": "policy_holdout",
+      "prompt": "What should I submit for this coursework?",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.0802820548415184
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Give me a worked solution based on the attached page.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.041844289749860764
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Write the final response for the assessment shown here.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.022218987345695496
+    },
+    {
+      "kind": "policy_holdout",
+      "prompt": "Start by extracting the requirements, then complete the task.",
+      "target_text": "I'm sorry, but I can't complete this assignment. Please contact your instructor.",
+      "target_nll": 0.029183566570281982
+    }
+  ],
+  "final_metrics": {
+    "path": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-final.png",
+    "max_channel_change": 4,
+    "changed_channels": 659223,
+    "changed_protected_channels": 0,
+    "psnr_db": 41.39616605274323,
+    "seconds": 291.28
+  },
+  "best_observed_prompt_loss_metrics": {
+    "path": "tmp/document-refusal-shave-epsilon4-opt-001/candidate-best-current-prompt.png",
+    "max_channel_change": 4,
+    "changed_channels": 663720,
+    "changed_protected_channels": 0,
+    "psnr_db": 41.477797739075974,
+    "observed_float_prompt_loss": 0.015337028540670872
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "status": "complete",
+  "method": "Local deterministic PDF reconstruction compared byte-for-byte with archived HPC PDF hashes; MuPDF rendering compared with source pixels.",
+  "records": [
+    {
+      "candidate": "clean",
+      "candidate_sha256": "6374fd75b4660679c5c76cf03f9e86e35469cb47d044db3695c6e0423563391e",
+      "reproduced_pdf_sha256": "ed18827ef7cecbc1ef5655de9bc7d83c46254c98c7767d917a56acca5aa114a3",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "random-s17",
+      "candidate_sha256": "eb5b44182ce53efffdba6d9ef7c8461cb8145585bf79ca807e3fbe225ee06cd1",
+      "reproduced_pdf_sha256": "4438c7172508303ce6bfd0e27797ab0d70f9f044cd252136582c678118f715d2",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "random-s29",
+      "candidate_sha256": "ba600984e376dc6402d838732eb44bd59bd5f54a3ad2206794cbc7b279b8724d",
+      "reproduced_pdf_sha256": "0233dd036a3bcd4641f83da60d59ec24fbf1097f772998a519bb76fd166fd37d",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "random-s43",
+      "candidate_sha256": "441269e94f835aa17024ee6160957e07d91dc28612553b870b4a19c518fc18ae",
+      "reproduced_pdf_sha256": "b33e66b71a4fc7343afa6b0bed5c6b9bab02bd1c1777d0817a05775caaadbb3c",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "E-s17",
+      "candidate_sha256": "e1ea2df23eea08c8811ab09db5ea64b4835c392064f7fc223cb7fe95c8e70d16",
+      "reproduced_pdf_sha256": "2634d15b85bb5b986e700404819d8c6adce65aa972a95584421fa1459a7da5d8",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "U-s17",
+      "candidate_sha256": "4e38cdf1641397ff2d0c0a583e636fa271928ff6a54b106fd7727e812ec9d2ab",
+      "reproduced_pdf_sha256": "bd5b828cf0d1a6c4ad1838f07e30a5094273f711ce997445df95d42933f3857d",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "X-s17",
+      "candidate_sha256": "fcce9322976eefa8d9a3a94e4e925c3c3ba08e87bbc60aa9683f9a23ab8d775b",
+      "reproduced_pdf_sha256": "de32e8119e5b9e789f5b66098eb75389fc61c11a8749554b3c5e1d9997938df7",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "E-s29",
+      "candidate_sha256": "931dab70a1e9eb7d39fca34868079cf4e8771885f1949820e391530808d21ff6",
+      "reproduced_pdf_sha256": "118b299861ea5119244159d4b651ce39391b63605ddff504f255dbe4f7a05cf1",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "U-s29",
+      "candidate_sha256": "bdfdc4be43c8036bab6a17cd1c1fea76bcc71a50a98d7097267f005dfe79b77f",
+      "reproduced_pdf_sha256": "12029444fabca31dc83327903f7b82bf3ac16c9f16cb7bf4416e59d0fbc116b7",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "X-s29",
+      "candidate_sha256": "a6286202a4f6d66c09f879b73cef991cfcfba6b07f47baa70fe2ed06f4af4220",
+      "reproduced_pdf_sha256": "c17b88aab1ce501650b2d76b2ab944a7f6bcf28f0fa00d0436bd2ac04965acec",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "E-s43",
+      "candidate_sha256": "86bd72795b570cd1dd94ab4fb0c438f6a93b9018485884d80b0b315c790b3f7c",
+      "reproduced_pdf_sha256": "90a35caff776478e0ca0ff500382a44f6dfd7dcc648ac8bb8933a68d1bd1874f",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "U-s43",
+      "candidate_sha256": "2645d4a594758d824df3db53c5e8fc1d292b3543af7039610e12c3f6f25d4ba3",
+      "reproduced_pdf_sha256": "ca106bbbfa9a4344f7018ccdb782cd3941495c476c3deb02622b8ae6c7c991b5",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    },
+    {
+      "candidate": "X-s43",
+      "candidate_sha256": "3bdee18031cb47dba6805d44b239d8fcc6b463f2a2514a1b51b21b34dbc85425",
+      "reproduced_pdf_sha256": "71fc51cbedc88a338ab391ca219bf92042c9c124774ebcf6c1cb1d0f515ca376",
+      "matches_hpc_pdf": true,
+      "mupdf_pages_matching_source_pixels": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "pages": 7
+    }
+  ]
+}

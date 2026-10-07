@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -N pdfi_gpu_alloc
+#PBS -q small_gpuq
+#PBS -l select=1:ncpus=1:ngpus=1:mem=2gb
+#PBS -l walltime=00:05:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script through PBS}"
+cd "${PBS_O_WORKDIR:?PBS working directory is required}"
+
+# Inspect assignment metadata only; do not create a CUDA context.
+python3.12 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+report = {
+    "gpu_environment": {
+        key: value for key, value in os.environ.items()
+        if key in {"CUDA_VISIBLE_DEVICES", "NVIDIA_VISIBLE_DEVICES", "PBS_GPUFILE"}
+    },
+    "cgroup_membership": Path("/proc/self/cgroup").read_text(),
+}
+gpu_file = os.environ.get("PBS_GPUFILE")
+if gpu_file:
+    report["gpu_file_contents"] = Path(gpu_file).read_text()
+for line in report["cgroup_membership"].splitlines():
+    _, controllers, group = line.split(":", 2)
+    if "devices" in controllers.split(","):
+        devices = Path("/sys/fs/cgroup/devices") / group.lstrip("/") / "devices.list"
+        report["allowed_devices"] = devices.read_text()
+print(json.dumps(report, indent=2))
+PY
+nvidia-smi --query-gpu=index,uuid,memory.total,memory.used --format=csv

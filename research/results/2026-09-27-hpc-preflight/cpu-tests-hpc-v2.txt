@@ -1,0 +1,13 @@
+test_bpda_has_real_byte_forward_and_identity_backward (test_torch_document.DocumentInputTests.test_bpda_has_real_byte_forward_and_identity_backward) ... ok
+test_constraints_protect_ink_and_its_margin (test_torch_document.DocumentInputTests.test_constraints_protect_ink_and_its_margin) ... ok
+test_geometry_rejects_implicit_resize (test_torch_document.DocumentInputTests.test_geometry_rejects_implicit_resize) ... ok
+test_packing_matches_reference_and_backpropagates (test_torch_document.DocumentInputTests.test_packing_matches_reference_and_backpropagates) ... ok
+test_short_answer_rejects_negated_substrings (test_torch_document.DocumentInputTests.test_short_answer_rejects_negated_substrings) ... ok
+test_cache_preserves_order_and_prompt_identity (test_evaluation_protocol.EvaluationProtocolTests.test_cache_preserves_order_and_prompt_identity) ... ok
+test_selection_uses_only_development_prompts_and_stable_ties (test_evaluation_protocol.EvaluationProtocolTests.test_selection_uses_only_development_prompts_and_stable_ties) ... ok
+test_task_constraints_and_reading_failures_are_not_refusals (test_evaluation_protocol.EvaluationProtocolTests.test_task_constraints_and_reading_failures_are_not_refusals) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.778s
+
+OK

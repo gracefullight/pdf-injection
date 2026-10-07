@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N pdfi_gpu_smoke
+#PBS -q small_gpuq
+#PBS -l select=1:ncpus=2:ngpus=1:mem=8gb
+#PBS -l walltime=00:05:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script through PBS}"
+cd "${PBS_O_WORKDIR:?PBS working directory is required}"
+export OMP_NUM_THREADS=2
+export MKL_NUM_THREADS=2
+
+# Prepare this environment with compatible prebuilt wheels before submitting.
+# No package installation or model download occurs in this job.
+exec .venv/bin/python -u gpu_smoke.py

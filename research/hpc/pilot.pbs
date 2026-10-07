@@ -1,0 +1,54 @@
+#!/bin/bash
+#PBS -N pdfi_textfree
+#PBS -q large_gpuq
+#PBS -l select=1:ncpus=4:ngpus=2:mem=64gb:Qlist=large_gpuq
+#PBS -l place=excl
+#PBS -l walltime=06:00:00
+#PBS -j oe
+
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script through PBS}"
+: "${PDFI_RENDERER_REPORT:?Set the passing renderer preflight report path at submission}"
+cd "${PBS_O_WORKDIR:?PBS working directory is required}"
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export TOKENIZERS_PARALLELISM=false
+export HF_HUB_OFFLINE=1
+export PDFI_EXPECTED_VISIBLE_GPUS=2
+if [[ -n "${PDFI_GPU_UUID:-}" ]]; then
+    .venv/bin/python -u gpu_binding.py --uuid "$PDFI_GPU_UUID" --host "${PDFI_GPU_HOST:?Set GPU host}"
+    export CUDA_VISIBLE_DEVICES="$PDFI_GPU_UUID"
+    export PDFI_EXPECTED_VISIBLE_GPUS=1
+fi
+export PDFI_PDFTOPPM="$PWD/.pdf-tools/bin/pdftoppm"
+PDFI_RUN="runs/pilot-${PBS_JOBID%%.*}"
+mkdir -p runs
+sha256sum torch_document.py vlm_preflight.py run_pilot.py evaluate_document.py \
+    document_artifacts.py pixel_notice_render.py crossover_document_perturbations.py \
+    specification3-prompts.json > "${PDFI_RUN}-code.sha256"
+.venv/bin/python -u gpu_smoke.py
+PDFI_READING_ARGS=()
+if [[ "${PDFI_ALLOW_BASELINE_READING_FAILURE:-0}" == 1 ]]; then
+    PDFI_READING_ARGS+=(--allow-baseline-reading-failure)
+fi
+if [[ "${PDFI_ALLOW_NONIMPROVING_PROBE:-0}" == 1 ]]; then
+    PDFI_READING_ARGS+=(--allow-nonimproving-probe)
+fi
+if [[ "${PDFI_RUN_PREFLIGHT:-0}" == 1 ]]; then
+    PDFI_PREFLIGHT_REPORT="${PDFI_RUN}-preflight/report.json"
+    .venv/bin/python -u vlm_preflight.py \
+        --model model --image inputs/document/page-2.png \
+        --prompts specification3-prompts.json --output "${PDFI_RUN}-preflight" \
+        "${PDFI_READING_ARGS[@]}"
+fi
+: "${PDFI_PREFLIGHT_REPORT:?Set the VLM report path or PDFI_RUN_PREFLIGHT=1}"
+.venv/bin/python -u run_pilot.py \
+    --model model --image inputs/document/page-2.png \
+    --prompts specification3-prompts.json --preflight "$PDFI_PREFLIGHT_REPORT" \
+    --renderer-preflight "$PDFI_RENDERER_REPORT" --output "$PDFI_RUN" \
+    --iterations 36 --seeds 17,29,43 "${PDFI_READING_ARGS[@]}"
+exec .venv/bin/python -u evaluate_document.py \
+    --model model --native inputs/document/Specification3.pdf \
+    --pages inputs/document --policy inputs/uts-assessment-integrity-notice.txt \
+    --prompts specification3-prompts.json --pilot "$PDFI_RUN" \
+    --output "${PDFI_RUN}-document"

@@ -1,0 +1,1447 @@
+{
+  "status": "completed_pending_manual_review_ocr_and_visual_checks",
+  "pilot_status": "page_pilot_finished_pending_manual_review_and_document_evaluation",
+  "document_status": "finished_pending_manual_review_ocr_and_visual_checks",
+  "page": {
+    "E-s17": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "E-s29": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "E-s43": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "U-s17": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "U-s29": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "U-s43": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "X-s17": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "X-s29": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "X-s43": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 2,
+          "RX": 4
+        },
+        "incomplete_tasks": 4,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "clean": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "random-s17": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "random-s29": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    },
+    "random-s43": {
+      "identity": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg95": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "jpeg85": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "resize75": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      },
+      "pdf-mupdf112": {
+        "task_count": 6,
+        "labels": {
+          "R0": 1,
+          "RX": 5
+        },
+        "incomplete_tasks": 5,
+        "utility_correct": 4,
+        "utility_count": 4
+      }
+    }
+  },
+  "document": {
+    "native-rendered-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "native-rendered-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "clean-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "clean-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "clean-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "clean-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s17-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "random-s17-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s17-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s17-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "incomplete_tasks": 3,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s29-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "random-s29-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s29-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s29-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "incomplete_tasks": 3,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s43-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "random-s43-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s43-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "random-s43-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "incomplete_tasks": 3,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s17-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "E-s17-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s17-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s17-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s17-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s17-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s17-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s17-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s17-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "X-s17-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s17-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s17-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s29-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s29-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s29-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s29-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s29-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s29-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s29-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s29-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s29-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s29-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s29-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s29-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s43-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "incomplete_tasks": 3,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "E-s43-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s43-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 3,
+        "RX": 3
+      },
+      "incomplete_tasks": 3,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "E-s43-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s43-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s43-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "U-s43-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "U-s43-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s43-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "X-s43-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s43-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "X-s43-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "blank-page-control-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "blank-page-control-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "blank-page-control-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "blank-page-control-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "readable-policy-control-single-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "readable-policy-control-single-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 4,
+      "utility_count": 4
+    },
+    "readable-policy-control-full-poppler": {
+      "task_count": 6,
+      "labels": {
+        "R0": 2,
+        "RX": 4
+      },
+      "incomplete_tasks": 4,
+      "utility_correct": 3,
+      "utility_count": 4
+    },
+    "readable-policy-control-full-pymupdf": {
+      "task_count": 6,
+      "labels": {
+        "R0": 1,
+        "RX": 5
+      },
+      "incomplete_tasks": 5,
+      "utility_correct": 3,
+      "utility_count": 4
+    }
+  },
+  "validation_errors": [],
+  "pixel_constraints": {
+    "candidates": 13,
+    "max_linf_bytes": 8,
+    "protected_changed_channels": 0
+  },
+  "page_conditions": 13,
+  "page_response_rows": 780,
+  "document_conditions": 62,
+  "document_response_rows": 620,
+  "document_unique_generations": 610,
+  "labels_are_provisional": true
+}
