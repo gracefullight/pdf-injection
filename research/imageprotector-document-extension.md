@@ -3,6 +3,13 @@
 작성일: 2026-09-09  
 작업명: **PSDS-PDF — Policy-Selective Document Steering under PDF Transformations**
 
+The primary reference is Shao et al. (ACL 2026),
+[ImageProtector](https://aclanthology.org/2026.acl-long.72/).
+STAB (Chang et al., AAAI 2026), presented in the Bo-work slides, is a supporting
+reference for transfer using surrogate models. Bibliographic details, an explanation
+of SAM, and differences from the current implementation are recorded in the
+[related work list](../docs/related-work.md#core-references-for-image-based-response-steering).
+
 ## 1. 결론
 
 ImageProtector를 그대로 PDF에 적용하는 것은 논문 기여가 약하다. 더 강한 방향은 다음 문제를 새로 정의하는 것이다.

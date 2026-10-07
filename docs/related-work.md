@@ -6,6 +6,122 @@ this project's own search found to be open. It exists because novelty claims are
 and hard to walk back once repeated — every claim below is tagged so a reader (or a future
 contributor) can tell a refereed finding from an unrefereed one at a glance.
 
+## Core references for image-based response steering
+
+Added and checked on 2026-09-27. The current surrogate-model research studies whether
+modifying a document image can steer a VLM's generated response. The user identified
+ImageProtector as the main reference. STAB is the main paper presented in
+`Transferable Backdoor Attacks-Code Models.pptx` (slides 1–13); slides 14–16 propose
+an adaptation to PDF malware detection. Those final slides are an experiment proposal,
+not PDF results reported by the STAB paper.
+
+### ImageProtector — primary research reference
+
+Shao, Z., Liu, H., Hu, Y., & Gong, N. Z. (2026). **Leave My Images Alone: Preventing
+Multi-Modal Large Language Models from Analyzing Images via Visual Prompt Injection.**
+In *Proceedings of the 64th Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers)*, pp. 1588–1604.
+[ACL Anthology](https://aclanthology.org/2026.acl-long.72/) ·
+[PDF](https://aclanthology.org/2026.acl-long.72.pdf) ·
+[DOI: 10.18653/v1/2026.acl-long.72](https://doi.org/10.18653/v1/2026.acl-long.72).
+
+- **Status:** published ACL 2026 long paper; title, authors, venue, pages and DOI
+  checked against ACL Anthology.
+- **Method:** optimizes bounded image perturbations to induce refusal responses,
+  using gradients and a set of anticipated questions. Its stated focus is open-weight
+  MLLMs.
+- **Relation to this repo:** the direct basis for optimizing document pixels against
+  a frozen local VLM. PDF rendering, content preservation, selective responses and
+  transfer to other models are additional questions in this repository. The paper's
+  results do not establish that this repo's PDFs transfer to commercial models.
+
+### STAB — main reference from the presentation
+
+Chang, S., Huang, H., Zhang, Y., Huang, Y., Xiao, F., & Zhang, L. Y. (2026).
+**Transferable Backdoor Attacks for Code Models via Sharpness-Aware Adversarial
+Perturbation.** *Proceedings of the AAAI Conference on Artificial Intelligence,
+40*(1), 57–65.
+[AAAI proceedings](https://ojs.aaai.org/index.php/AAAI/article/view/36964) ·
+[DOI: 10.1609/aaai.v40i1.36964](https://doi.org/10.1609/aaai.v40i1.36964) ·
+[arXiv:2602.11213](https://arxiv.org/abs/2602.11213).
+
+- **Status:** published AAAI 2026 paper; bibliographic details checked against the
+  publisher and the authors' arXiv record.
+- **Method:** trains a surrogate with SAM, then uses Gumbel-Softmax to optimize
+  identifier-based triggers for code-model backdoors. It evaluates transfer across
+  surrogate/victim datasets and resistance to defenses.
+- **Relation to this repo:** a methodological reference for surrogate-based
+  transfer. STAB poisons training data; this repo's image experiments modify inputs
+  at inference time. Its code-model results are not evidence of PDF/VLM transfer.
+- **Presentation extension:** the PDF proposal replaces a non-differentiable
+  detector with an MLP and searches over structural/metadata edits. This differs
+  from the repo's frozen Qwen model and pixel optimization.
+
+### Supporting references for methods and baseline named in the presentation
+
+The slides name these methods but do not provide a complete bibliography. The
+following records identify their source papers; this is a selected reading list.
+
+| Method | Reference and checked source | Why it is relevant |
+|---|---|---|
+| SAM | Foret, P., Kleiner, A., Mobahi, H., & Neyshabur, B. **Sharpness-Aware Minimization for Efficiently Improving Generalization.** [arXiv:2010.01412](https://arxiv.org/abs/2010.01412), first posted 2020, revised 2021. | Explains the surrogate-training procedure used by STAB. |
+| Gumbel-Softmax | Jang, E., Gu, S., & Poole, B. **Categorical Reparameterization with Gumbel-Softmax.** [arXiv:1611.01144](https://arxiv.org/abs/1611.01144), first posted 2016, revised 2017. | Makes discrete choices amenable to gradient optimization; used for STAB trigger tokens and proposed PDF edit choices. |
+| AFRAIDOOR | Yang, Z., Xu, B., Zhang, J. M., Kang, H. J., Shi, J., He, J., & Lo, D. (2023). **Stealthy Backdoor Attack for Code Models.** [arXiv:2301.02496](https://arxiv.org/abs/2301.02496). | Adaptive code-trigger baseline compared with STAB. This entry identifies the arXiv version; journal publication status was not checked. |
+
+### What SAM means here
+
+SAM stands for **Sharpness-Aware Minimization**. During model training, it seeks
+weights whose nearby values also have low loss. It approximately finds a small
+weight perturbation that increases loss, then updates the original weights using
+the gradient evaluated at that perturbed point. This favors a broad low-loss region
+over a narrow minimum. See the [SAM paper](https://arxiv.org/abs/2010.01412).
+
+STAB uses this training procedure to improve transfer in its code-backdoor setting.
+That is a motivation to investigate, not a guarantee of transfer to another VLM.
+The current [`document_refusal_search.py`](../research/document_refusal_search.py)
+loads and freezes the VLM, then optimizes image pixels. It implements neither SAM
+training nor Gumbel-Softmax. Applying SAM would require a separate model-training
+experiment.
+
+Repository context:
+[`ImageProtector document extension`](../research/imageprotector-document-extension.md) ·
+[`surrogate pilot results`](../research/results/2026-09-13-surrogate-factorial/README.md).
+
+## Additional close references as of 2026-09-27
+
+A targeted search found relevant work beyond ImageProtector and STAB. This is not
+a systematic review or evidence that all related papers have been found. The
+comparison below separates image-level response control, model transfer, and
+refusal through a safety filter. Closeness to this repository is our assessment.
+
+| Work | Date / checked status | Connection and distinction |
+|---|---|---|
+| Bailey, Ong, Russell & Emmons, **Image Hijacks: Adversarial Images can Control Generative Models at Runtime** | ICML 2024, PMLR 235:2443–2455; [publisher record](https://proceedings.mlr.press/v235/bailey24a.html). Earlier preprint: 2023. | Direct precedent for controlling generated responses through optimized images at inference time. Introduces behaviour matching and prompt matching. Its objective is broader than protective refusal, and results depend on the attack and image constraint. |
+| Ding, Xia, Kong & Jiang, **Covert Visual Prompt Injection against Commercial Multimodal Large Language Models** (CoTTA) | [arXiv:2603.29418v2](https://arxiv.org/abs/2603.29418v2), 2026-08-11; first posted 2026-03-31 under the title *Adversarial Prompt Injection Attack on Multimodal Large Language Models*. Preprint; venue not verified. | Particularly close to the transfer problem: combines a bounded text overlay with image perturbations and visual/textual feature alignment to steer commercial MLLM outputs. The overlay means it is not a text-free perturbation baseline. |
+| Chen, Tsai, Evtimov, Chaudhuri, Popa, Wagner & Zharmagambetov, **Repeat-After-Me: Black-Box Adaptive Visual Prompt Injection** | [arXiv:2609.04533v2](https://arxiv.org/abs/2609.04533v2), 2026-09-15; first posted 2026-09-03. Preprint; also listed by [Meta Research](https://ai.meta.com/research/publications/repeat-after-me-black-box-adaptive-visual-prompt-injection/). | Black-box response steering using rendered response prefixes and adaptive search. Relevant to visual text controls and transfer evaluation; not an imperceptible, text-free pixel method. Its negative gradient-transfer baselines are relevant to our current bottleneck. |
+| Shi et al., **The Boy Who Cried Wolf: Adversarial Misclassification of Safe Inputs as Unsafe in Multimodal Guardrails** | [arXiv:2608.01373](https://arxiv.org/abs/2608.01373), 2026-08-02. The author record states acceptance at KDD 2026; proceedings metadata not independently checked. | Perturbs safe images to induce rejection by multimodal guard models. Close to refusal induction, but targets a safety classifier rather than the document-reading generator's response. |
+| Nasery, Kumar, Hsieh & Oh, **MIRAGE: Protecting against Malicious Image Editing via False Moderation** | [arXiv:2606.26199](https://arxiv.org/abs/2606.26199), first posted 2026-06-24. Preprint; venue not verified. | Protects images by causing commercial editing systems' moderation to reject them, using open-source embedding/moderation ensembles. Relevant to protective refusal and transfer, but studies image editing and moderation rather than document question answering. |
+
+ImageProtector remains the closest starting point for the protective-refusal
+objective. CoTTA and Image Hijacks are more directly related than STAB to steering
+a VLM through image inputs. STAB remains a reference for a possible surrogate
+training method, not the main prior work for visual response control.
+
+In Section 4.2, [Repeat-After-Me](https://arxiv.org/html/2609.04533v2) reports zero
+attack success for its TransferEns baseline using Qwen3-VL-4B-Instruct,
+Qwen2.5-VL-3B-Instruct and InternVL3.5-4B. Those tests target exact information
+disclosure and tool-call outputs; they do not establish that semantic refusal
+transfer is impossible. They do show why adding more surrogates alone cannot be
+assumed to solve our transfer problem. Its rendered-text method must be evaluated
+separately from text-free perturbations.
+
+The search covered visual prompt injection, image protection through refusal,
+commercial-model transfer, and document/PDF protection. Metadata and abstracts were
+checked at author/publisher sources; CoTTA and Repeat-After-Me method sections were
+also inspected. No full reproduction or systematic novelty audit was performed.
+PDF rendering robustness, content preservation and selective policy responses are
+questions to test, not established novelty claims.
+
 ## 1. How to read this page
 
 Two independent axes matter for every citation here:
