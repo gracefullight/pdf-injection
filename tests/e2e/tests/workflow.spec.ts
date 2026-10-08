@@ -56,6 +56,23 @@ test("full workflow: white_text mode, generate, validate, download, delete", asy
   // evidence for the result file.
   expect(["PASS", "PASS_WITH_WARNINGS"]).toContain(overall);
 
+  // Human View renders PDF.js's text layer over the canvas. The injected bottom-margin text is
+  // therefore selectable in the preview just like it is in a desktop PDF viewer.
+  await page.getByTestId("tab-human-view").click();
+  const goToTargetPage = page.getByTestId("human-view-go-to-target-page");
+  if ((await goToTargetPage.count()) > 0) await goToTargetPage.click();
+  const outputTextLayer = page.getByTestId("human-view-output-canvas").locator(".textLayer");
+  await expect(outputTextLayer).toBeVisible();
+  const selectedPreviewText = await outputTextLayer.evaluate((layer) => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(layer);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    return selection?.toString() ?? "";
+  });
+  expect(selectedPreviewText).toContain(DOD_INSTRUCTION);
+
   // Extracted Text tab: white_text mode must show the instruction was found
   // (DoD item 10). ExtractedTextTab defaults its selected page to the target
   // page, so the match-status block for the target page is visible immediately.

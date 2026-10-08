@@ -253,6 +253,7 @@ export function UploadScreen({
                 document={pdfDocument}
                 pageNumber={1}
                 scale={0.5}
+                interactive={false}
                 data-testid="upload-first-page-preview"
               />
               {/* Discoverability affordance — the thumbnail alone doesn't read as clickable. */}

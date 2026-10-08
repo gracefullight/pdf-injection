@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { type PDFDocumentProxy, renderPageToCanvas } from "@/lib/pdfjs";
+import { type PDFDocumentProxy, type PDFPageProxy, renderPageToCanvas } from "@/lib/pdfjs";
 
 export interface PdfPageCanvasProps {
   document: PDFDocumentProxy | null;
   /** 1-based page number, matching PDF.js's `getPage()` convention. */
   pageNumber: number;
   scale?: number;
+  /** Enables selectable text and clickable PDF annotations. Disable inside button thumbnails. */
+  interactive?: boolean;
   className?: string;
   "data-testid"?: string;
+}
+
+interface RenderedInteractivePdfPage {
+  element: HTMLDivElement;
+  cleanup: () => void;
 }
 
 /**
@@ -35,11 +42,75 @@ export async function renderPdfPage(
   return renderPageToCanvas(page, options);
 }
 
+async function renderInteractivePdfPage(
+  document: PDFDocumentProxy,
+  page: PDFPageProxy,
+  pageNumber: number,
+  options: { scale: number; whiteBackground: boolean },
+): Promise<RenderedInteractivePdfPage> {
+  const { AnnotationLayerBuilder, SimpleLinkService, TextLayerBuilder } = await import(
+    "pdfjs-dist/web/pdf_viewer.mjs"
+  );
+  const viewport = page.getViewport({ scale: options.scale });
+  const surface = window.document.createElement("div");
+  surface.className = "pdf-page-surface";
+  surface.setAttribute("role", "img");
+  surface.setAttribute("aria-label", `Page ${pageNumber} preview`);
+  surface.style.width = `${viewport.width}px`;
+  surface.style.maxWidth = "100%";
+  surface.style.aspectRatio = `${viewport.width} / ${viewport.height}`;
+  surface.style.setProperty("--scale-factor", "1");
+
+  const canvas = await renderPageToCanvas(page, options);
+  canvas.setAttribute("aria-hidden", "true");
+  surface.append(canvas);
+
+  const textLayer = new TextLayerBuilder({
+    pdfPage: page,
+    enablePermissions: true,
+  });
+  surface.append(textLayer.div);
+
+  const linkService = new SimpleLinkService();
+  linkService.setDocument(document);
+  const annotationLayer = new AnnotationLayerBuilder({
+    pdfPage: page,
+    linkService,
+    annotationStorage: document.annotationStorage,
+    renderForms: false,
+    onAppend: (layer: HTMLDivElement) => surface.append(layer),
+  });
+
+  await Promise.all([
+    textLayer.render(viewport, { includeMarkedContent: true }),
+    annotationLayer.render(viewport, {}),
+  ]);
+
+  const updateResponsiveScale = () => {
+    const displayedWidth = surface.getBoundingClientRect().width;
+    if (displayedWidth > 0) {
+      surface.style.setProperty("--scale-factor", String(displayedWidth / viewport.width));
+    }
+  };
+  const resizeObserver = new ResizeObserver(updateResponsiveScale);
+  resizeObserver.observe(surface);
+
+  return {
+    element: surface,
+    cleanup: () => {
+      resizeObserver.disconnect();
+      textLayer.cancel();
+      annotationLayer.cancel();
+    },
+  };
+}
+
 /** Renders a single PDF.js page into a `<canvas>`, re-rendering when the page/scale changes. */
 export function PdfPageCanvas({
   document,
   pageNumber,
   scale = 1.2,
+  interactive = true,
   className,
   ...rest
 }: PdfPageCanvasProps) {
@@ -48,25 +119,44 @@ export function PdfPageCanvas({
 
   useEffect(() => {
     let cancelled = false;
+    let cleanupRenderedPage: (() => void) | undefined;
     setError(null);
 
     if (!document) return;
 
-    renderPdfPage(document, pageNumber, { scale, whiteBackground: true })
-      .then((canvas) => {
-        if (cancelled || !containerRef.current) return;
-        containerRef.current.replaceChildren(canvas);
-        canvas.setAttribute("role", "img");
-        canvas.setAttribute("aria-label", `Page ${pageNumber} preview`);
+    const renderPromise = interactive
+      ? document.getPage(pageNumber).then((page) =>
+          renderInteractivePdfPage(document, page, pageNumber, {
+            scale,
+            whiteBackground: true,
+          }),
+        )
+      : renderPdfPage(document, pageNumber, { scale, whiteBackground: true }).then((canvas) => ({
+          element: canvas,
+          cleanup: () => undefined,
+        }));
+
+    renderPromise
+      .then(({ element, cleanup }) => {
+        if (cancelled || !containerRef.current) {
+          cleanup();
+          return;
+        }
+        cleanupRenderedPage = cleanup;
+        containerRef.current.replaceChildren(element);
+        if (element instanceof HTMLCanvasElement) {
+          element.setAttribute("role", "img");
+          element.setAttribute("aria-label", `Page ${pageNumber} preview`);
+        }
         // Fit-to-width via CSS (keeps the backing pixel resolution from `scale` for crispness,
         // just scales the display size down to the container) — the page is rendered at a fixed
         // intrinsic pixel size, but every container this component is used in (Human View panes,
         // the Upload thumbnail) is narrower than a full 612pt+ page at any reasonable scale, so
         // without this the right portion of every page was clipped instead of visible
         // side-by-side (r11 review H-03, M-01).
-        canvas.style.display = "block";
-        canvas.style.width = "100%";
-        canvas.style.height = "auto";
+        element.style.display = "block";
+        element.style.width = "100%";
+        element.style.height = "auto";
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -75,8 +165,9 @@ export function PdfPageCanvas({
 
     return () => {
       cancelled = true;
+      cleanupRenderedPage?.();
     };
-  }, [document, pageNumber, scale]);
+  }, [document, interactive, pageNumber, scale]);
 
   if (error) {
     return (
