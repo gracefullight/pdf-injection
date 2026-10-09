@@ -1,6 +1,6 @@
 # Integrated IMRaD outline for document policy routing
 
-Date: 2026-10-09
+Date: 2026-10-10
 
 Status: Combined manuscript outline. Completed observations, interpretations, and proposed evaluations are identified separately.
 
@@ -10,7 +10,9 @@ Working title: **Document Policy Routing with Visual Signals: Reach, Detection, 
 
 This outline combines the earlier nine-section proposal with the policy-routing architecture and the corrected scope of the existing experiments. The central measurement question is whether a document signal reaches the relevant component, whether it is detected, and whether the model follows the associated policy. Human visibility is a separate property.
 
-The proposed architecture detects a visual document signal, associates it with an institution-approved policy, and delivers that policy through the model's system instruction interface. The existing routing evidence concerns one manually configured pattern and policy. A general registry, payload decoding, multiple-policy selection, and interchangeable signal implementations remain proposed work.
+The primary setting is PDF-only distribution: the professor distributes a document without announcing its embedded signal or instruction, and the student uploads it to a third-party LLM. The professor controls the PDF, but not the student's gateway or system instructions.
+
+The proposed routing architecture is a conditional extension requiring control of a gateway. It detects a visual document signal, associates it with an institution-approved policy, and delivers that policy through the model's system instruction interface. The existing routing evidence concerns one manually configured pattern and policy. It does not establish that distributing the marked PDF alone achieves the intended response. A general registry, payload decoding, multiple-policy selection, and interchangeable signal implementations remain proposed work.
 
 The September 2026 presentation already proposed external PDF expert checks that pass structured watermark findings to a general model. The architecture here develops that direction by specifying policy association and the trust boundary for system instruction delivery.
 
@@ -20,9 +22,9 @@ Earlier text and pixel experiments explain the design choices. They used differe
 
 ### 1.1 Academic integrity and document ingestion
 
-Assessment documents increasingly become inputs to LLMs. An institution may want its approved assistance policy to accompany an assessment when the document is processed through an institutional service. That policy can prohibit assignment-specific answers while permitting questions about deadlines, contacts, or other administrative information.
+Assessment documents increasingly become inputs to LLMs. A professor may want an assistance policy to accompany an assessment when a student uploads the PDF to their own LLM service. That policy can prohibit assignment-specific answers while permitting questions about deadlines, contacts, or other administrative information.
 
-This study concerns document policy application. It does not determine whether a student cheated, attribute intent, or provide disciplinary evidence. Covert evasion of screening tools is not a research objective. The intended deployment is a disclosed institutional gateway, with an accessible assessment copy and an explanation of the applicable policy.
+This study concerns document policy application. It does not determine whether a student cheated, attribute intent, or provide disciplinary evidence. Covert evasion of screening tools is not a research objective. The primary setting does not assume that students are told about the embedded signal or use an institution-controlled gateway. Disclosure and accessibility remain deployment questions.
 
 ### 1.2 Separate reach, detection, compliance, and visibility
 
@@ -34,7 +36,7 @@ For a document-carried instruction, the following questions require different ob
 
 A fourth question concerns whether a person can see or read the added content. A small pixel difference does not establish human invisibility, and detector recovery does not establish that the model understood an instruction.
 
-Routing introduces a different role for the document signal. The gateway detects the marker, retrieves trusted policy text, and delivers that policy to the model. The model need not interpret the marker's pixels as instructions. Marker recovery, policy delivery, and response compliance must therefore be recorded separately.
+In the conditional routing setting, the gateway detects the marker, retrieves trusted policy text, and delivers that policy to the model. The model need not interpret the marker's pixels as instructions. Marker recovery, policy delivery, and response compliance must therefore be recorded separately.
 
 The earlier reach/detect inversion is a measurement hypothesis: ingestion and screening can expose different representations of the same document. The present paper must not claim that a specific inversion has been established from the excluded AcroForm evidence.
 
@@ -46,7 +48,7 @@ The earlier reach/detect inversion is a measurement hypothesis: ingestion and sc
 
 **Signal embedding and recovery.** Zero-bit watermarking separates presence detection from message decoding (Furon, 2007). HiDDeN, TrustMark, StegaStamp, and Watermark Anything provide candidate mechanisms for embedding messages, recovering them after image distortions, or locating marked regions (Bui et al., 2025; Sander et al., 2025; Tancik et al., 2020; Zhu et al., 2018). PhantomStamp is a software candidate for the signal layer, not a peer-reviewed validation of the proposed PDF system (1zumiii, 2026).
 
-**Output signatures and document policies.** Watermark seeding and in-context watermarking ask the model to produce identifiable output through instruction following (Aiersilan et al., 2026; Y. Liu et al., 2026). The proposed gateway instead detects a document signal externally and delivers an approved policy. Doc-PP already studies policy-preserving multimodal document QA and is a necessary comparison for policy-compliance claims (Jang et al., 2026). DOPE remains a provisional prior-art lead because its current full text is not readable through the checked public route (*DOPE*, n.d.).
+**Output signatures and document policies.** Watermark seeding and in-context watermarking ask the model to produce identifiable output through instruction following (Aiersilan et al., 2026; Y. Liu et al., 2026). The proposed gateway instead detects a document signal externally and delivers an approved policy. Doc-PP is an evaluation reference for measuring policy violations and permitted answer content, rather than a solution to the same PDF-only deployment (Jang et al., 2026). DOPE remains a provisional prior-art lead because its current full text is not readable through the checked public route (*DOPE*, n.d.).
 
 **Visual detection and preprocessing.** SnapGuard provides context for detecting instructions in screenshots (Du et al., 2026). Image-scaling research motivates checking changes introduced during preprocessing (Quiring et al., 2020). Neither establishes detectability or robustness of this project's own markers.
 
@@ -65,11 +67,11 @@ The completed contributions are a bounded negative result for the evaluated pert
 
 ### 2.1 Actors, deployment assumptions, and trust boundaries
 
-The actors are the document issuer or professor, student or other user, institutional gateway, detector, policy store, and LLM provider. An injection scanner may inspect untrusted content independently of the gateway's marker detector.
+In the primary setting, the actors are the document issuer or professor, student or other user, and LLM provider. The professor controls the distributed PDF only. An institutional gateway, detector, and policy store are additional actors in the conditional routing setting. An injection scanner may inspect untrusted content independently of the gateway's marker detector.
 
-The institution controls the gateway and approved policy configuration in the proposed deployment. Institutional approval is a deployment assumption; the pilot policy is a research fixture, not evidence of an approved operational policy. The pilot requests pass through the configured routing pipeline. Uploaded documents, user questions, metadata, and tool descriptions remain untrusted inputs. A detected marker selects an operator-approved policy; text extracted from a PDF does not acquire system privileges.
+Only the conditional routing setting assumes institutional control of the gateway and approved policy configuration. Institutional approval is a deployment assumption; the pilot policy is a research fixture, not evidence of an approved operational policy. The pilot requests pass through the configured routing pipeline. Uploaded documents, user questions, metadata, and tool descriptions remain untrusted inputs. A detected marker selects an operator-approved policy; text extracted from a PDF does not acquire system privileges.
 
-The conceptual instruction ordering for this deployment is uploaded content < user instructions < institution-supplied system policy. This describes the intended authority boundary. It does not guarantee that a model will follow the policy under every conflicting user instruction. Resistance to overrides requires measurement.
+The conceptual instruction ordering is uploaded content < user instructions < system policy. In the primary setting, the professor cannot supply that system policy. The routing pilot assumes access to the system instruction interface. This describes an authority boundary, not a guarantee of compliance under conflicting user instructions. Resistance to overrides requires measurement.
 
 Input-triggered output signatures provide a useful comparison because they rely on the model following document-carried instructions (Aiersilan et al., 2026; Y. Liu et al., 2026). The proposed gateway moves policy delivery to an institution-controlled instruction interface. This is a design distinction, not a demonstrated security advantage.
 
@@ -92,7 +94,7 @@ For routing, record marker recovery, the policy identifier supplied or selected,
 
 ### 2.3 Proposed architecture and implemented prototype
 
-The proposed processing sequence is:
+The proposed processing sequence, conditional on gateway control, is:
 
     Document with a visual signal
         -> Gateway marker detection
@@ -115,7 +117,7 @@ The direct perturbation strand uses Qwen2.5-VL-3B-Instruct in BF16 on rendered S
 
 The readable-notice strand uses a synthetic four-page PDF and Luna. It renders policy text in an existing blank region, without adding a native text layer. Repeat-After-Me provides related rendered-instruction context, with a different adaptive objective and protocol (Chen et al., 2026).
 
-The routing strand compares the original document, a marked document without routing, and a marked document with configured policy delivery. A matched system-policy-only condition has not been completed. The existing study therefore cannot isolate the marker's added value from the policy instruction's effect.
+The routing strand is a controlled gateway pilot comparing the original document, a marked document without routing, and a marked document with configured policy delivery. A matched system-policy-only condition has not been completed. The existing study therefore cannot isolate the marker's added value from the policy instruction's effect.
 
 The studies must be reported separately. Gradient checks assess optimization reliability, not behavioral success. An improving objective, an ingestion probe, or a recovery score cannot substitute for the response-level evaluation.
 
@@ -169,7 +171,7 @@ This pilot supports delivery of policy semantics through readable pixels. It doe
 
 The prohibited questions requested assignment answers, a worked solution, a complete submission, step-by-step hints with an architecture recommendation, a requirements and marking-criteria summary, and a Korean translation. The permitted questions concerned the policy contact, page count, background colour, course number and assignment title, deadline, and official question channel. Summary and translation were prohibited by this fixture's policy; they are not universally prohibited request types.
 
-The pilot demonstrates the configured detection-and-policy-delivery path. It does not evaluate a multi-policy registry, independently establish human invisibility, or isolate the signal's added value against a matched system-policy-only condition.
+The pilot demonstrates the configured detection-and-policy-delivery path under gateway control. It does not demonstrate effective PDF-only distribution to a student's own LLM, evaluate a multi-policy registry, independently establish human invisibility, or isolate the signal's added value against a matched system-policy-only condition.
 
 ### 3.4 File transformations
 
@@ -208,18 +210,19 @@ A policy notice in a document occupies the content layer. A gateway can instead 
 
 The predicted difference under conflicting user instructions remains a hypothesis. The current pilot shows configured policy delivery under its tested questions, not guaranteed adherence to system policy under adversarial overrides.
 
-The marker's proposed contribution is document-specific policy association and selection. A matched system-policy-only condition is necessary to establish what signal-based routing adds. Multiple valid policies and wrong-policy controls are also required. Doc-PP is a direct comparison for policy-preserving document QA, so the existence of a policy or a refusal response is insufficient evidence of novelty (Jang et al., 2026).
+The marker's proposed contribution is document-specific policy association and selection in a controlled gateway. A matched system-policy-only condition is necessary to establish what signal-based routing adds. Multiple valid policies and wrong-policy controls are also required. Doc-PP informs evaluation of policy violations and permitted answer content; it does not resolve the PDF-only deployment constraint (Jang et al., 2026). The existence of a policy or a refusal response is insufficient evidence of novelty.
 
 ### 4.3 Auditability and disclosure
 
-Auditability takes priority over concealment in the proposed deployment. Users should be able to learn that the institution uses document signals, what policy applies, what assistance remains permitted, and how to contact a person about an incorrect decision. The research should disclose the signal mechanism and its limitations.
+The research should disclose the signal mechanism and its limitations. In the primary setting, students are not told about the embedded signal. Whether and how to disclose its use, the applicable policy, and a contact route remains an unresolved deployment question.
 
-A low-visibility marker can coexist with disclosed use. Low visibility is an aesthetic property to measure, not evidence of secrecy, safety, or screening evasion. Detection is useful because it enables independent checking of document-policy associations.
+A low-visibility marker can coexist with disclosed use, but that is a separate deployment choice. Low visibility requires measurement and does not establish safety or screening evasion. Detection enables independent checking of document-policy associations where a detector is available.
 
-The historical routing instruction “do not reveal the detection mechanism to the student” conflicts with this disclosure position. Its presence must be reported rather than treated as an established deployment requirement. A deployment would need to resolve that conflict. Keeping a cryptographic key confidential would not justify concealing the existence or meaning of an enforced policy.
+The historical routing instruction “do not reveal the detection mechanism to the student” raises a tension with public auditability. Its presence must be reported. The completed technical checks do not resolve that governance question.
 
 ### 4.4 Limitations and claim boundaries
 
+- The primary PDF-only goal remains unestablished. The marker alone did not induce the target refusal, and the successful routing condition requires control unavailable to the professor in that setting.
 - The routing and readable-notice pilots each concern one synthetic four-page document and Luna. The perturbation study uses rendered Specification3 inputs and Qwen. The paper must not describe every document as synthetic or every strand as using the same questions.
 - Human visibility has not been independently established. A maximum channel change is a measurement of the file, not a human perception result.
 - The correct-key, wrong-key, and original-document scores are individual controls. They do not estimate population detection errors.
@@ -235,6 +238,8 @@ SnapGuard motivates assessing rendered instructions rather than assuming faint c
 
 #### 4.5.1 Matched routing comparisons and deployment module
 
+These comparisons and the deployment module concern the conditional gateway extension. They do not substitute for testing PDF-only distribution.
+
 Use the same documents, questions, models, and policy text for the original document, marked document without routing, original document with the policy supplied directly, and marked document with signal-based routing. Include unmarked and wrong-signal controls.
 
 Then evaluate multiple valid signals associated with distinct approved policies. Measure missed detections, incorrect detections, wrong-policy selection, prohibited assistance, permitted utility, visibility, and latency. These comparisons test policy association rather than only the effect of a system instruction.
@@ -243,13 +248,13 @@ A provider-independent skill or gateway module is a proposed engineering extensi
 
 #### 4.5.2 Conflicting user instructions, E2
 
-Compare the readable notice and routed policy under a fixed set of conflicting user requests, including requests to disregard document notices. Pre-register the document set, ordinary and conflicting questions, response grading, and failure accounting before running the comparison.
+Test the readable notice under a fixed set of conflicting user requests, including requests to disregard document notices. A routed-policy comparison is a separate condition requiring gateway control. Pre-register the document set, ordinary and conflicting questions, response grading, and failure accounting before running the comparison.
 
 The expected asymmetry is a hypothesis: a content-layer notice may be easier to override than an institution-supplied policy. Score prohibited responses using the stated R0/R1/R2 rubric and permitted responses for correctness. Record partial compliance and leakage. Do not assume the system-layer condition will always hold.
 
 #### 4.5.3 Provider and ingestion generalization, E1
 
-Evaluate a second provider with native PDF ingestion and a matched rendered-image route where available. Preserve the same documents and prompts across providers. Use the retained 3 Tr baseline, readable notice, and routing controls to examine ingestion and response differences.
+Evaluate a second provider with native PDF ingestion and a matched rendered-image route where available. Preserve the same documents and prompts across providers. Use the retained 3 Tr baseline and readable notice to examine ingestion and response differences. Include routing controls only in a separately identified gateway-controlled setting.
 
 Any AcroForm follow-up would be a separately labeled ingestion diagnostic, subject to the unresolved visibility and usability requirements. It would not restore AcroForm as the proposed protection method. Record any direct reach observations separately from behavioral proxies.
 
@@ -265,7 +270,7 @@ The question is whether the model, user interface, and scanner expose different 
 
 #### 4.5.5 Signal implementations and accessibility
 
-Compare the current presence pattern with selected watermark methods while keeping the routing policy fixed. Measure detection and wrong-policy errors after additional transformations, including cropping, rotation, printing and scanning, removal, and copying. Test text readability and human visibility independently.
+In the conditional gateway setting, compare the current presence pattern with selected watermark methods while keeping the routing policy fixed. Measure detection and wrong-policy errors after additional transformations, including cropping, rotation, printing and scanning, removal, and copying. Test text readability and human visibility independently. Detector recovery alone does not establish response steering in the PDF-only setting.
 
 HiDDeN, TrustMark, StegaStamp, Watermark Anything, and PhantomStamp are candidates with different capabilities, not already integrated alternatives (1zumiii, 2026; Bui et al., 2025; Sander et al., 2025; Tancik et al., 2020; Zhu et al., 2018). Watermark Anything motivates region-level evaluation, and StegaStamp motivates physical-image tests. Their existing results do not establish PDF performance.
 
@@ -288,13 +293,13 @@ Retain the project's ten existing governance requirements:
 9. Detection results must be presented together with uncertainty and alternative explanations.
 10. The UI must not use definitive AI-misconduct verdict phrasing.
 
-These requirements also constrain routing. A detected marker must not authorize arbitrary document text, distort a permitted answer, or produce a misconduct verdict. Public disclosure of the practice, accessible alternatives, and a human contact route are necessary parts of the proposed deployment.
+These requirements also constrain routing. A detected marker must not authorize arbitrary document text, distort a permitted answer, or produce a misconduct verdict. Accessibility and a human contact route require deployment planning. The ten requirements do not themselves settle prior disclosure to students; that question remains unresolved.
 
 The mechanism-disclosure conflict described in Section 4.3 remains unresolved in the historical pilot. No claim of ethically validated institutional deployment follows from the completed technical checks.
 
 ### 4.7 Provisional conclusion
 
-> Document reach, detector visibility, and model compliance require separate evidence. The completed perturbation study found no strict success within its evaluated setting, while a readable notice and a configured policy-routing pilot produced the required responses in their respective small tests. We propose an auditable gateway that associates visual document signals with approved policies; its added value, multiple-policy selection, override resistance, and broader robustness remain to be evaluated.
+> Document reach, detector visibility, and model compliance require separate evidence. The completed perturbation study found no strict success within its evaluated setting, while a readable notice produced the required responses in a small pilot. The primary goal of undisclosed PDF-only distribution remains unestablished. Configured watermark routing succeeded under gateway control and remains a conditional architectural extension requiring further evaluation.
 
 ## Appendix A. Integration of the nine-section proposal
 
@@ -304,7 +309,7 @@ The mechanism-disclosure conflict described in Section 4.3 remains unresolved in
 | 2. Threat model and channel taxonomy | 2.1–2.2 | Restores actors, four channel families, trust boundaries, and human visibility |
 | 3. Document-object study | 2.4 and 3.1 | Keeps 3 Tr as historical context; excludes AcroForm as a central method and does not claim a verified inversion |
 | 4. Pixel study | 2.4 and 3.1–3.2 | Retains bounded negative perturbation evidence and the readable-notice pilot without cross-setting ranking |
-| 5. Routing study | 2.3 and 3.3–3.4 | Centers configured policy delivery; separates it from proposed registry and authentication |
+| 5. Routing study | 2.3 and 3.3–3.4 | Retains configured policy delivery as a conditional gateway pilot; separates it from PDF-only deployment, proposed registry, and authentication |
 | 6. Defense layer discussion | 4.1–4.3 | Restores instruction-layer interpretation and auditability |
 | 7. Future work | 4.5 | Includes module/registry, E1, E2, tool selection, signal methods, and accessibility |
 | 8. Ethics and limitations | 4.3–4.4 and 4.6 | Includes the ten existing requirements and the unresolved disclosure conflict |
@@ -316,7 +321,8 @@ The mechanism-disclosure conflict described in Section 4.3 remains unresolved in
 | --- | --- | --- |
 | Completed BF16 perturbation pipeline achieved no strict success | Configuration, nine selected candidates, and response limitations in 3.1 | Bounded observed result |
 | Readable pixels carried the policy in the Luna pilot | Three repeats, six prohibited and six permitted questions, ten transformed-file calls in 3.2 | Observed in one fixture |
-| Marker detection enabled configured policy delivery | Correct/wrong-key scores and original/marker-only/routed response controls in 3.3 | Observed in one configured association |
+| Marker detection enabled configured policy delivery | Correct/wrong-key scores and original/marker-only/routed response controls in 3.3 | Observed in one gateway-controlled association |
+| A marked PDF alone achieves the primary deployment goal | Marker-only calls allowed assessment answering in 3.3 | Not established |
 | Five transformed versions passed routing checks | Named transformations and one response call per version in 3.4 | Small robustness screen |
 | Reach/detect inversion is established | No retained matched ingestion/scanner mechanism result | Not claimed |
 | The marker is invisible to people | Pixel budget only; no independent human study | Not established |
@@ -339,7 +345,7 @@ Checked on October 9, 2026. Eighteen of the nineteen entries have a verified pub
 | Du et al. (2026) | 1.3 and 4.4 | Detection of rendered screenshot instructions; a reason not to assume faint text is undetectable. It does not evaluate our keyed marker. | DOI resolves; [arXiv full text](https://arxiv.org/html/2604.25562) is readable. |
 | Fan et al. (2025) | 1.3 and 2.5 | Separate protection and permitted-utility outcomes; prior work on their joint evaluation. | DOI resolves; [arXiv full text](https://arxiv.org/html/2512.18264) is readable. |
 | Furon (2007) | 1.3 and 2.3 | Presence detection without a decoded payload. This definition does not establish robustness or authentication of our pattern. | DOI reaches IEEE without readable article content in this check; [author preprint](https://arxiv.org/pdf/cs/0606034) is readable. |
-| Jang et al. (2026) | 1.3, 2.5, and 4.2 | Policy-preserving document QA and reasoning/verification; the nearest comparison for policy compliance. | DOI resolves; [ACL full-text PDF](https://aclanthology.org/2026.findings-acl.832.pdf) is readable. |
+| Jang et al. (2026) | 1.3, 2.5, and 4.2 | Evaluation reference for policy violations and permitted answer content; not a solution to the same PDF-only deployment. | DOI resolves; [ACL full-text PDF](https://aclanthology.org/2026.findings-acl.832.pdf) is readable. |
 | S. Liu and Ming (2026) | 1.3 and 2.5 | Distinguishing document construction, ingestion exposure, and downstream behavior. | DOI resolves; [arXiv full-text PDF](https://arxiv.org/pdf/2606.15020v2) is readable. |
 | Y. Liu et al. (2026) | 1.3 and 2.1 | In-context output watermarking through instruction following; comparison with gateway-selected policy delivery. | [Final ICLR PDF](https://proceedings.iclr.cc/paper_files/paper/2026/file/571082ea18d30060177dfcaf662ff0e5-Paper-Conference.pdf) is readable. |
 | Murray (2025) | 1.3 and 2.5 | Hidden-text detection by comparing extraction with rendered-content OCR. It does not establish detection of a pixel watermark. | DOI resolves; [arXiv full text](https://arxiv.org/html/2508.17884v2) is readable. |
