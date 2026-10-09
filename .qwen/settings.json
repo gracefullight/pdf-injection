@@ -19,7 +19,7 @@
             "name": "oma-hook-PreToolUse",
             "type": "command",
             "command": "\"$QWEN_PROJECT_DIR/.qwen/hooks/oma-hook.sh\" --vendor 'qwen' --event 'PreToolUse' --matcher 'run_shell_command'",
-            "timeout": 13
+            "timeout": 15
           }
         ],
         "matcher": "run_shell_command"
@@ -31,11 +31,11 @@
           {
             "name": "oma-hook-PostToolUse",
             "type": "command",
-            "command": "\"$QWEN_PROJECT_DIR/.qwen/hooks/oma-hook.sh\" --vendor 'qwen' --event 'PostToolUse' --matcher 'write_file|replace'",
+            "command": "\"$QWEN_PROJECT_DIR/.qwen/hooks/oma-hook.sh\" --vendor 'qwen' --event 'PostToolUse' --matcher 'write_file|edit|replace'",
             "timeout": 10
           }
         ],
-        "matcher": "write_file|replace"
+        "matcher": "write_file|edit|replace"
       }
     ],
     "Stop": [
@@ -45,7 +45,19 @@
             "name": "oma-hook-Stop",
             "type": "command",
             "command": "\"$QWEN_PROJECT_DIR/.qwen/hooks/oma-hook.sh\" --vendor 'qwen' --event 'Stop'",
-            "timeout": 15
+            "timeout": 40
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "name": "oma-hook-SessionStart",
+            "type": "command",
+            "command": "\"$QWEN_PROJECT_DIR/.qwen/hooks/oma-hook.sh\" --vendor 'qwen' --event 'SessionStart'",
+            "timeout": 13
           }
         ]
       }
@@ -61,28 +73,35 @@
     "enabled": true
   },
   "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--no-usage-statistics",
-        "--isolated"
-      ]
-    },
     "serena": {
       "command": "oma",
       "args": [
         "bridge",
         "--context",
-        "ide"
+        "oma"
       ],
       "env": {
         "SERENA_LOG_LEVEL": "info"
-      }
+      },
+      "trust": true
+    },
+    "firefox-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mozilla/firefox-devtools-mcp@latest",
+        "--autoProfile"
+      ],
+      "trust": true
     }
   },
   "privacy": {
     "usageStatisticsEnabled": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(ls *)",
+      "Bash(oma *)"
+    ]
   }
 }

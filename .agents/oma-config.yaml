@@ -477,3 +477,7 @@ vendors:
   - hermes
   - qwen
   - zcode
+
+# Added by oma update — new config keys (template defaults; edit freely)
+providers:
+  code_intelligence: serena

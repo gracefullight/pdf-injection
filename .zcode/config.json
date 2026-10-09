@@ -1,0 +1,14 @@
+{
+  "mcp": {
+    "servers": {
+      "firefox-devtools": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@mozilla/firefox-devtools-mcp@latest",
+          "--autoProfile"
+        ]
+      }
+    }
+  }
+}

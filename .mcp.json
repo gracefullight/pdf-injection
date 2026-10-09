@@ -6,14 +6,22 @@
     },
     "serena": {
       "command": "oma",
-      "args": ["bridge", "--context", "claude-code"],
+      "args": [
+        "bridge",
+        "--context",
+        "oma"
+      ],
       "env": {
         "SERENA_LOG_LEVEL": "info"
       }
     },
     "firefox-devtools": {
       "command": "npx",
-      "args": ["-y", "@mozilla/firefox-devtools-mcp@latest", "--autoProfile"]
+      "args": [
+        "-y",
+        "@mozilla/firefox-devtools-mcp@latest",
+        "--autoProfile"
+      ]
     }
   }
 }

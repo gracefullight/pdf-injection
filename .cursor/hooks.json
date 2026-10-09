@@ -9,7 +9,7 @@
     "preToolUse": [
       {
         "command": "'.cursor/hooks/oma-hook.sh' --vendor 'cursor' --event 'preToolUse' --matcher 'Shell'",
-        "timeout": 13,
+        "timeout": 15,
         "matcher": "Shell"
       }
     ],
@@ -22,7 +22,7 @@
     "stop": [
       {
         "command": "'.cursor/hooks/oma-hook.sh' --vendor 'cursor' --event 'stop'",
-        "timeout": 15,
+        "timeout": 40,
         "loop_limit": null
       }
     ],

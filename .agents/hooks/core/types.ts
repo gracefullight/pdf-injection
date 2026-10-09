@@ -8,8 +8,8 @@
 // HandlerResult, HandlerCtx, HookHandler). It is self-contained — no imports
 // from `cli/` — so that both `cli/` and the `.agents/hooks/core/` standalone
 // scripts can import from here without creating a circular dependency.
-// `cli/commands/hook/types.ts` re-exports these symbols plus the transport
-// envelope types (HookRequest, HookResponse, HookTransport).
+// `cli/commands/hook/types.ts` re-exports these symbols plus the dispatch
+// envelope types (HookRequest, HookResponse).
 
 import type { VENDORS } from "./constants.ts";
 
@@ -37,7 +37,7 @@ export interface RawHookInput {
 
 /**
  * Optional goal contract for a persistent workflow (design-prime-agent-adoption
- * Track B). Written by `oma goal:set`; read by the persistent-mode Stop hook.
+ * Track B). Written by `oma goal set`; read by the persistent-mode Stop hook.
  */
 export interface ModeGoal {
   /** Human description of the objective. Informational only. */
@@ -120,7 +120,7 @@ export type HookInput =
       /**
        * Assistant response / transcript text from the stop payload, if any.
        * Carries deactivation phrases ("workflow done") so persistent-mode can
-       * deactivate via the central `oma hook` path, matching the standalone path.
+       * deactivate via the central `oma hook run` path, matching the standalone path.
        */
       responseText?: string;
     };
@@ -138,11 +138,25 @@ export type HandlerResult =
   | { type: "mutate"; updatedInput: Record<string, unknown> }
   | { type: "block"; reason: string };
 
+/**
+ * Resolved project config (CUE + YAML + local overlay) as loaded by the CLI.
+ * Structural on purpose: this file stays free of `cli/` imports, and each
+ * handler validates only the keys it reads.
+ */
+export type HookConfig = Record<string, unknown>;
+
 /** Context passed to every handler alongside the normalized HookInput. */
 export interface HandlerCtx {
   vendor: Vendor;
+  /** Resolved OMA project root (config and state live under its `.agents/`). */
   cwd: string;
   sid?: string;
+  /**
+   * Project config loaded once by `oma hook run` from `<cwd>/.agents/`. Absent
+   * in standalone runs, when the project has no config, or when loading
+   * failed; handlers then fall back to their own YAML readers.
+   */
+  config?: HookConfig;
 }
 
 /** Interface every centralized handler must implement. */

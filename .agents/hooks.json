@@ -26,11 +26,11 @@
       }
     ]
   },
-  "oma-serena-primer": {
+  "oma-code-intelligence-primer": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "bun \"/Users/gracefullight/workspace/pdf-injection/.agents/hooks/core/serena-primer.ts\"",
+        "command": "bun \"/Users/gracefullight/workspace/pdf-injection/.agents/hooks/core/code-intelligence-primer.ts\"",
         "timeout": 3
       }
     ]
@@ -61,7 +61,7 @@
       {
         "type": "command",
         "command": "bun \"/Users/gracefullight/workspace/pdf-injection/.agents/hooks/core/persistent-mode.ts\"",
-        "timeout": 5
+        "timeout": 30
       }
     ]
   }

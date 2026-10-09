@@ -22,7 +22,7 @@
 // followup_message, grok via {decision:"block"} (verified from the grok
 // binary's embedded docs — Stop/SubagentStop CAN block), agy via
 // {decision:"continue"}. kiro's Stop output is not processed by the host,
-// so there the enforcer direct-dispatches `oma agent:spawn
+// so there the enforcer direct-dispatches `oma agent spawn
 // refactor-engineer` (detached) instead of relying on the block reason.
 //
 // OFF by default (opt-in). The guard only fires when the project enables it:
@@ -39,7 +39,13 @@ import { agyConversationId, agyProjectDir, isAgyInput } from "./agy-input.ts";
 import { toPosixPath } from "./fs-utils.ts";
 import { makeBlockOutput } from "./hook-output.ts";
 import { atomicWriteJson } from "./state-marker.ts";
-import type { HandlerCtx, HandlerResult, HookInput, Vendor } from "./types.ts";
+import type {
+  HandlerCtx,
+  HandlerResult,
+  HookConfig,
+  HookInput,
+  Vendor,
+} from "./types.ts";
 import { getProjectDir } from "./vendor-detect.ts";
 
 // --- Defaults ---
@@ -53,7 +59,7 @@ export const MAX_STOP_BLOCKS = 2;
  * Vendors whose Stop hook output cannot block the stop (kiro: hook output is
  * not processed — aws/amazon-q lineage; verified 2026-08). A blocking reason
  * cannot force the model there, so the enforcer dispatches the refactor agent
- * DIRECTLY via a detached `oma agent:spawn refactor-engineer` on the first
+ * DIRECTLY via a detached `oma agent spawn refactor-engineer` on the first
  * block of each offending file.
  */
 const DIRECT_DISPATCH_VENDORS = new Set<string>(["kiro"]);
@@ -153,10 +159,38 @@ function scalarValue(raw: string): string {
 }
 
 /**
+ * Read `refactor_guard` from the config `oma hook run` loaded (CUE and local
+ * overlays included). Accepts the same YAML 1.1 boolean spellings as the
+ * standalone reader so a value never flips meaning between the two paths.
+ */
+export function guardConfigFromConfig(config: HookConfig): GuardConfig {
+  const result: GuardConfig = { enabled: false, maxLines: DEFAULT_MAX_LINES };
+  const block = config.refactor_guard;
+  if (!block || typeof block !== "object" || Array.isArray(block)) {
+    return result;
+  }
+  const { enabled, max_lines: maxLines } = block as Record<string, unknown>;
+  result.enabled =
+    enabled === true ||
+    (typeof enabled === "string" && /^(true|yes|on)$/i.test(enabled.trim()));
+  if (typeof maxLines === "number" && Number.isInteger(maxLines)) {
+    if (maxLines >= 0) result.maxLines = maxLines;
+  } else if (typeof maxLines === "string" && /^\d+$/.test(maxLines.trim())) {
+    result.maxLines = Number.parseInt(maxLines, 10);
+  }
+  return result;
+}
+
+/**
  * Extract `enabled` / `max_lines` from the `refactor_guard:` block of
  * oma-config.yaml without a yaml dependency — core handlers stay standalone.
+ * `config` (from `oma hook run`) replaces the file read when present.
  */
-export function loadGuardConfig(projectDir: string): GuardConfig {
+export function loadGuardConfig(
+  projectDir: string,
+  config?: HookConfig,
+): GuardConfig {
+  if (config) return guardConfigFromConfig(config);
   // Forced refactoring is opt-in: enabled stays false until the project sets
   // `refactor_guard.enabled: true` in oma-config.yaml.
   const defaults: GuardConfig = { enabled: false, maxLines: DEFAULT_MAX_LINES };
@@ -303,12 +337,16 @@ function recordTouched(
   input: HookInput & { kind: "post_tool" },
   ctx: HandlerCtx,
 ): null {
-  const { toolName, toolInput, cwd: projectDir } = input;
+  const { toolName, toolInput } = input;
+  // Config and state live at the resolved project root; a relative tool path
+  // is relative to the session's working directory (the payload cwd).
+  const projectDir = ctx.cwd || input.cwd;
   if (!projectDir) return null;
+  const sessionCwd = input.cwd || projectDir;
   if (!EDIT_TOOLS.has(toolName.toLowerCase())) return null;
 
   // Opt-in gate — with the default (disabled) config nothing below runs.
-  const config = loadGuardConfig(projectDir);
+  const config = loadGuardConfig(projectDir, ctx.config);
   if (!config.enabled) return null;
 
   const sid = ctx.sid ?? "unknown";
@@ -316,7 +354,7 @@ function recordTouched(
   for (const rawPath of resolveEditedPaths(toolName, toolInput)) {
     const absPath = isAbsolute(rawPath)
       ? rawPath
-      : resolve(projectDir, rawPath);
+      : resolve(sessionCwd, rawPath);
     const relPath = toPosixPath(relative(projectDir, absPath));
     if (!isRefactorableFile(relPath)) continue;
     if (!existsSync(absPath)) continue;
@@ -344,10 +382,10 @@ function enforceOnStop(
   input: HookInput & { kind: "stop" },
   ctx: HandlerCtx,
 ): HandlerResult | null {
-  const projectDir = input.cwd;
+  const projectDir = ctx.cwd || input.cwd;
   if (!projectDir) return null;
 
-  const config = loadGuardConfig(projectDir);
+  const config = loadGuardConfig(projectDir, ctx.config);
   if (!config.enabled) return null;
 
   const sid = ctx.sid ?? "unknown";
@@ -432,7 +470,7 @@ function enforceOnStop(
       `budget: ${fileList}. Before ending this turn, dispatch the ` +
       `\`refactor-engineer\` subagent to split each file into smaller, ` +
       `cohesive modules (native Agent tool when the runtime supports it, ` +
-      `otherwise \`oma agent:spawn refactor-engineer\`). The refactor must be ` +
+      `otherwise \`oma agent spawn refactor-engineer\`). The refactor must be ` +
       `behavior-preserving and land as refactor-only changes. Adjust via ` +
       `\`refactor_guard.max_lines\` / \`refactor_guard.enabled\` in ` +
       `.agents/oma-config.yaml.`,
@@ -461,7 +499,15 @@ function spawnRefactorAgent(
       `behavior-preserving and land as refactor-only changes: ${files}`;
     const child = spawn(
       "oma",
-      ["agent:spawn", "refactor-engineer", prompt, sid, "-w", projectDir],
+      [
+        "agent",
+        "spawn",
+        "refactor-engineer",
+        prompt,
+        sid,
+        "--workspace",
+        projectDir,
+      ],
       { detached: true, stdio: "ignore" },
     );
     // ENOENT (oma not on PATH) surfaces as an async 'error' event, not a
@@ -494,7 +540,7 @@ function main() {
 
   const parsed: StandaloneInput = JSON.parse(raw);
 
-  // agy runs core hooks standalone (no `oma hook` router): its envelope is
+  // agy runs core hooks standalone (no `oma hook run` router): its envelope is
   // camelCase with a nested toolCall (verified against the agy 1.1.13 binary).
   const toolCall = parsed.toolCall as
     | { name?: unknown; args?: unknown }

@@ -28,3 +28,6 @@ docs/generated/
 # OS / scratch
 .DS_Store
 tmp/
+
+.agents/oma-config.local.cue
+.agents/oma-config.local.yaml

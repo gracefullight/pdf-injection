@@ -9,19 +9,18 @@
       "args": [
         "bridge",
         "--context",
-        "ide"
+        "oma"
       ],
       "env": {
         "SERENA_LOG_LEVEL": "info"
       }
     },
-    "chrome-devtools": {
+    "firefox-devtools": {
       "command": "npx",
       "args": [
         "-y",
-        "chrome-devtools-mcp@latest",
-        "--no-usage-statistics",
-        "--isolated"
+        "@mozilla/firefox-devtools-mcp@latest",
+        "--autoProfile"
       ]
     }
   }

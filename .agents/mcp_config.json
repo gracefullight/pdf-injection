@@ -8,11 +8,19 @@
       "args": [
         "bridge",
         "--context",
-        "antigravity"
+        "oma"
       ],
       "env": {
         "SERENA_LOG_LEVEL": "info"
       }
+    },
+    "firefox-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mozilla/firefox-devtools-mcp@latest",
+        "--autoProfile"
+      ]
     }
   }
 }
